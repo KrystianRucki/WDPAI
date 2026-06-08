@@ -1,20 +1,17 @@
 <?php
 
-require_once 'AppController.php';
-require_once __DIR__.'/../repositories/UsersRepository.php';
+declare(strict_types=1);
 
-class DashboardController extends AppController {
+require_once __DIR__ . '/AppController.php';
 
-    public function index() {
-        // if(!$this->isLoggedIn()) {
-        //     return;
-        // }
-        // TODO pobieranie danych z bazy
-        // wstawianie zmiennych na widok
-        $title = "INDEX";
-        $usersRepository = new UsersRepository();
-        $users = $usersRepository->getUsers();
+final class DashboardController extends AppController
+{
+    public function index(): void
+    {
+        if (!$this->requireLogin()) {
+            return;
+        }
 
-        return $this->render("index", ["title" => $title, "users" => $users]);
+        $this->render('feed_films');
     }
 }
