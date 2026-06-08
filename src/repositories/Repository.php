@@ -1,12 +1,20 @@
 <?php
 
-require_once __DIR__."/../../Database.php";
+declare(strict_types=1);
 
-class Repository {
+require_once __DIR__ . '/../../Database.php';
 
-    protected $database;
+abstract class Repository
+{
+    protected Database $database;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->database = new Database();
+    }
+
+    protected function connection(): PDO
+    {
+        return $this->database->connect();
     }
 }

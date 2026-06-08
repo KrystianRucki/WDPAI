@@ -9,11 +9,13 @@ services:
       - .:/app/
     links:
       - php
+    depends_on:
+      php:
+        condition: service_started
     networks:
       - pg-network
-  
+
   db:
-    platform: linux/arm64
     build:
       context: .
       dockerfile: docker/db/Dockerfile
@@ -23,16 +25,30 @@ services:
       - pg-network
     volumes:
       - ./docker/db/init:/docker-entrypoint-initdb.d
-  
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U docker -d db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
   php:
     build:
       context: .
       dockerfile: docker/php/Dockerfile
     volumes:
       - .:/app
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: db
+      DB_USER: docker
+      DB_PASSWORD: docker
+    depends_on:
+      db:
+        condition: service_healthy
     networks:
       - pg-network
-  
+
   pgadmin-wdpai:
     image: dpage/pgadmin4:latest
     container_name: pg-admin3
@@ -43,9 +59,10 @@ services:
       - "5050:80"
     networks:
       - pg-network
-  
+
 networks:
   pg-network:
 
 volumes:
   pg-data:
+

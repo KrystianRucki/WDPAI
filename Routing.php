@@ -1,64 +1,129 @@
 <?php
 
-require_once 'src/controllers/SecurityController.php';
-require_once 'src/controllers/DashboardController.php';
-require_once 'src/controllers/UsersController.php';
+declare(strict_types=1);
 
-// TODO musimy zapewnic, ze utworzony 
-// obiekt kontrollera ma tylko jedna instancję - SINGLETON
+require_once __DIR__ . '/src/controllers/AppController.php';
+require_once __DIR__ . '/src/controllers/SecurityController.php';
+require_once __DIR__ . '/src/controllers/PageController.php';
+require_once __DIR__ . '/src/controllers/AdminController.php';
+require_once __DIR__ . '/src/controllers/SearchController.php';
+require_once __DIR__ . '/src/controllers/UsersController.php';
+require_once __DIR__ . '/src/controllers/ListsController.php';
+require_once __DIR__ . '/src/controllers/ReviewsController.php';
+require_once __DIR__ . '/src/controllers/NotificationsController.php';
+require_once __DIR__ . '/src/controllers/SettingsController.php';
 
-// TODO 2 /dashboard -- wszystkei dnae
-// /dashboard/12234 -- wyciagnie nam jakis elemtn o wskaznaym ID 12234
-// REGEX
-class Routing {
-
-    public static $routes = [
-        "login" => [
-            "controller" => "SecurityController",
-            "action" => "login"
-        ],
-        "dashboard" => [
-            "controller" => "DashboardController",
-            "action" => "index"
-        ],
-        "" => [
-            "controller" => "SecurityController",
-            "action" => "login"
-        ],
-        "register" => [
-            "controller" => "SecurityController",
-            "action" => "register"
-        ],
-        "search" => [
-            "controller" => "UsersController",
-            "action" => "search"
-        ],
-        "delete-user" => [
-            "controller" => "UsersController",
-            "action" => "delete"
-        ],
+final class Routing
+{
+    private const PUBLIC_VIEWS = [
+        'login',
+        'register',
+        'not_found',
+        'offline_page',
     ];
 
-    public static function run(string $path) {
-        // TODO sprawdzać za pomoca array_key_exists
-        switch($path) {
-            case 'dashboard':
-            case '':
-            case 'login':
-            case 'register':
-            case 'search':
-            case 'delete-user':
-                $controller = Routing::$routes[$path]["controller"];
-                $action = Routing::$routes[$path]["action"];
+    private const VIEW_ALIASES = [
+        '' => 'login',
+        'dashboard' => 'feed_films',
+        'feed-films' => 'feed_films',
+        'feed-reviews' => 'feed_reviews',
+        'feed-lists' => 'feed_lists',
+        'film-details' => 'film_details',
+        'review-details' => 'review_details',
+        'review-comments' => 'review_comments',
+        'list-details' => 'list_details',
+        'new-from-friends' => 'new_from_friends',
+        'activity-following' => 'activity_following',
+        'activity-you' => 'activity_you',
+        'profile' => 'profile_p_main',
+        'profile-p-profile' => 'profile_p_main',
+        'profile-diary' => 'profile_p_diary',
+        'profile-lists' => 'profile_p_lists',
+        'profile-watchlist' => 'profile_p_watchlist',
+        'settings' => 'settings',
+        'notifications' => 'notifications',
+        'search' => 'search_empty',
+        'search-films' => 'search_films',
+        'search-users' => 'search_users',
+        'search-lists' => 'search_lists',
+        'search-actors' => 'search_actors',
+        'log-search' => 'log_search_empty',
+        'log-search-results' => 'log_search_results',
+        'log-selected' => 'log_selected',
+        'calendar' => 'calendar',
+        'admin-panel' => 'admin_panel',
+    ];
 
-                $controllerObj = new $controller;
-                $id = null;
+    public static function run(string $path): void
+    {
+        $path = self::normalizePath($path);
 
-                $controllerObj->$action($id);
-                break; 
-            default:
-                include 'public/views/404.html';
-                break;
+        $routes = [
+            'login' => [SecurityController::class, 'login'],
+            'register' => [SecurityController::class, 'register'],
+            'logout' => [SecurityController::class, 'logout'],
+
+            'admin-panel' => [AdminController::class, 'index'],
+            'api-admin-users' => [AdminController::class, 'users'],
+            'api-admin-block-user' => [AdminController::class, 'blockUser'],
+
+            'api-search' => [SearchController::class, 'search'],
+            'api-search-users' => [SearchController::class, 'users'],
+            'api-notifications' => [NotificationsController::class, 'list'],
+            'api-notifications-read' => [NotificationsController::class, 'markRead'],
+            'api-settings-profile' => [SettingsController::class, 'updateProfile'],
+            'api-settings-notifications' => [SettingsController::class, 'updateNotifications'],
+            'api-lists-create' => [ListsController::class, 'create'],
+            'api-lists-add-film' => [ListsController::class, 'addFilm'],
+            'api-reviews-comment' => [ReviewsController::class, 'comment'],
+            'api-reviews-like' => [ReviewsController::class, 'like'],
+
+            // Backwards-compatible routes from the original class baseline.
+            'delete-user' => [UsersController::class, 'delete'],
+            'search-users-legacy' => [UsersController::class, 'search'],
+        ];
+
+        if (isset($routes[$path])) {
+            [$controllerClass, $action] = $routes[$path];
+            (new $controllerClass())->$action();
+            return;
         }
+
+        $template = self::VIEW_ALIASES[$path] ?? self::templateFromPath($path);
+
+        if ($template !== null && file_exists(__DIR__ . '/public/views/' . $template . '.html')) {
+            if ($template === 'admin_panel') {
+                (new AdminController())->index();
+                return;
+            }
+
+            $isPublic = in_array($template, self::PUBLIC_VIEWS, true);
+            (new PageController())->show($template, $isPublic);
+            return;
+        }
+
+        http_response_code(404);
+        (new PageController())->show('not_found', true);
+    }
+
+    private static function normalizePath(string $path): string
+    {
+        $path = trim($path, '/');
+
+        if (str_ends_with($path, '.html')) {
+            $path = substr($path, 0, -5);
+        }
+
+        return str_replace('_', '-', $path);
+    }
+
+    private static function templateFromPath(string $path): ?string
+    {
+        if ($path === '') {
+            return 'login';
+        }
+
+        $candidate = str_replace('-', '_', $path);
+        return preg_match('/^[a-z0-9_]+$/', $candidate) ? $candidate : null;
     }
 }
