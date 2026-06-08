@@ -1,0 +1,120 @@
+<!doctype html>
+<html class="dark" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Reevio - Settings</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;700;800;900&family=Manrope:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+      rel="stylesheet"
+    />
+    <link href="/public/assets/css/reevio.css" rel="stylesheet" /></head>
+  <body class="bg-surface text-on-surface antialiased overflow-x-hidden reevio-page-settings">
+    <div class="cinematic-glow"></div>
+<?php
+$activeNav = 'profile';
+$showAdminLink = ($showAdminLink ?? false);
+include __DIR__ . '/partials/navigation.html';
+?>
+<!-- Main content -->
+    <main class="relative z-10 ml-64 min-h-screen w-[calc(100%-16rem)] px-4 pb-24 pt-[8.7rem] lg:px-5 xl:px-6">
+<div class="mx-auto max-w-[1120px]">
+        <header class="mb-8 pr-44">
+          <p class="mb-3 font-label text-xs font-bold uppercase tracking-[0.28em] text-secondary">
+            Account
+          </p>
+          <h1 class="font-headline text-[32px] font-black tracking-tight text-on-surface">
+            Settings
+          </h1>
+          <p class="mt-2 max-w-2xl text-sm leading-relaxed text-on-surface-variant">
+            Edit your username, bio and notification preferences.
+          </p>
+        </header>
+
+        <div class="grid max-w-[980px] gap-6 lg:grid-cols-[260px_minmax(0,1fr)]">
+          <aside class="rounded-3xl border border-outline-variant/15 bg-surface-container-low p-4 ambient-shadow">
+            <nav class="flex flex-col gap-2">
+              <a class="rounded-2xl bg-primary px-4 py-3 font-label text-sm font-bold text-on-primary" href="#profile-settings">
+                Profile
+              </a>
+              <a class="rounded-2xl px-4 py-3 font-label text-sm font-bold text-on-surface-variant transition-colors hover:bg-surface-container-high hover:text-on-surface" href="#notification-settings">
+                Notifications
+              </a>
+            </nav>
+          </aside>
+
+          <section class="space-y-6">
+            <article id="profile-settings" class="rounded-3xl border border-outline-variant/15 bg-surface-container-low p-6 ambient-shadow">
+              <h2 class="mb-5 font-headline text-2xl font-black text-on-surface">Profile</h2>
+
+              <div class="grid gap-5 md:grid-cols-[96px_minmax(0,1fr)]">
+                <div class="h-24 w-24 overflow-hidden rounded-full border-2 border-primary/45 bg-surface-container-high">
+                  <img
+                    alt="Profile avatar"
+                    class="h-full w-full object-cover"
+                    src="https://lh3.googleusercontent.com/a/ACg8ocLw_IidUeX4V3gI7e9Iu_JmN9Y6S7O_N7L-A6C-Qy0uY_c=s96-c"
+                  />
+                </div>
+
+                <div class="grid gap-4">
+<label class="block">
+                    <span class="mb-2 block font-label text-xs font-bold uppercase tracking-wider text-on-surface-variant">Username</span>
+                    <input class="w-full rounded-2xl border border-outline-variant/20 bg-surface-container-lowest px-4 py-3 text-on-surface outline-none transition-colors focus:border-secondary" type="text" value="jakub" />
+                  </label>
+
+                  <label class="block">
+                    <span class="mb-2 block font-label text-xs font-bold uppercase tracking-wider text-on-surface-variant">Bio</span>
+                    <textarea class="min-h-[120px] w-full rounded-2xl border border-outline-variant/20 bg-surface-container-lowest px-4 py-3 text-on-surface outline-none transition-colors focus:border-secondary" placeholder="Tell people what kind of films you love...">Watching, rating and collecting films with a soft spot for sci-fi, noir and emotional dramas.</textarea>
+                  </label>
+                </div>
+              </div>
+            </article>
+
+            <article id="notification-settings" class="rounded-3xl border border-outline-variant/15 bg-surface-container-low p-6 ambient-shadow">
+              <h2 class="mb-5 font-headline text-2xl font-black text-on-surface">Notifications</h2>
+
+              <div class="divide-y divide-outline-variant/15">
+                <div class="flex items-center justify-between gap-5 py-4">
+                  <div>
+                    <h3 class="font-headline text-lg font-bold text-on-surface">New followers</h3>
+                    <p class="mt-1 text-sm text-on-surface-variant">Notify me when someone follows my profile.</p>
+                  </div>
+                  <button class="settings-switch" type="button" aria-label="New followers toggle" aria-pressed="true"></button>
+                </div>
+
+                <div class="flex items-center justify-between gap-5 py-4">
+                  <div>
+                    <h3 class="font-headline text-lg font-bold text-on-surface">Review likes</h3>
+                    <p class="mt-1 text-sm text-on-surface-variant">Notify me when someone likes one of my reviews.</p>
+                  </div>
+                  <button class="settings-switch" type="button" aria-label="Review likes toggle" aria-pressed="true"></button>
+                </div>
+
+                <div class="flex items-center justify-between gap-5 py-4">
+                  <div>
+                    <h3 class="font-headline text-lg font-bold text-on-surface">Review comments</h3>
+                    <p class="mt-1 text-sm text-on-surface-variant">Notify me about comments and replies under my reviews.</p>
+                  </div>
+                  <button class="settings-switch" type="button" aria-label="Review comments toggle" aria-pressed="true"></button>
+                </div>
+              </div>
+            </article>
+
+            <div class="flex justify-end">
+              <button class="rounded-full bg-primary px-8 py-3 font-label text-sm font-bold uppercase tracking-widest text-on-primary shadow-[0_0_20px_rgba(255,215,155,0.28)] transition-opacity hover:opacity-90" type="button">
+                Save changes
+              </button>
+            </div>
+          </section>
+        </div>
+      </div>
+    </main>
+
+    <script src="/public/assets/js/reevio.js"></script>
+  </body>
+</html>

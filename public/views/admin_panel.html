@@ -1,0 +1,285 @@
+<!doctype html>
+<html class="dark" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Reevio - Admin Panel</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;700;800;900&family=Manrope:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+      rel="stylesheet"
+    />
+
+    <link href="/public/assets/css/reevio.css" rel="stylesheet" /></head>
+
+  <body class="bg-surface text-on-surface antialiased overflow-x-hidden reevio-page-admin_panel">
+    <div class="cinematic-glow"></div>
+<?php
+$activeNav = 'admin';
+$showAdminLink = true;
+include __DIR__ . '/partials/navigation.html';
+?>
+<!-- Main content -->
+    <main class="relative z-10 ml-64 min-h-screen w-[calc(100%-16rem)] px-4 pb-24 pt-[8.7rem] lg:px-5 xl:px-6">
+<div class="mx-auto max-w-[1120px]">
+        <header class="mb-8 pr-44">
+          <p class="mb-3 font-label text-xs font-bold uppercase tracking-[0.28em] text-secondary">
+            Admin area
+          </p>
+          <h1 class="font-headline text-[32px] font-black tracking-tight text-on-surface">
+            User Management
+          </h1>
+          <p class="mt-2 max-w-2xl text-sm leading-relaxed text-on-surface-variant">
+            Search users, review account status and block or unblock accounts. The list shows 10 users per page.
+          </p>
+        </header>
+
+        <section class="mb-8 grid max-w-[860px] gap-4 md:grid-cols-3">
+          <article class="rounded-2xl border border-outline-variant/15 bg-surface-container-low p-5 ambient-shadow">
+            <span id="admin-total-users" class="font-headline text-3xl font-black text-primary">0</span>
+            <span class="mt-1 block font-label text-xs font-bold uppercase tracking-wider text-on-surface-variant">Total users</span>
+          </article>
+
+          <article class="rounded-2xl border border-outline-variant/15 bg-surface-container-low p-5 ambient-shadow">
+            <span id="admin-active-users" class="font-headline text-3xl font-black text-secondary">0</span>
+            <span class="mt-1 block font-label text-xs font-bold uppercase tracking-wider text-on-surface-variant">Active</span>
+          </article>
+
+          <article class="rounded-2xl border border-outline-variant/15 bg-surface-container-low p-5 ambient-shadow">
+            <span id="admin-blocked-users" class="font-headline text-3xl font-black text-error">0</span>
+            <span class="mt-1 block font-label text-xs font-bold uppercase tracking-wider text-on-surface-variant">Blocked</span>
+          </article>
+        </section>
+
+        <section class="max-w-[980px] rounded-3xl border border-outline-variant/15 bg-surface-container-low p-6 ambient-shadow">
+          <div class="mb-6 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+              <h2 class="font-headline text-2xl font-black tracking-tight text-on-surface">
+                Users
+              </h2>
+              <p class="mt-1 font-label text-sm text-on-surface-variant">
+                <span id="admin-results-label">Showing users 1-10</span>
+              </p>
+            </div>
+
+            <label class="relative block w-full lg:max-w-[420px]">
+              <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+              <input
+                id="admin-user-search"
+                class="w-full rounded-full border border-outline-variant/20 bg-surface-container-lowest py-3.5 pl-12 pr-4 text-on-surface placeholder:text-on-surface-variant/60 outline-none transition-colors focus:border-secondary"
+                type="search"
+                placeholder="Search users by username or email..."
+              />
+            </label>
+          </div>
+
+          <div class="overflow-hidden rounded-2xl border border-outline-variant/15 bg-surface-container-lowest">
+            <div class="hidden grid-cols-[minmax(0,1.6fr)_minmax(0,1.5fr)_120px_150px] gap-4 border-b border-outline-variant/15 px-5 py-3 font-label text-xs font-bold uppercase tracking-wider text-on-surface-variant md:grid">
+              <span>User</span>
+              <span>Email</span>
+              <span>Status</span>
+              <span class="text-right">Action</span>
+            </div>
+
+            <div id="admin-users-list" class="divide-y divide-outline-variant/15"></div>
+          </div>
+
+          <div class="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <p id="admin-page-label" class="font-label text-sm text-on-surface-variant">
+              Page 1 of 1
+            </p>
+
+            <div class="flex items-center gap-2">
+              <button
+                id="admin-prev-page"
+                class="inline-flex items-center gap-2 rounded-full border border-outline-variant/20 px-4 py-2.5 font-label text-sm font-bold text-on-surface-variant transition-colors hover:border-secondary/40 hover:bg-secondary/10 hover:text-secondary disabled:cursor-not-allowed disabled:opacity-40"
+                type="button"
+              >
+                <span class="material-symbols-outlined text-[18px]">chevron_left</span>
+                Previous
+              </button>
+
+              <div id="admin-page-buttons" class="flex items-center gap-2"></div>
+
+              <button
+                id="admin-next-page"
+                class="inline-flex items-center gap-2 rounded-full border border-outline-variant/20 px-4 py-2.5 font-label text-sm font-bold text-on-surface-variant transition-colors hover:border-secondary/40 hover:bg-secondary/10 hover:text-secondary disabled:cursor-not-allowed disabled:opacity-40"
+                type="button"
+              >
+                Next
+                <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+              </button>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <script src="/public/assets/js/reevio.js"></script>
+    <script>
+      const usersPerPage = 10;
+      let currentPage = 1;
+      let searchTerm = "";
+      let lastPayload = null;
+
+      const listEl = document.getElementById("admin-users-list");
+      const searchEl = document.getElementById("admin-user-search");
+      const totalEl = document.getElementById("admin-total-users");
+      const activeEl = document.getElementById("admin-active-users");
+      const blockedEl = document.getElementById("admin-blocked-users");
+      const pageLabelEl = document.getElementById("admin-page-label");
+      const resultsLabelEl = document.getElementById("admin-results-label");
+      const prevBtn = document.getElementById("admin-prev-page");
+      const nextBtn = document.getElementById("admin-next-page");
+      const pageButtonsEl = document.getElementById("admin-page-buttons");
+
+      async function fetchUsers() {
+        const params = new URLSearchParams({
+          page: String(currentPage),
+          limit: String(usersPerPage),
+          search: searchTerm
+        });
+
+        const response = await fetch(`/api-admin-users?${params.toString()}`);
+
+        if (!response.ok) {
+          throw new Error("Could not load users");
+        }
+
+        lastPayload = await response.json();
+        renderUsers(lastPayload);
+      }
+
+      function renderUsers(payload) {
+        const users = payload.users || [];
+        const pagination = payload.pagination || { page: 1, pages: 1, total: 0 };
+        const stats = payload.stats || { total: 0, active: 0, blocked: 0 };
+
+        totalEl.textContent = stats.total;
+        activeEl.textContent = stats.active;
+        blockedEl.textContent = stats.blocked;
+
+        listEl.innerHTML = users.map((user) => {
+          const isBlocked = !user.is_active;
+          const initials = user.username
+            .split(" ")
+            .map((part) => part[0])
+            .slice(0, 2)
+            .join("");
+
+          return `
+            <article class="admin-user-row ${isBlocked ? "is-blocked" : ""} grid gap-4 px-5 py-4 md:grid-cols-[minmax(0,1.6fr)_minmax(0,1.5fr)_120px_150px] md:items-center">
+              <div class="flex min-w-0 items-center gap-4">
+                <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-surface-container-high font-headline text-sm font-black text-primary">
+                  ${initials}
+                </div>
+                <div class="min-w-0">
+                  <h3 class="truncate font-headline text-base font-black text-on-surface">${user.username}</h3>
+                  <p class="truncate font-label text-xs text-secondary">@${user.username}</p>
+                </div>
+              </div>
+
+              <p class="truncate font-label text-sm text-on-surface-variant">${user.email}</p>
+
+              <span class="admin-status inline-flex w-fit items-center gap-2 rounded-full border ${isBlocked ? "border-error/35 text-error" : "border-secondary/35 text-secondary"} px-3 py-1 font-label text-xs font-bold uppercase tracking-wider">
+                <span class="h-2 w-2 rounded-full ${isBlocked ? "bg-error" : "bg-secondary"}"></span>
+                ${isBlocked ? "Blocked" : "Active"}
+              </span>
+
+              <button
+                class="admin-block-button justify-self-start rounded-full border ${isBlocked ? "border-secondary/35 text-secondary hover:bg-secondary/10" : "border-error/35 text-error hover:bg-error/10"} px-4 py-2 font-label text-xs font-bold uppercase tracking-wider md:justify-self-end"
+                type="button"
+                data-user-id="${user.id}"
+                data-blocked="${isBlocked ? "false" : "true"}"
+              >
+                ${isBlocked ? "Unblock" : "Block"}
+              </button>
+            </article>
+          `;
+        }).join("");
+
+        if (!users.length) {
+          listEl.innerHTML = `
+            <div class="px-5 py-10 text-center">
+              <span class="material-symbols-outlined mb-3 text-4xl text-on-surface-variant">search_off</span>
+              <p class="font-headline text-lg font-black text-on-surface">No users found</p>
+              <p class="mt-1 text-sm text-on-surface-variant">Try a different search phrase.</p>
+            </div>
+          `;
+        }
+
+        const start = pagination.total ? (pagination.page - 1) * usersPerPage + 1 : 0;
+        const end = Math.min(start + users.length - 1, pagination.total);
+        resultsLabelEl.textContent = `Showing users ${start}-${end} of ${pagination.total}`;
+        pageLabelEl.textContent = `Page ${pagination.page} of ${pagination.pages}`;
+
+        prevBtn.disabled = pagination.page <= 1;
+        nextBtn.disabled = pagination.page >= pagination.pages;
+
+        pageButtonsEl.innerHTML = Array.from({ length: pagination.pages }, (_, index) => {
+          const page = index + 1;
+          return `
+            <button
+              class="h-10 min-w-10 rounded-full px-3 font-label text-sm font-bold transition-colors ${page === pagination.page ? "bg-primary text-on-primary" : "border border-outline-variant/20 text-on-surface-variant hover:border-secondary/40 hover:bg-secondary/10 hover:text-secondary"}"
+              type="button"
+              data-page="${page}"
+            >
+              ${page}
+            </button>
+          `;
+        }).join("");
+      }
+
+      let searchTimeout = null;
+      searchEl.addEventListener("input", (event) => {
+        searchTerm = event.target.value;
+        currentPage = 1;
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(fetchUsers, 250);
+      });
+
+      prevBtn.addEventListener("click", () => {
+        currentPage = Math.max(1, currentPage - 1);
+        fetchUsers();
+      });
+
+      nextBtn.addEventListener("click", () => {
+        const pages = lastPayload?.pagination?.pages || 1;
+        currentPage = Math.min(pages, currentPage + 1);
+        fetchUsers();
+      });
+
+      pageButtonsEl.addEventListener("click", (event) => {
+        const pageButton = event.target.closest("[data-page]");
+        if (!pageButton) return;
+        currentPage = Number(pageButton.dataset.page);
+        fetchUsers();
+      });
+
+      listEl.addEventListener("click", async (event) => {
+        const button = event.target.closest("[data-user-id]");
+        if (!button) return;
+
+        const response = await fetch("/api-admin-block-user", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            user_id: Number(button.dataset.userId),
+            blocked: button.dataset.blocked === "true"
+          })
+        });
+
+        if (response.ok) {
+          fetchUsers();
+        }
+      });
+
+      fetchUsers();
+    </script>
+  </body>
+</html>

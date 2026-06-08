@@ -1,0 +1,283 @@
+<!doctype html>
+<html class="dark" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Reevio - Search Films</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;600;700;800;900&family=Manrope:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+      rel="stylesheet"
+    />
+    <link href="/public/assets/css/reevio.css" rel="stylesheet" /></head>
+
+  <body class="bg-surface text-on-surface font-body min-h-screen antialiased search-compact-page reevio-page-search_films">
+    <div class="cinematic-glow"></div>
+<?php
+$activeNav = 'search';
+$showAdminLink = ($showAdminLink ?? false);
+include __DIR__ . '/partials/navigation.html';
+?>
+<!-- MAIN CONTENT AREA -->
+    <div class="relative z-10 min-h-screen pl-64">
+<!-- SEARCH FILMS BODY -->
+      <main class="w-full relative z-10">
+        <div class="max-w-7xl mx-auto px-8 pb-20 pt-6">
+          <!-- SEARCH BAR -->
+          <div class="mb-5 max-w-3xl">
+            <div
+              class="relative flex items-center bg-surface-container-lowest rounded-full px-5 py-4 shadow-[0_20px_40px_rgba(0,0,0,0.4)] ring-1 ring-outline-variant/15 focus-within:ring-secondary focus-within:ring-2 focus-within:shadow-[0_0_20px_rgba(189,244,255,0.18)] transition-all"
+            >
+              <span
+                class="material-symbols-outlined text-on-surface-variant mr-3"
+                >search</span
+              >
+
+              <input
+                class="bg-transparent border-none focus:ring-0 text-on-surface font-body w-full placeholder-on-surface-variant text-lg outline-none"
+                placeholder="Search films, directors, actors..."
+                type="text"
+                value="Blade Runner"
+              />
+
+              <button
+                class="ml-2 text-on-surface-variant hover:text-on-surface transition-colors"
+                aria-label="Clear search"
+              >
+                <span class="material-symbols-outlined text-xl">cancel</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- CATEGORY CHIPS -->
+          <div class="flex gap-3 pb-10 overflow-x-auto scrollbar-hide">
+            <button
+              class="glass-gradient-cta text-on-primary rounded-full px-6 py-2.5 font-label text-sm font-bold whitespace-nowrap shadow-[0_0_15px_rgba(255,215,155,0.25)]"
+            >
+              Films
+            </button>
+
+            <button
+              class="bg-surface-container-high text-on-surface-variant rounded-full px-6 py-2.5 font-label text-sm font-medium whitespace-nowrap hover:bg-surface-bright hover:text-on-surface transition-colors"
+            >
+              Actors
+            </button>
+
+            <button
+              class="bg-surface-container-high text-on-surface-variant rounded-full px-6 py-2.5 font-label text-sm font-medium whitespace-nowrap hover:bg-surface-bright hover:text-on-surface transition-colors"
+            >
+              Users
+            </button>
+
+            <button
+              class="bg-surface-container-high text-on-surface-variant rounded-full px-6 py-2.5 font-label text-sm font-medium whitespace-nowrap hover:bg-surface-bright hover:text-on-surface transition-colors"
+            >
+              Lists
+            </button>
+          </div>
+
+          <!-- RESULTS SECTION -->
+          <section>
+            <h2 class="font-headline text-2xl font-bold text-on-surface mb-5">
+              Live Results
+            </h2>
+
+            <div
+              class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6 xl:gap-8"
+            >
+              <!-- MOVIE CARD -->
+              <article
+                class="group relative rounded-xl overflow-hidden aspect-[2/3] bg-surface-container-low shadow-[0_20px_40px_rgba(0,0,0,0.4)] cursor-pointer"
+              >
+                <img
+                  alt="Blade Runner 2049"
+                  class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuCVX6i6km0tgFs4Wl43e_IN_urby1MJfP2o2A4s0zYyhlH7ij2h7lOOOjX-aWSshSirakKf2XAqLPYMRLCAYPqEDNHCvsxXRj6a4WXf7l2kCKWhM_VUf-UyP5lzyJTa-tWA104EHkSjs2lio8P4tJPEAuDyf4md5s80d_IPrWBJ2HsG67-fh-R6F1b21ABHh-qg3va7V55tbJqV1GjaqY-VnhaRiY7_QARYHdo9MywPPs6d2Go_oyVb_raHbFD2AxGShm0CVbLMZVFf"
+                />
+
+                <div
+                  class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-surface-container-lowest/55 to-transparent opacity-95 group-hover:opacity-100 transition-opacity"
+                ></div>
+
+                <div class="absolute bottom-0 left-0 right-0 p-5">
+                  <div class="flex items-center justify-between mb-2">
+                    <span
+                      class="text-secondary font-label text-xs tracking-widest font-bold uppercase"
+                    >
+                      2017
+                    </span>
+
+                    <div
+                      class="flex items-center gap-1 bg-surface-variant/80 backdrop-blur-sm px-2 py-1 rounded-md"
+                    >
+                      <span
+                        class="material-symbols-outlined text-primary text-sm reevio-inline-style-001"
+                       
+                        >star</span
+                      >
+                      <span class="text-on-surface text-xs font-bold">4.8</span>
+                    </div>
+                  </div>
+
+                  <h3
+                    class="font-headline text-xl text-on-surface font-bold leading-tight group-hover:text-primary transition-colors"
+                  >
+                    Blade Runner 2049
+                  </h3>
+
+                  <p class="font-body text-on-surface-variant text-xs mt-2">
+                    Denis Villeneuve
+                  </p>
+                </div>
+              </article>
+
+              <!-- MOVIE CARD -->
+              <article
+                class="group relative rounded-xl overflow-hidden aspect-[2/3] bg-surface-container-low shadow-[0_20px_40px_rgba(0,0,0,0.4)] cursor-pointer"
+              >
+                <img
+                  alt="Dune: Part One"
+                  class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuCLebd0-nozzSTbmaz8isct5nsla9YvmaoUVB1IuS2bFZX1spICd5q4TgNYdvS5RPZNIuQhAAYyjiKqySsVMVN6ppxLGOsxJJk4QSRPKGw5IYSarAqp_RI8ua-rxGcBGtF42j6524BCwX3FK6Fdru0m8cYsIqz82PCd4hYQbsidWPQ48PGYB8a3VLF4esoV6a_X5F3NqEzSVekrNKdDBMGgdZR_WjRoGSL4E7Q77i-YauRBSlYTBbKld1AOJWfTR1psnJeDOZlHd20t"
+                />
+
+                <div
+                  class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-surface-container-lowest/55 to-transparent opacity-95 group-hover:opacity-100 transition-opacity"
+                ></div>
+
+                <div class="absolute bottom-0 left-0 right-0 p-5">
+                  <div class="flex items-center justify-between mb-2">
+                    <span
+                      class="text-secondary font-label text-xs tracking-widest font-bold uppercase"
+                    >
+                      2021
+                    </span>
+
+                    <div
+                      class="flex items-center gap-1 bg-surface-variant/80 backdrop-blur-sm px-2 py-1 rounded-md"
+                    >
+                      <span
+                        class="material-symbols-outlined text-primary text-sm reevio-inline-style-001"
+                       
+                        >star</span
+                      >
+                      <span class="text-on-surface text-xs font-bold">4.5</span>
+                    </div>
+                  </div>
+
+                  <h3
+                    class="font-headline text-xl text-on-surface font-bold leading-tight group-hover:text-primary transition-colors"
+                  >
+                    Dune: Part One
+                  </h3>
+
+                  <p class="font-body text-on-surface-variant text-xs mt-2">
+                    Denis Villeneuve
+                  </p>
+                </div>
+              </article>
+
+              <!-- MOVIE CARD -->
+              <article
+                class="group relative rounded-xl overflow-hidden aspect-[2/3] bg-surface-container-low shadow-[0_20px_40px_rgba(0,0,0,0.4)] cursor-pointer"
+              >
+                <img
+                  alt="Arrival"
+                  class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuCAstGseRgGb3ro02iYh5Tmjv0Xh08Tso4YXyUqImZDWBg0nhJ7elkngvIQRC45oMjTgYGp4A378n9FXdjSdfbqQVRRM1qDH-Xt28zDz3sDCTpoovvLg2xrmpZ8-EnzM4Yc84SHe8wdhXMrc_KdBJmDBpvr_elYlXmo5UNZQUsRUU1dBoVVxwHsgn0u9D52UlbFWncvddDO-Ah7v74YoC7Mt0BiUzXh1cBGTm2KFIx2vh55JkmXxjdW0LoU3bjrRv5AxKgEOkDq4640"
+                />
+
+                <div
+                  class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-surface-container-lowest/55 to-transparent opacity-95 group-hover:opacity-100 transition-opacity"
+                ></div>
+
+                <div class="absolute bottom-0 left-0 right-0 p-5">
+                  <div class="flex items-center justify-between mb-2">
+                    <span
+                      class="text-secondary font-label text-xs tracking-widest font-bold uppercase"
+                    >
+                      2016
+                    </span>
+
+                    <div
+                      class="flex items-center gap-1 bg-surface-variant/80 backdrop-blur-sm px-2 py-1 rounded-md"
+                    >
+                      <span
+                        class="material-symbols-outlined text-primary text-sm reevio-inline-style-001"
+                       
+                        >star</span
+                      >
+                      <span class="text-on-surface text-xs font-bold">4.4</span>
+                    </div>
+                  </div>
+
+                  <h3
+                    class="font-headline text-xl text-on-surface font-bold leading-tight group-hover:text-primary transition-colors"
+                  >
+                    Arrival
+                  </h3>
+
+                  <p class="font-body text-on-surface-variant text-xs mt-2">
+                    Denis Villeneuve
+                  </p>
+                </div>
+              </article>
+
+              <!-- MOVIE CARD -->
+              <article
+                class="group relative rounded-xl overflow-hidden aspect-[2/3] bg-surface-container-low shadow-[0_20px_40px_rgba(0,0,0,0.4)] cursor-pointer"
+              >
+                <img
+                  alt="Sicario"
+                  class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuC1QUMFYQXiRQCTt3mRqlBg-zV1DfwB7L3_NGZd-r-e55vvsdXcVLUf4WFQx6ql_WwfhcRQZah0qFooBeELBGigG41otuSWZTffs3_NlMG1cgXUeyF2l0Qz5d4QU0WMDM94NV0i4jXrI3eeM-V8qazhgEjWs1uvVGKIIF8mcrHE8QYK_zw4whOEY-GVscpWMA6bo7sh7edSlGDc33lZq05ub1Bd1GxCOJLctM8wCN9SoeBkjMDGYSwWI4ZoCyO_xHlVeLgJWkKkyCzZ"
+                />
+
+                <div
+                  class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-surface-container-lowest/55 to-transparent opacity-95 group-hover:opacity-100 transition-opacity"
+                ></div>
+
+                <div class="absolute bottom-0 left-0 right-0 p-5">
+                  <div class="flex items-center justify-between mb-2">
+                    <span
+                      class="text-secondary font-label text-xs tracking-widest font-bold uppercase"
+                    >
+                      2015
+                    </span>
+
+                    <div
+                      class="flex items-center gap-1 bg-surface-variant/80 backdrop-blur-sm px-2 py-1 rounded-md"
+                    >
+                      <span
+                        class="material-symbols-outlined text-primary text-sm reevio-inline-style-001"
+                       
+                        >star</span
+                      >
+                      <span class="text-on-surface text-xs font-bold">4.2</span>
+                    </div>
+                  </div>
+
+                  <h3
+                    class="font-headline text-xl text-on-surface font-bold leading-tight group-hover:text-primary transition-colors"
+                  >
+                    Sicario
+                  </h3>
+
+                  <p class="font-body text-on-surface-variant text-xs mt-2">
+                    Denis Villeneuve
+                  </p>
+                </div>
+              </article>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+      <script src="/public/assets/js/reevio.js"></script>
+</body>
+</html>

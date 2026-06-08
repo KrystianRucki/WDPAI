@@ -1,0 +1,164 @@
+<?php
+$activeNav = $activeNav ?? '';
+
+$showAdminLink = $showAdminLink
+    ?? (
+        (isset($_SESSION['role']) && $_SESSION['role'] === 'admin')
+        || (isset($currentUser['role']) && $currentUser['role'] === 'admin')
+    );
+
+if (!function_exists('reevio_nav_link_class')) {
+    function reevio_nav_link_class(string $key, string $activeNav): string
+    {
+        $base = 'flex items-center gap-4 rounded-lg px-2 py-2.5 transition-colors';
+
+        if ($key === $activeNav) {
+            return $base . ' bg-surface-variant/60 font-bold text-primary';
+        }
+
+        return $base . ' text-on-surface hover:bg-surface-container-low';
+    }
+}
+
+if (!function_exists('reevio_nav_icon_class')) {
+    function reevio_nav_icon_class(string $key, string $activeNav): string
+    {
+        if ($key === $activeNav) {
+            return 'material-symbols-outlined text-xl text-primary';
+        }
+
+        return 'material-symbols-outlined text-xl text-on-surface-variant';
+    }
+}
+
+if (!function_exists('reevio_nav_label_class')) {
+    function reevio_nav_label_class(string $key, string $activeNav): string
+    {
+        if ($key === $activeNav) {
+            return 'font-label text-sm';
+        }
+
+        return 'font-label text-sm font-medium';
+    }
+}
+?>
+
+<!-- SideNavBar / TopNavBar shared partial -->
+<aside
+  class="fixed left-0 top-0 z-50 flex h-screen w-64 shrink-0 flex-col justify-between border-r border-outline-variant/20 bg-surface-container-lowest px-6 py-8"
+>
+  <div>
+    <div class="mb-12 px-2">
+      <h1 class="font-headline text-2xl font-black uppercase tracking-tight text-primary">
+        Reevio
+      </h1>
+    </div>
+
+    <nav class="flex flex-col gap-8">
+      <div>
+        <h4 class="mb-4 px-2 font-label text-xs uppercase tracking-wider text-on-surface-variant/60">
+          Feed
+        </h4>
+
+        <div class="flex flex-col gap-2">
+          <a class="<?= reevio_nav_link_class('films', $activeNav); ?>" href="/feed-films">
+            <span class="<?= reevio_nav_icon_class('films', $activeNav); ?>">movie</span>
+            <span class="<?= reevio_nav_label_class('films', $activeNav); ?>">Films</span>
+          </a>
+
+          <a class="<?= reevio_nav_link_class('reviews', $activeNav); ?>" href="/feed-reviews">
+            <span class="<?= reevio_nav_icon_class('reviews', $activeNav); ?>">rate_review</span>
+            <span class="<?= reevio_nav_label_class('reviews', $activeNav); ?>">Reviews</span>
+          </a>
+
+          <a class="<?= reevio_nav_link_class('lists', $activeNav); ?>" href="/feed-lists">
+            <span class="<?= reevio_nav_icon_class('lists', $activeNav); ?>">format_list_bulleted</span>
+            <span class="<?= reevio_nav_label_class('lists', $activeNav); ?>">Lists</span>
+          </a>
+        </div>
+      </div>
+
+      <div>
+        <div class="flex flex-col gap-2">
+          <a class="<?= reevio_nav_link_class('search', $activeNav); ?>" href="/search">
+            <span class="<?= reevio_nav_icon_class('search', $activeNav); ?>">search</span>
+            <span class="<?= reevio_nav_label_class('search', $activeNav); ?>">Search</span>
+          </a>
+
+          <a class="<?= reevio_nav_link_class('activity', $activeNav); ?>" href="/activity-following">
+            <span class="<?= reevio_nav_icon_class('activity', $activeNav); ?>">local_activity</span>
+            <span class="<?= reevio_nav_label_class('activity', $activeNav); ?>">Activity</span>
+          </a>
+
+          <a class="<?= reevio_nav_link_class('profile', $activeNav); ?>" href="/profile">
+            <span class="<?= reevio_nav_icon_class('profile', $activeNav); ?>">person</span>
+            <span class="<?= reevio_nav_label_class('profile', $activeNav); ?>">Profile</span>
+          </a>
+        </div>
+      </div>
+
+      <?php if ($showAdminLink): ?>
+        <div>
+          <h4 class="mb-4 px-2 font-label text-xs uppercase tracking-wider text-on-surface-variant/60">
+            Admin
+          </h4>
+
+          <div class="flex flex-col gap-2">
+            <a class="<?= reevio_nav_link_class('admin', $activeNav); ?>" href="/admin-panel">
+              <span class="<?= reevio_nav_icon_class('admin', $activeNav); ?>">admin_panel_settings</span>
+              <span class="<?= reevio_nav_label_class('admin', $activeNav); ?>">Admin Panel</span>
+            </a>
+          </div>
+        </div>
+      <?php endif; ?>
+    </nav>
+  </div>
+
+  <div class="mt-auto pt-8 space-y-3">
+    <a
+      class="flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-3.5 font-label text-sm font-bold text-on-primary shadow-[0_0_20px_rgba(255,215,155,0.32)] transition-all hover:shadow-[0_0_30px_rgba(255,215,155,0.5)]"
+      href="/log-search"
+    >
+      <span class="material-symbols-outlined text-[20px]">add</span>
+      Log Film
+    </a>
+
+    <a
+      class="flex w-full items-center justify-center gap-2 rounded-xl border border-outline-variant/20 py-3 font-label text-sm font-bold text-on-surface-variant transition-colors hover:border-error/40 hover:bg-error/10 hover:text-error"
+      href="/logout"
+    >
+      <span class="material-symbols-outlined text-[20px]">logout</span>
+      Logout
+    </a>
+  </div>
+</aside>
+
+<!-- TopNavBar -->
+<div
+  class="fixed top-6 right-6 z-50 flex items-center px-4 py-2 gap-4 bg-surface-container-low/80 backdrop-blur-xl rounded-full shadow-2xl font-label text-label-md border border-outline-variant/15"
+>
+  <a
+    class="text-on-surface-variant hover:text-secondary transition-colors p-2 rounded-full hover:bg-surface-container-high flex items-center justify-center"
+    href="/settings"
+    aria-label="Settings"
+  >
+    <span class="material-symbols-outlined">settings</span>
+  </a>
+
+  <a
+    class="text-on-surface-variant hover:text-secondary transition-colors p-2 rounded-full hover:bg-surface-container-high relative flex items-center justify-center"
+    href="/notifications"
+    aria-label="Notifications"
+  >
+    <span class="material-symbols-outlined">notifications</span>
+    <span class="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full"></span>
+  </a>
+
+  <a
+    class="text-on-surface-variant hover:text-secondary transition-colors p-2 rounded-full hover:bg-surface-container-high flex items-center justify-center"
+    href="/profile"
+    aria-label="Account"
+  >
+    <span class="material-symbols-outlined">account_circle</span>
+  </a>
+</div>

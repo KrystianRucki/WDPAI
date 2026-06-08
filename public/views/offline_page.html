@@ -1,0 +1,91 @@
+<!doctype html>
+<html class="dark" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Reevio - Offline</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;700;900&family=Manrope:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+      rel="stylesheet"
+    />
+    <link href="/public/assets/css/reevio.css" rel="stylesheet" /></head>
+
+  <body class="antialiased text-on-surface reevio-page-offline_page">
+    <!-- Cinematic desktop background -->
+    <div class="fixed inset-0 pointer-events-none overflow-hidden">
+      <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(0,0,0,0.28)_58%,rgba(0,0,0,0.68)_100%)]"></div>
+
+      <div
+        class="absolute -top-40 left-[12%] h-[520px] w-[720px] rounded-full bg-primary/10 blur-[130px]"
+      ></div>
+
+      <div
+        class="absolute bottom-[-180px] right-[8%] h-[560px] w-[660px] rounded-full bg-secondary/10 blur-[135px]"
+      ></div>
+
+      <div
+        class="absolute top-[18%] right-[22%] h-48 w-48 rounded-full bg-primary-container/10 blur-[80px]"
+      ></div>
+
+      <div class="noise-overlay absolute inset-0 opacity-[0.035]"></div>
+
+      <div
+        class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent"
+      ></div>
+    </div>
+
+    <main class="relative z-10 flex min-h-screen items-center justify-center px-6 py-16">
+      <section
+        class="glass-card w-full max-w-[480px] rounded-3xl border border-outline-variant/20 px-8 py-10 text-center shadow-[0_28px_70px_rgba(0,0,0,0.48)] sm:px-10 sm:py-12"
+      >
+        <div class="relative mx-auto mb-8 flex h-28 w-28 items-center justify-center">
+          <div class="pulse-ring absolute inset-0 rounded-full border border-secondary/30"></div>
+
+          <div
+            class="relative flex h-28 w-28 items-center justify-center rounded-full border border-outline-variant/20 bg-surface-container-lowest shadow-[0_0_34px_rgba(189,244,255,0.1)]"
+          >
+            <span
+              class="material-symbols-outlined text-6xl text-secondary reevio-inline-style-014"
+             
+            >
+              wifi_off
+            </span>
+          </div>
+        </div>
+
+        <p class="mb-3 font-label text-xs uppercase tracking-[0.3em] text-secondary">
+          No connection
+        </p>
+
+        <h2 class="mb-4 font-headline text-4xl font-black tracking-tight text-on-surface">
+          Transmission Lost
+        </h2>
+
+        <p class="mb-10 text-base leading-relaxed text-on-surface-variant">
+          Reevio can’t reach the server right now. Check your connection and
+          try again when you’re back online.
+        </p>
+
+        <button
+          class="flex w-full items-center justify-center gap-3 rounded-full bg-gradient-to-r from-[#ffd79b] to-[#ffb300] py-4 font-headline text-lg font-bold tracking-wide text-[#281900] shadow-[0_10px_24px_rgba(255,215,155,0.18)] transition-transform hover:scale-[1.02] active:scale-95"
+          type="button"
+        >
+          <span
+            class="material-symbols-outlined text-2xl reevio-inline-style-014"
+           
+          >
+            refresh
+          </span>
+          Try Again
+        </button>
+      </section>
+    </main>
+      <script src="/public/assets/js/reevio.js"></script>
+</body>
+</html>

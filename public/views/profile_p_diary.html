@@ -1,0 +1,317 @@
+<!doctype html>
+<html class="dark" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Reevio - Diary</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;700;800;900&family=Manrope:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+      rel="stylesheet"
+    />
+    <link href="/public/assets/css/reevio.css" rel="stylesheet" /></head>
+
+  <body class="bg-surface text-on-surface antialiased overflow-x-hidden reevio-page-profile_p_diary">
+    <div class="cinematic-glow"></div>
+<?php
+$activeNav = 'profile';
+$showAdminLink = ($showAdminLink ?? false);
+include __DIR__ . '/partials/navigation.html';
+?>
+<!-- Main content -->
+    <main class="relative z-10 ml-64 min-h-screen w-[calc(100%-16rem)] px-4 pb-24 pt-[8.7rem] lg:px-5 xl:px-6">
+      <div class="mx-auto max-w-[1120px]">
+        <!-- Profile tabs -->
+        <nav
+          class="mb-10 flex w-fit items-center gap-2 rounded-full border border-outline-variant/20 bg-surface-container-low px-2 py-2"
+          aria-label="Profile sections"
+        >
+          <a
+            class="rounded-full px-5 py-2.5 font-label text-sm font-bold text-on-surface-variant transition-colors hover:bg-surface-container-high hover:text-on-surface"
+            href="profile_p_main.html"
+          >
+            Profile
+          </a>
+
+          <a
+            class="rounded-full bg-primary px-5 py-2.5 font-label text-sm font-bold text-on-primary shadow-[0_0_16px_rgba(255,215,155,0.18)]"
+            href="profile_p_diary.html"
+          >
+            Diary
+          </a>
+
+          <a
+            class="rounded-full px-5 py-2.5 font-label text-sm font-bold text-on-surface-variant transition-colors hover:bg-surface-container-high hover:text-on-surface"
+            href="profile_p_lists.html"
+          >
+            Lists
+          </a>
+
+          <a
+            class="rounded-full px-5 py-2.5 font-label text-sm font-bold text-on-surface-variant transition-colors hover:bg-surface-container-high hover:text-on-surface"
+            href="profile_p_watchlist.html"
+          >
+            Watchlist
+          </a>
+        </nav>
+
+        <!-- Header -->
+        <header class="mb-8 pr-44">
+          <p class="mb-3 font-label text-xs font-bold uppercase tracking-[0.28em] text-secondary">
+            Your profile
+          </p>
+
+          <h1 class="font-headline text-[32px] font-black tracking-tight text-on-surface">
+            Diary
+          </h1>
+        </header>
+
+        <!-- Diary content -->
+        <section class="grid gap-8 xl:grid-cols-[minmax(0,1fr)_320px]">
+          <div class="rounded-3xl border border-outline-variant/15 bg-surface-container-low p-7 ambient-shadow">
+            <!-- April -->
+            <div class="mb-6 flex items-center justify-between">
+              <h2 class="font-label text-xs font-bold uppercase tracking-[0.28em] text-on-surface-variant">
+                April 2026
+              </h2>
+              <span class="font-label text-xs text-secondary">3 entries</span>
+            </div>
+
+            <div class="relative space-y-5">
+              <div class="diary-line absolute left-8 top-0 h-full w-px"></div>
+
+              <!-- Entry 1 -->
+              <article class="relative grid grid-cols-[64px_minmax(0,1fr)] gap-5">
+                <div class="relative z-10 flex h-16 w-16 items-center justify-center rounded-2xl border border-outline-variant/30 bg-surface-container-lowest shadow-[0_12px_24px_rgba(0,0,0,0.25)]">
+                  <span class="font-headline text-2xl font-bold text-on-surface">6</span>
+                </div>
+
+                <a href="log_details.html" class="diary-log-card flex gap-5 rounded-2xl border border-outline-variant/10 bg-surface-container-lowest p-4 transition-colors hover:bg-surface-container-high" aria-label="Open logged movie details">
+                  <div class="h-28 w-[74px] shrink-0 overflow-hidden rounded-xl poster-shadow">
+                    <img
+                      alt="Benjamin Button poster"
+                      class="h-full w-full object-cover"
+                      src="https://lh3.googleusercontent.com/aida-public/AB6AXuDAkCwsmKRuL5MUGjoApr5kDC3B6dMwDa0WSgKmco1jNaDLFEg5lrwsMzhFHkLBTxuzbPQVlsAgW-POAS4R8dDD0fUwTE6TLUK0__cwwx28CFpGe50jZKQgLhnhZDapC44bnzyFw-gyp-p_qDOzSf3E8BRAVCGvT_Pj6XbTQ1Bmwtl_JkLQhNGYTFdYvr2DUlqU8mXBHCrLXf0UaRE_AYklucKh-SK2LyzOhiCYTrLux2Us5hRavcsAj-DTDTJH3Wg0Q58csU4FmoOE"
+                    />
+                  </div>
+
+                  <div class="min-w-0 flex-1">
+                    <div class="mb-2 flex flex-wrap items-baseline gap-2">
+                      <h3 class="font-headline text-xl font-black leading-tight text-on-surface">
+                        Benjamin Button
+                      </h3>
+                      <span class="font-body text-sm text-on-surface-variant">2008</span>
+                    </div>
+
+                    <div class="mb-3 flex items-center gap-1 text-primary">
+                      <span class="material-symbols-outlined filled text-[18px]">star</span>
+                      <span class="material-symbols-outlined filled text-[18px]">star</span>
+                      <span class="material-symbols-outlined filled text-[18px]">star</span>
+                      <span class="material-symbols-outlined filled text-[18px]">star</span>
+                      <span class="material-symbols-outlined filled text-[18px]">star_half</span>
+                      <span class="material-symbols-outlined filled ml-3 text-[17px]">rate_review</span>
+                    </div>
+
+                    <p class="font-body text-sm leading-relaxed text-on-surface-variant">
+                      Logged with review.
+                    </p>
+                  </div>
+                </a>
+              </article>
+
+              <!-- Entry 2 -->
+              <article class="relative grid grid-cols-[64px_minmax(0,1fr)] gap-5">
+                <div class="relative z-10 flex h-16 w-16 items-center justify-center rounded-2xl border border-outline-variant/30 bg-surface-container-lowest shadow-[0_12px_24px_rgba(0,0,0,0.25)]">
+                  <span class="font-headline text-2xl font-bold text-on-surface">5</span>
+                </div>
+
+                <a href="log_details.html" class="diary-log-card flex gap-5 rounded-2xl border border-outline-variant/10 bg-surface-container-lowest p-4 transition-colors hover:bg-surface-container-high" aria-label="Open logged movie details">
+                  <div class="h-28 w-[74px] shrink-0 overflow-hidden rounded-xl poster-shadow">
+                    <img
+                      alt="Fight Club poster"
+                      class="h-full w-full object-cover"
+                      src="https://lh3.googleusercontent.com/aida-public/AB6AXuA-vn_BMUM1eCDVyzdca9JfnGJ9i4lZJixRpr4-ktFi8lButWsPWGhUzC-vHdlwt9ZNiTQ3yPxK-ZJMKxQPn7ckKt8WLrsUJU2PSfcHXKCUo-aEe1x_Hq_Vq22Fd-FnMc5-4SfFoyPx4KhwfZRkz-7h8d5eGxY3B7cOhuMPR7qg55DHWi8zgWHsIGmhazFMfTW2LMlOircZA8uoUu8cVtoAYa96KrbQKV9iheWQk48oXOpL1ZpxHgcVkNxnpAyMA7cSSaoOeqhLBsaf"
+                    />
+                  </div>
+
+                  <div class="min-w-0 flex-1">
+                    <div class="mb-2 flex flex-wrap items-baseline gap-2">
+                      <h3 class="font-headline text-xl font-black leading-tight text-on-surface">
+                        Fight Club
+                      </h3>
+                      <span class="font-body text-sm text-on-surface-variant">1999</span>
+                    </div>
+
+                    <div class="mb-3 flex items-center gap-1 text-primary">
+                      <span class="material-symbols-outlined filled text-[18px]">star</span>
+                      <span class="material-symbols-outlined filled text-[18px]">star</span>
+                      <span class="material-symbols-outlined filled text-[18px]">star</span>
+                      <span class="material-symbols-outlined filled text-[18px]">star</span>
+                      <span class="material-symbols-outlined filled text-[18px]">star</span>
+                      <span class="material-symbols-outlined filled ml-3 text-[17px]">rate_review</span>
+                      <span class="material-symbols-outlined ml-1 text-[17px] text-on-surface-variant">autorenew</span>
+                    </div>
+
+                    <p class="font-body text-sm leading-relaxed text-on-surface-variant">
+                      Rewatched and reviewed.
+                    </p>
+                  </div>
+                </a>
+              </article>
+
+              <!-- Entry 3 -->
+              <article class="relative grid grid-cols-[64px_minmax(0,1fr)] gap-5">
+                <div class="relative z-10 flex h-16 w-16 items-center justify-center rounded-2xl border border-outline-variant/30 bg-surface-container-lowest shadow-[0_12px_24px_rgba(0,0,0,0.25)]">
+                  <span class="font-headline text-2xl font-bold text-on-surface">5</span>
+                </div>
+
+                <a href="log_details.html" class="diary-log-card flex gap-5 rounded-2xl border border-outline-variant/10 bg-surface-container-lowest p-4 transition-colors hover:bg-surface-container-high" aria-label="Open logged movie details">
+                  <div class="h-28 w-[74px] shrink-0 overflow-hidden rounded-xl poster-shadow">
+                    <img
+                      alt="Talking Heads poster"
+                      class="h-full w-full object-cover"
+                      src="https://lh3.googleusercontent.com/aida-public/AB6AXuDSndE9aE_Cc634QvUB0eKB-zXMqgAQfdJcpAcR_r0k9UbTZu910IPtmvWIO4cT2524AoChiv02OK7QmBY7DKYrPzyU-7Ew94pqOPv9JkHNDcKHNKSev0kA3UHGvqyxjRjoDW6vj92-vHk98xsvfxTj6F5tT__CcCfINjQ9p8wq1pbD4K9Qm4RejB38dESKXvmNPf9B8iNaIxzaW6dK6Prfvon296z71jILppqvXi4DYs7zkxm1obbeX-mYE5_s2WzmndCsIluAfehi"
+                    />
+                  </div>
+
+                  <div class="min-w-0 flex-1">
+                    <div class="mb-2 flex flex-wrap items-baseline gap-2">
+                      <h3 class="font-headline text-xl font-black leading-tight text-on-surface">
+                        Talking Heads
+                      </h3>
+                      <span class="font-body text-sm text-on-surface-variant">1980</span>
+                    </div>
+
+                    <div class="mb-3 flex items-center gap-1 text-primary">
+                      <span class="material-symbols-outlined filled text-[18px]">star</span>
+                      <span class="material-symbols-outlined filled text-[18px]">star</span>
+                      <span class="material-symbols-outlined filled text-[18px]">star</span>
+                      <span class="material-symbols-outlined filled text-[18px]">star</span>
+                      <span class="material-symbols-outlined filled ml-3 text-[17px]">rate_review</span>
+                    </div>
+
+                    <p class="font-body text-sm leading-relaxed text-on-surface-variant">
+                      Logged with review.
+                    </p>
+                  </div>
+                </a>
+              </article>
+            </div>
+
+            <!-- March -->
+            <div class="mb-6 mt-10 flex items-center justify-between border-t border-outline-variant/15 pt-8">
+              <h2 class="font-label text-xs font-bold uppercase tracking-[0.28em] text-on-surface-variant">
+                March 2026
+              </h2>
+              <span class="font-label text-xs text-secondary">1 entry</span>
+            </div>
+
+            <div class="relative">
+              <div class="diary-line absolute left-8 top-0 h-full w-px"></div>
+
+              <article class="relative grid grid-cols-[64px_minmax(0,1fr)] gap-5">
+                <div class="relative z-10 flex h-16 w-16 items-center justify-center rounded-2xl border border-outline-variant/30 bg-surface-container-lowest shadow-[0_12px_24px_rgba(0,0,0,0.25)]">
+                  <span class="font-headline text-2xl font-bold text-on-surface">24</span>
+                </div>
+
+                <a href="log_details.html" class="diary-log-card flex gap-5 rounded-2xl border border-outline-variant/10 bg-surface-container-lowest p-4 transition-colors hover:bg-surface-container-high" aria-label="Open logged movie details">
+                  <div class="h-28 w-[74px] shrink-0 overflow-hidden rounded-xl poster-shadow">
+                    <img
+                      alt="Sacred Deer poster"
+                      class="h-full w-full object-cover"
+                      src="https://lh3.googleusercontent.com/aida-public/AB6AXuDaNS2dlZn5D8faPrjHrsgOOF-2m_YkC3QORnTjRahUzWg16Cv2uJy3htW0iDKmMKYAO0LsSoELcZ2TS0Yi2LI3rmScVmXpu1Pd85giA8j79kCXudMnPnzaYtM-yj9ZUlLGtKFkLSv4JFPb1z1VSTRgH6feYhUytCwB1jKLRsj1D9nerzQm8GVIDP20kZbpITg1OuEL8-JDnddl7e7wQRMgzcX7cI0E7eFSDr-nGFqLqCdT2llDfnI7KE00D2y7iGg4HqlAl24Lzgee"
+                    />
+                  </div>
+
+                  <div class="min-w-0 flex-1">
+                    <div class="mb-2 flex flex-wrap items-baseline gap-2">
+                      <h3 class="font-headline text-xl font-black leading-tight text-on-surface">
+                        Sacred Deer
+                      </h3>
+                      <span class="font-body text-sm text-on-surface-variant">2017</span>
+                    </div>
+
+                    <div class="mb-3 flex items-center gap-1 text-primary">
+                      <span class="material-symbols-outlined filled text-[18px]">star</span>
+                      <span class="material-symbols-outlined filled text-[18px]">star</span>
+                      <span class="material-symbols-outlined filled text-[18px]">star</span>
+                      <span class="material-symbols-outlined filled text-[18px]">star</span>
+                      <span class="material-symbols-outlined filled ml-3 text-[17px]">rate_review</span>
+                    </div>
+
+                    <p class="font-body text-sm leading-relaxed text-on-surface-variant">
+                      Logged with review.
+                    </p>
+                  </div>
+                </a>
+              </article>
+            </div>
+          </div>
+
+          <!-- Right summary -->
+          <aside class="space-y-6">
+            <section class="rounded-3xl border border-outline-variant/15 bg-surface-container-low p-6 ambient-shadow">
+              <h2 class="mb-5 font-headline text-2xl font-black tracking-tight text-primary">
+                Diary Summary
+              </h2>
+
+              <div class="grid grid-cols-2 gap-4">
+                <div class="rounded-2xl border border-outline-variant/15 bg-surface-container-lowest p-4">
+                  <p class="font-headline text-3xl font-black text-primary">4</p>
+                  <p class="mt-1 font-label text-xs font-bold uppercase tracking-wider text-on-surface-variant">
+                    Entries
+                  </p>
+                </div>
+
+                <div class="rounded-2xl border border-outline-variant/15 bg-surface-container-lowest p-4">
+                  <p class="font-headline text-3xl font-black text-primary">4.5</p>
+                  <p class="mt-1 font-label text-xs font-bold uppercase tracking-wider text-on-surface-variant">
+                    Avg rating
+                  </p>
+                </div>
+              </div>
+            </section>
+
+            <section class="rounded-3xl border border-outline-variant/15 bg-surface-container-low p-6 ambient-shadow">
+              <h2 class="mb-5 font-headline text-2xl font-black tracking-tight text-on-surface">
+                Filters
+              </h2>
+
+              <div class="space-y-3">
+                <button
+                  class="flex w-full items-center justify-between rounded-2xl bg-surface-container-lowest px-4 py-3 text-left font-label text-sm font-bold text-on-surface-variant transition-colors hover:bg-surface-container-high hover:text-primary"
+                  type="button"
+                >
+                  All entries
+                  <span class="material-symbols-outlined text-[18px]">check</span>
+                </button>
+
+                <button
+                  class="flex w-full items-center justify-between rounded-2xl bg-surface-container-lowest px-4 py-3 text-left font-label text-sm font-bold text-on-surface-variant transition-colors hover:bg-surface-container-high hover:text-primary"
+                  type="button"
+                >
+                  Reviews only
+                  <span class="material-symbols-outlined text-[18px]">rate_review</span>
+                </button>
+
+                <button
+                  class="flex w-full items-center justify-between rounded-2xl bg-surface-container-lowest px-4 py-3 text-left font-label text-sm font-bold text-on-surface-variant transition-colors hover:bg-surface-container-high hover:text-primary"
+                  type="button"
+                >
+                  Rewatches
+                  <span class="material-symbols-outlined text-[18px]">autorenew</span>
+                </button>
+              </div>
+            </section>
+          </aside>
+        </section>
+      </div>
+    </main>
+      <script src="/public/assets/js/reevio.js"></script>
+</body>
+</html>

@@ -1,0 +1,199 @@
+<!doctype html>
+<html class="dark" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Reevio - Search Lists</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;600;700;800;900&family=Manrope:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+      rel="stylesheet"
+    />
+    <link href="/public/assets/css/reevio.css" rel="stylesheet" /></head>
+
+  <body class="bg-surface text-on-surface font-body min-h-screen antialiased search-compact-page reevio-page-search_lists">
+    <div class="cinematic-glow"></div>
+<?php
+$activeNav = 'search';
+$showAdminLink = ($showAdminLink ?? false);
+include __DIR__ . '/partials/navigation.html';
+?>
+<!-- MAIN CONTENT AREA -->
+    <div class="relative z-10 min-h-screen pl-64">
+<!-- SEARCH LISTS BODY -->
+      <main class="w-full relative z-10">
+        <div class="max-w-7xl mx-auto px-8 pb-20 pt-6">
+          <!-- SEARCH BAR -->
+          <div class="mb-5 max-w-3xl">
+            <div
+              class="relative flex items-center bg-surface-container-lowest rounded-full px-5 py-4 shadow-[0_20px_40px_rgba(0,0,0,0.4)] ring-1 ring-outline-variant/15 focus-within:ring-secondary focus-within:ring-2 focus-within:shadow-[0_0_20px_rgba(189,244,255,0.18)] transition-all"
+            >
+              <span
+                class="material-symbols-outlined text-on-surface-variant mr-3"
+                >search</span
+              >
+
+              <input
+                class="bg-transparent border-none focus:ring-0 text-on-surface font-body w-full placeholder-on-surface-variant text-lg outline-none"
+                placeholder="Search films, directors, actors..."
+                type="text"
+                value="Sci-Fi Essentials"
+              />
+
+              <button
+                class="ml-2 text-on-surface-variant hover:text-on-surface transition-colors"
+                aria-label="Clear search"
+              >
+                <span class="material-symbols-outlined text-xl">cancel</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- CATEGORY CHIPS -->
+          <div class="flex gap-3 pb-10 overflow-x-auto scrollbar-hide">
+            <button
+              class="bg-surface-container-high text-on-surface-variant rounded-full px-6 py-2.5 font-label text-sm font-medium whitespace-nowrap hover:bg-surface-bright hover:text-on-surface transition-colors"
+            >
+              Films
+            </button>
+
+            <button
+              class="bg-surface-container-high text-on-surface-variant rounded-full px-6 py-2.5 font-label text-sm font-medium whitespace-nowrap hover:bg-surface-bright hover:text-on-surface transition-colors"
+            >
+              Actors
+            </button>
+
+            <button
+              class="bg-surface-container-high text-on-surface-variant rounded-full px-6 py-2.5 font-label text-sm font-medium whitespace-nowrap hover:bg-surface-bright hover:text-on-surface transition-colors"
+            >
+              Users
+            </button>
+
+            <button
+              class="glass-gradient-cta text-on-primary rounded-full px-6 py-2.5 font-label text-sm font-bold whitespace-nowrap shadow-[0_0_15px_rgba(255,215,155,0.25)]"
+            >
+              Lists
+            </button>
+          </div>
+
+          <!-- RESULTS SECTION -->
+          <section>
+            <h2 class="font-headline text-2xl font-bold text-on-surface mb-5">
+              Live Results
+            </h2>
+
+            <div
+              class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6 xl:gap-8"
+            >
+              <!-- LIST CARD -->
+              <article
+                class="relative rounded-xl overflow-hidden shadow-[0_20px_40px_rgba(0,0,0,0.4)] bg-surface-container-low group cursor-pointer aspect-[2/3]"
+              >
+                <img
+                  alt="Sci-Fi Essentials list preview"
+                  class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuDcUUfsq09JEYm-m6vrU_Kzy5eDguwBKd7mKOGcZvnu09DCgNHuWOzKU5w4MYzwtMuCtWj6uBBzC-ibwrx9g9s4EjWv6aAx-DlNj7EKU-1xpwTUfBbR3cs_AYAyBN2-vr9lrDOEfc_Lv5Ep246cF3MKTEzSMg5xRXfiDNkB1orfff94O9dWMMJkpqStnBtBtUoqv_dJb-ArzZpdX9l_N3ABf_XopPTrMNlMwGIHX7CZ_rgXRwpY9QOZRYARHIyoYl3SnwlMcR-Eimi5"
+                />
+
+                <div
+                  class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-surface-container-lowest/35 to-transparent flex flex-col justify-end p-5"
+                >
+                  <h3
+                    class="font-headline text-xl font-bold text-on-surface leading-tight group-hover:text-primary transition-colors"
+                  >
+                    Sci-Fi Essentials
+                  </h3>
+
+                  <p class="font-label text-xs text-on-surface-variant mt-1">
+                    Film list
+                  </p>
+                </div>
+              </article>
+
+              <!-- LIST CARD -->
+              <article
+                class="relative rounded-xl overflow-hidden shadow-[0_20px_40px_rgba(0,0,0,0.4)] bg-surface-container-low group cursor-pointer aspect-[2/3]"
+              >
+                <img
+                  alt="Slow Cinema Starters list preview"
+                  class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuCCS5-p3t2RWoHV9ljjnnXqAEyGTqJFZM_BgBL48Zi0TKiVDDyDRCxLgUBqsqjpT9BQRGVS2Mva6YaRd9OnPsiqkCQoc6rjVODOF9xourYgN_mLnQjx5bafXnWGq9Zh2fxHDREZk4YACW7GBxbs4UvVpcsE2ciq-uMBRs3wsYAtSeUqOZeYr-wXQMknoGJbSg1hgiHPjlnbWeYcGAH7yx4b6H5TBr2DGLFL3u7I1Rmv7PqLWDwEk7EXQoT1TkkIEZjbKp-mr_zNSJF_"
+                />
+
+                <div
+                  class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-surface-container-lowest/35 to-transparent flex flex-col justify-end p-5"
+                >
+                  <h3
+                    class="font-headline text-xl font-bold text-on-surface leading-tight group-hover:text-primary transition-colors"
+                  >
+                    Slow Cinema Starters
+                  </h3>
+
+                  <p class="font-label text-xs text-on-surface-variant mt-1">
+                    Film list
+                  </p>
+                </div>
+              </article>
+
+              <!-- LIST CARD -->
+              <article
+                class="relative rounded-xl overflow-hidden shadow-[0_20px_40px_rgba(0,0,0,0.4)] bg-surface-container-low group cursor-pointer aspect-[2/3]"
+              >
+                <img
+                  alt="Neon Noir Nights list preview"
+                  class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuDXwcfo6YeA1PxhGQKmchBEU3P_4K7cj7vTkiZETQWTVK9DlsTydWL8g0yhfI6WQ98wNQi_9pJBotQb3g5_X7nDb8CxSoKj9EgNQVw879tkKjcQddiQtGuNFasCSAp1GbR25XqYXgUGmUKeJOSEfEo7ZK6z2vceuQTKp_aUQNFmlO1PHfq_lK_E1Bzulng0bk3CwfVX8JJ85tX5TfzbvI5Vh_iWB2ftWj0sBKSIZU7ruhFcRYu-ANdw6Iyr5ZO8QrCSAESNlraHtynk"
+                />
+
+                <div
+                  class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-surface-container-lowest/35 to-transparent flex flex-col justify-end p-5"
+                >
+                  <h3
+                    class="font-headline text-xl font-bold text-on-surface leading-tight group-hover:text-primary transition-colors"
+                  >
+                    Neon Noir Nights
+                  </h3>
+
+                  <p class="font-label text-xs text-on-surface-variant mt-1">
+                    Film list
+                  </p>
+                </div>
+              </article>
+
+              <!-- LIST CARD -->
+              <article
+                class="relative rounded-xl overflow-hidden shadow-[0_20px_40px_rgba(0,0,0,0.4)] bg-surface-container-low group cursor-pointer aspect-[2/3]"
+              >
+                <img
+                  alt="Villeneuve Ranked list preview"
+                  class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuDZ20geHNulqDqa045PwSlUhcWdmOjNlErbx5LSJqh8iL5IIA9AbeEtRYJ9bxZF4IJWYOtujNovkk6VuodYNfYx7VePKAemb0QiwdyMnmh81nKRInvCJ-w9E1zsC-P8aEtHZMJNpIAAEH3eYd6Wk3h5y1IxB8s1rwMaJcqCu7F-6IsYDAPoYT--e0SAlv0bDOwefBEb0XUcUwCSMhZQOkoQDRnAbDGfvu9aecNcBN1-n5JclIPXlQcL4e7bDo5TFgzvSp9xsJVL3OI_"
+                />
+
+                <div
+                  class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-surface-container-lowest/35 to-transparent flex flex-col justify-end p-5"
+                >
+                  <h3
+                    class="font-headline text-xl font-bold text-on-surface leading-tight group-hover:text-primary transition-colors"
+                  >
+                    Villeneuve Ranked
+                  </h3>
+
+                  <p class="font-label text-xs text-on-surface-variant mt-1">
+                    Film list
+                  </p>
+                </div>
+              </article>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+      <script src="/public/assets/js/reevio.js"></script>
+</body>
+</html>

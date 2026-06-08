@@ -1,0 +1,113 @@
+<!doctype html>
+<html class="dark" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Reevio - Search</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;600;700;800;900&family=Manrope:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+      rel="stylesheet"
+    />
+    <link href="/public/assets/css/reevio.css" rel="stylesheet" /></head>
+
+  <body
+    class="bg-background text-on-surface font-body min-h-screen antialiased relative search-empty-page reevio-page-search_empty"
+  >
+    <div class="ambient-flare"></div>
+<?php
+$activeNav = 'search';
+$showAdminLink = ($showAdminLink ?? false);
+include __DIR__ . '/partials/navigation.html';
+?>
+<!-- MAIN WRAPPER -->
+    <div class="relative z-10 min-h-screen pl-64 flex flex-col">
+</header>
+
+      <!-- EMPTY SEARCH MAIN CONTENT -->
+      <main
+        class="flex-1 flex flex-col items-center justify-center relative z-10 px-8 pb-20"
+      >
+        <div
+          class="w-full max-w-3xl flex flex-col items-center text-center space-y-10 search-empty-panel"
+        >
+          <!-- Headline -->
+          <div class="space-y-4">
+            <span
+              class="material-symbols-outlined text-6xl text-primary/80 mb-4 font-light drop-shadow-[0_0_15px_rgba(255,215,155,0.3)]"
+            >
+              explore
+            </span>
+
+            <h1
+              class="font-headline text-5xl md:text-6xl font-black tracking-tight text-on-surface"
+            >
+              Start your
+              <span class="gradient-text">cinematic</span>
+              journey
+            </h1>
+
+            <p
+              class="font-body text-on-surface-variant text-lg max-w-xl mx-auto font-medium"
+            >
+              Discover hidden gems, trending blockbusters, and iconic
+              performances.
+            </p>
+          </div>
+
+          <!-- Search Input -->
+          <div class="w-full relative group search-empty-search">
+            <div
+              class="absolute inset-y-0 left-6 flex items-center pointer-events-none"
+            >
+              <span
+                class="material-symbols-outlined text-outline group-focus-within:text-secondary transition-colors duration-300"
+              >
+                search
+              </span>
+            </div>
+
+            <input
+              class="w-full bg-surface-container-highest border border-outline-variant/30 rounded-full py-5 pl-16 pr-6 text-on-surface placeholder:text-outline-variant font-body text-lg focus:outline-none focus:ring-1 focus:ring-secondary focus:border-secondary transition-all shadow-[0_10px_30px_rgba(0,0,0,0.5)]"
+              placeholder="Search for movies, actors, or directors..."
+              type="text"
+            />
+          </div>
+
+          <!-- Category Chips -->
+          <div class="flex flex-wrap justify-center gap-3">
+            <button
+              class="glass-gradient-cta text-on-primary rounded-full px-6 py-2.5 font-label text-sm font-bold whitespace-nowrap shadow-[0_0_15px_rgba(255,215,155,0.25)]"
+            >
+              Films
+            </button>
+
+            <button
+              class="bg-surface-container-high text-on-surface-variant rounded-full px-6 py-2.5 font-label text-sm font-medium whitespace-nowrap hover:bg-surface-bright hover:text-on-surface transition-colors"
+            >
+              Actors
+            </button>
+
+            <button
+              class="bg-surface-container-high text-on-surface-variant rounded-full px-6 py-2.5 font-label text-sm font-medium whitespace-nowrap hover:bg-surface-bright hover:text-on-surface transition-colors"
+            >
+              Users
+            </button>
+
+            <button
+              class="bg-surface-container-high text-on-surface-variant rounded-full px-6 py-2.5 font-label text-sm font-medium whitespace-nowrap hover:bg-surface-bright hover:text-on-surface transition-colors"
+            >
+              Lists
+            </button>
+          </div>
+        </div>
+      </main>
+    </div>
+      <script src="/public/assets/js/reevio.js"></script>
+</body>
+</html>

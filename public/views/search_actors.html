@@ -1,0 +1,199 @@
+<!doctype html>
+<html class="dark" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Reevio - Search Actors</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;600;700;800;900&family=Manrope:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+      rel="stylesheet"
+    />
+    <link href="/public/assets/css/reevio.css" rel="stylesheet" /></head>
+
+  <body class="bg-surface text-on-surface font-body min-h-screen antialiased search-compact-page reevio-page-search_actors">
+    <div class="cinematic-glow"></div>
+<?php
+$activeNav = 'search';
+$showAdminLink = ($showAdminLink ?? false);
+include __DIR__ . '/partials/navigation.html';
+?>
+<!-- MAIN CONTENT AREA -->
+    <div class="relative z-10 min-h-screen pl-64">
+<!-- SEARCH ACTORS BODY -->
+      <main class="w-full relative z-10">
+        <div class="max-w-7xl mx-auto px-8 pb-20 pt-6">
+          <!-- SEARCH BAR -->
+          <div class="mb-5 max-w-3xl">
+            <div
+              class="relative flex items-center bg-surface-container-lowest rounded-full px-5 py-4 shadow-[0_20px_40px_rgba(0,0,0,0.4)] ring-1 ring-outline-variant/15 focus-within:ring-secondary focus-within:ring-2 focus-within:shadow-[0_0_20px_rgba(189,244,255,0.18)] transition-all"
+            >
+              <span
+                class="material-symbols-outlined text-on-surface-variant mr-3"
+                >search</span
+              >
+
+              <input
+                class="bg-transparent border-none focus:ring-0 text-on-surface font-body w-full placeholder-on-surface-variant text-lg outline-none"
+                placeholder="Search films, directors, actors..."
+                type="text"
+                value="Ryan Gosling"
+              />
+
+              <button
+                class="ml-2 text-on-surface-variant hover:text-on-surface transition-colors"
+                aria-label="Clear search"
+              >
+                <span class="material-symbols-outlined text-xl">cancel</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- CATEGORY CHIPS -->
+          <div class="flex gap-3 pb-10 overflow-x-auto scrollbar-hide">
+            <button
+              class="bg-surface-container-high text-on-surface-variant rounded-full px-6 py-2.5 font-label text-sm font-medium whitespace-nowrap hover:bg-surface-bright hover:text-on-surface transition-colors"
+            >
+              Films
+            </button>
+
+            <button
+              class="glass-gradient-cta text-on-primary rounded-full px-6 py-2.5 font-label text-sm font-bold whitespace-nowrap shadow-[0_0_15px_rgba(255,215,155,0.25)]"
+            >
+              Actors
+            </button>
+
+            <button
+              class="bg-surface-container-high text-on-surface-variant rounded-full px-6 py-2.5 font-label text-sm font-medium whitespace-nowrap hover:bg-surface-bright hover:text-on-surface transition-colors"
+            >
+              Users
+            </button>
+
+            <button
+              class="bg-surface-container-high text-on-surface-variant rounded-full px-6 py-2.5 font-label text-sm font-medium whitespace-nowrap hover:bg-surface-bright hover:text-on-surface transition-colors"
+            >
+              Lists
+            </button>
+          </div>
+
+          <!-- RESULTS SECTION -->
+          <section>
+            <h2 class="font-headline text-2xl font-bold text-on-surface mb-5">
+              Live Results
+            </h2>
+
+            <div
+              class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6 xl:gap-8"
+            >
+              <!-- ACTOR CARD -->
+              <article
+                class="relative rounded-xl overflow-hidden shadow-[0_20px_40px_rgba(0,0,0,0.4)] bg-surface-container-low group cursor-pointer aspect-[2/3]"
+              >
+                <img
+                  alt="Ryan Gosling"
+                  class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuAHXe59QhLKwzDIK-chaPIK4H-hBaqLNfrIP3xfR7BmFQn6DW5s2ITELU6s6cECtJqgJjUesLcLhyqr7c801Xqeo-pMnYNck_moL0bDXNrMLpFOM32gPPPuVUFtZ0xkbYrF-JUkLlOzNk2sP_7UVsJE55ldft3Ll8r97N4ry8c9ZkG9K8KfI6G3GK1gSjp8PS-SYA2obuihFPgAXOiHVgQIkJAB_ppVRVfkvdW3ZuDPdEpEqgvwBN3MYcaijeNcDlFvxvAUUZPRbKNH"
+                />
+
+                <div
+                  class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-surface-container-lowest/25 to-transparent flex flex-col justify-end p-5"
+                >
+                  <h3
+                    class="font-headline text-xl font-bold text-on-surface leading-tight group-hover:text-primary transition-colors"
+                  >
+                    Ryan Gosling
+                  </h3>
+
+                  <p class="font-label text-xs text-on-surface-variant mt-1">
+                    Actor • Director
+                  </p>
+                </div>
+              </article>
+
+              <!-- ACTOR CARD -->
+              <article
+                class="relative rounded-xl overflow-hidden shadow-[0_20px_40px_rgba(0,0,0,0.4)] bg-surface-container-low group cursor-pointer aspect-[2/3]"
+              >
+                <img
+                  alt="Ana de Armas"
+                  class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4Qtna-v05wNYlXF8AqAAWu5u6KI0u9pglpSPPnuOMq_uztCQ-A8gHMWayC7xhK3qJysK5MK7poU82nDmy9kCMJoDiewi6dI3UQ6aDQ3MY_JLSREHF_n62bvP4VSCsLRx7Gyr6mM7rYQwcmRsuj6RPu9kWwT-0C3v9aIYihqxiRD9YsLmSI1dqLRbhhWHm7J_4kfzutr-uJRACDMc4dbiZHjnDDl6cYI9brgh0vgBKYFH_sZRjkzfzPPaHlknQXPVLZL81nK_fWi03"
+                />
+
+                <div
+                  class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-surface-container-lowest/25 to-transparent flex flex-col justify-end p-5"
+                >
+                  <h3
+                    class="font-headline text-xl font-bold text-on-surface leading-tight group-hover:text-primary transition-colors"
+                  >
+                    Ana de Armas
+                  </h3>
+
+                  <p class="font-label text-xs text-on-surface-variant mt-1">
+                    Actor
+                  </p>
+                </div>
+              </article>
+
+              <!-- ACTOR CARD -->
+              <article
+                class="relative rounded-xl overflow-hidden shadow-[0_20px_40px_rgba(0,0,0,0.4)] bg-surface-container-low group cursor-pointer aspect-[2/3]"
+              >
+                <img
+                  alt="Harrison Ford"
+                  class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuD9g3tXQSfXdGGpUGHbF6vVFU2-fYV3PtPCgARnKO75q3XJV9syQCOEEe53fOF1OeFI4OsRrHp8CShQi954K6pi2fa94ROB5zulANMGw_wUQCioqWPEpN9I3vmaBrywJL7YrmJ4a8bDZZz5Vu8V3c9Hd8daXLGp99tGr8OFwpTLZjS5SflY1O8WB25oe011fujG61F5Addc1RKgD0pjA8AGSoIlDQUk3xaNmOcVYq39YY29rKkiC_ypv-mcwjEcPOtqzpFFcEnOfLQB"
+                />
+
+                <div
+                  class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-surface-container-lowest/25 to-transparent flex flex-col justify-end p-5"
+                >
+                  <h3
+                    class="font-headline text-xl font-bold text-on-surface leading-tight group-hover:text-primary transition-colors"
+                  >
+                    Harrison Ford
+                  </h3>
+
+                  <p class="font-label text-xs text-on-surface-variant mt-1">
+                    Actor
+                  </p>
+                </div>
+              </article>
+
+              <!-- ACTOR CARD -->
+              <article
+                class="relative rounded-xl overflow-hidden shadow-[0_20px_40px_rgba(0,0,0,0.4)] bg-surface-container-low group cursor-pointer aspect-[2/3]"
+              >
+                <img
+                  alt="Timothée Chalamet"
+                  class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuACNsk_iXD2auCV2_-5SytyD28QpZDKawgcLjZOYZQ3LnXmCpyZKa2ubLDItvXOPPiSsNujKlsdN7tqFQkDtU3Lrv-4uZyJbCPpzBG-MiL-_9w73qA0OhvwisrFsqaxaak6zjY3TaauK6FcNS_Qz0vHocD1rT9YiIj1JdgphvFpk6nvE6kObgg4H0v8TMQWS0Xn_ujErCVRSE1keh5jsB9PxR36bBRymcXGWq7QDOID5IBf8cRD1Tdvw_C0stdKsF7RWCNcJc1mc1nw"
+                />
+
+                <div
+                  class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-surface-container-lowest/25 to-transparent flex flex-col justify-end p-5"
+                >
+                  <h3
+                    class="font-headline text-xl font-bold text-on-surface leading-tight group-hover:text-primary transition-colors"
+                  >
+                    Timothée Chalamet
+                  </h3>
+
+                  <p class="font-label text-xs text-on-surface-variant mt-1">
+                    Actor
+                  </p>
+                </div>
+              </article>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+      <script src="/public/assets/js/reevio.js"></script>
+</body>
+</html>

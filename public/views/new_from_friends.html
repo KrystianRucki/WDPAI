@@ -1,0 +1,279 @@
+<!doctype html>
+<html class="dark" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Reevio - New From Friends</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;700;900&amp;family=Manrope:wght@400;600&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link href="/public/assets/css/reevio.css" rel="stylesheet" /></head>
+  <body
+    class="bg-surface text-on-surface font-body overflow-x-hidden min-h-screen flex reevio-page-new_from_friends"
+  >
+<?php
+$activeNav = 'films';
+$showAdminLink = ($showAdminLink ?? false);
+include __DIR__ . '/partials/navigation.html';
+?>
+<!-- Main Content Area -->
+    <main class="relative z-10 ml-64 min-h-screen w-[calc(100%-16rem)] px-4 pb-24 pt-[8.7rem] lg:px-5 xl:px-6">
+      <div class="max-w-[1120px]">
+      <!-- Header Section -->
+      <header class="mb-7">
+        <div class="flex items-start gap-4">
+          <a
+            href="#"
+            class="w-11 h-11 shrink-0 rounded-full bg-surface-container-low border border-outline-variant/20 text-primary hover:text-secondary hover:bg-surface-container-high transition-all flex items-center justify-center shadow-[0_20px_40px_rgba(0,0,0,0.28)]"
+            aria-label="Back to feed"
+          >
+            <span class="material-symbols-outlined text-[24px]"
+              >arrow_back</span
+            >
+          </a>
+
+          <div>
+            <h2
+              class="font-headline text-[28px] font-black tracking-tight text-on-surface mb-2"
+            >
+              New From Friends
+            </h2>
+            <p class="font-label text-on-surface-variant text-sm">
+              Recent logs and reviews from your network.
+            </p>
+          </div>
+        </div>
+      </header>
+      <!-- Asymmetric Grid Layout for Movie Logs -->
+      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-10">
+        <!-- Card 1: Dune: Part Two -->
+        <article data-href="#"
+          class="bg-surface-container-low rounded-2xl p-5 ghost-border flex flex-col gap-4 relative group hover:bg-surface-container-high transition-colors duration-300 ambient-shadow"
+        >
+          <div class="flex items-center gap-3">
+            <img
+              alt="Sarah's Avatar"
+              class="w-10 h-10 rounded-full object-cover"
+              data-alt="A close-up portrait of a cinematic user avatar in a dimly lit environment. High-contrast neon highlights create an editorial mood. The mood is sophisticated and modern. Deep charcoal background with subtle amber accents."
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuAFshklroTxqxSE1xnwoUZzqHhcqWVwBWllUszO8-KNHmA-D7tClQVlEuyIRFXb3F-Wg7pHmo0RVTF05DUIWr5W_mG-eDAXsQoVXbnI_gkXGyUqAvFQitaoJLcMre4xsIAnVHJ3HC6XHzsLRnObysT6DzjmO8Fqr_ePBji4HpV0tD4I5Oq8FNvG77aAf-n55qmNeo067yML8bZE28RVtPq7nIjkmM0saXzjdhhAXmT9l8W2sYb3Yf5RaFGAI8PuPlCtwMl5obeTKT_P"
+            />
+            <div>
+              <p class="font-headline font-bold text-sm text-on-surface">
+                @sarah_cine
+              </p>
+              <p class="font-label text-xs text-on-surface-variant">
+                Logged yesterday
+              </p>
+            </div>
+          </div>
+          <div
+            class="relative w-full aspect-[2/3] rounded-lg overflow-hidden poster-shadow group-hover:scale-[1.02] transition-transform duration-500"
+          >
+            <img
+              alt="Dune Part Two Poster"
+              class="w-full h-full object-cover"
+              data-alt="A sweeping, majestic desert landscape bathed in golden-hour light reminiscent of an epic sci-fi film poster. The dunes stretch endlessly under a dark, dramatic sky. The lighting highlights the texture of the sand with high contrast. Deep cinematic tones with intense amber highlights and dark charcoal shadows."
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuC14zflSDf1x9JqLmN_pgPhX1DKvReNWyU3kxAa2WPluJK4YatnkB1HhUfnQgJ84cyk_Yafao_Z4jBptE8Bcha3Sn1j7LydKiCf7DJvlFl1Ordfp0C81BPgZP8HwqBvicrpmFbEFJvSfgzQrkY5j1FxUoafwoDB9pBbZoAegM0pln7nv7_DlnlNIRoMTD27MJe8NwwuVNSxDHSeuc6pSIuX5q29Qm7KDhrlsIH5XZfE849zbzZovmR66PZfVFuGOxLyCNn7pw1ffYDl"
+            />
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-transparent to-transparent opacity-80"
+            ></div>
+            <div
+              class="absolute bottom-4 left-4 right-4 flex justify-between items-end"
+            >
+              <h3
+                class="font-headline font-bold text-xl text-on-surface drop-shadow-md"
+              >
+                Dune: Part Two
+              </h3>
+              <span
+                class="material-symbols-outlined text-primary text-xl reevio-inline-style-001"
+               
+                >rate_review</span
+              >
+            </div>
+          </div>
+          <div class="flex items-center gap-1 text-primary">
+            <span
+              class="material-symbols-outlined reevio-inline-style-015"
+             
+              >star</span
+            >
+            <span
+              class="material-symbols-outlined reevio-inline-style-015"
+             
+              >star</span
+            >
+            <span
+              class="material-symbols-outlined reevio-inline-style-015"
+             
+              >star</span
+            >
+            <span
+              class="material-symbols-outlined reevio-inline-style-015"
+             
+              >star</span
+            >
+            <span
+              class="material-symbols-outlined text-outline reevio-inline-style-002"
+             
+              >star_half</span
+            >
+          </div>
+        </article>
+        <!-- Card 2: Poor Things (Shifted down for asymmetry) -->
+        <article data-href="#"
+          class="bg-surface-container-low rounded-2xl p-5 ghost-border flex flex-col gap-4 relative group hover:bg-surface-container-high transition-colors duration-300 ambient-shadow"
+        >
+          <div class="flex items-center gap-3">
+            <img
+              alt="Alex's Avatar"
+              class="w-10 h-10 rounded-full object-cover"
+              data-alt="A profile shot of a male user avatar illuminated by moody, teal neon backlighting. The aesthetic is highly cinematic, reminiscent of a cyberpunk noir film. The deep background enhances the striking cool tones on his face. Professional editorial styling."
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuCFMTOdshGWkGVEFRVgUqT--NJzV86ihNwvF85K6SCGqsUzI_QmK-nuXmwxrHoA6YhRwPjVUGhNdV3-v-Wg_rozbPghuFFsnKXnjbH9HyvprpamX9zJsV9vEW6x4mvrrLqEJ1yx7p2b6gpwHtR7iYVkWwOSOA4vrQBKnSPXmJ1PybaBBxfIZbrQZOXwolW2j9DTTP4za-ja5SL9pjZMSeZlpMwH1BJzaDP-vNV_FZ-ib_cpVjel2tqwh5GdpDToIZqFjJY5QORnse-h"
+            />
+            <div>
+              <p class="font-headline font-bold text-sm text-on-surface">
+                @alex_watches
+              </p>
+              <p class="font-label text-xs text-on-surface-variant">
+                Logged 2 days ago
+              </p>
+            </div>
+          </div>
+          <div
+            class="relative w-full aspect-[2/3] rounded-lg overflow-hidden poster-shadow group-hover:scale-[1.02] transition-transform duration-500"
+          >
+            <img
+              alt="Poor Things Poster Abstract"
+              class="w-full h-full object-cover"
+              data-alt="A bizarre, surreal abstract architectural landscape evoking a whimsical yet unsettling fantasy world. Warped perspectives and unnatural lighting create a dreamlike atmosphere. The color palette features stark contrasts between deep shadows and vibrant, unexpected pastels. A distinctly avant-garde, cinematic feel."
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuBrrWLUqgzkE3LL3JUAZwONBeHhh-nux97XcCPRqWZaVoyLIOlE7G5oWjaPTa9CGBPeqzAhDGxfX_ll2CHtoDXvhk67LmUaFD0pk8WAtWejjoiEFWLJGzvBAKcbYZ0PGgN_4H_EyAwdewvPtIff4vqhDj40y6GIqgoGjsBZwYSOoX9Shu60ElIhqazaIRgStcZV28ioaEHvUg7jXKHCcsCF-1Dj_Sa6c6517tYWncZDv8OMUeBns-wn3iFG1Uhg_f9qqB9HxYnoX6qB"
+            />
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-transparent to-transparent opacity-80"
+            ></div>
+            <div
+              class="absolute bottom-4 left-4 right-4 flex justify-between items-end"
+            >
+              <h3
+                class="font-headline font-bold text-xl text-on-surface drop-shadow-md"
+              >
+                Poor Things
+              </h3>
+            </div>
+          </div>
+          <div class="flex items-center gap-1 text-primary">
+            <span
+              class="material-symbols-outlined reevio-inline-style-015"
+             
+              >star</span
+            >
+            <span
+              class="material-symbols-outlined reevio-inline-style-015"
+             
+              >star</span
+            >
+            <span
+              class="material-symbols-outlined reevio-inline-style-015"
+             
+              >star</span
+            >
+            <span
+              class="material-symbols-outlined reevio-inline-style-015"
+             
+              >star</span
+            >
+            <span
+              class="material-symbols-outlined reevio-inline-style-015"
+             
+              >star</span
+            >
+          </div>
+        </article>
+        <!-- Card 3: Past Lives -->
+        <article data-href="#"
+          class="bg-surface-container-low rounded-2xl p-5 ghost-border flex flex-col gap-4 relative group hover:bg-surface-container-high transition-colors duration-300 ambient-shadow"
+        >
+          <div class="flex items-center gap-3">
+            <img
+              alt="Mia's Avatar"
+              class="w-10 h-10 rounded-full object-cover"
+              data-alt="A soft, emotionally resonant portrait of a female user avatar in natural, muted lighting. The image feels intimate and nostalgic, like a still from an indie drama. The background is a soft, out-of-focus urban setting. Subtle color grading highlights warmth in the skin tones against cool shadows."
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuA85yPxewRvG2vDAWt5V1JYo9YTVSev6ZsUHUa4l90k52uyJvX98iEKzbewLP9DzI_OCUK5zV7TgoT69HQIu5pF8lPMN8h1IOnXBGy5v4WOoZ-wapUbhxp1itC0B5P4-qnBHb-Tgq0RCcY6E2-EKMDAgd9_HLqyoFMvPe0TbApRMWi3F4OhAgNz-KvbVcW1Df9cY1ghx0O4oVFwllrZHjXfZIGx6kTgiu1cbaOLyyuH_sN2-yiv80MRHYqbkkGRu1o5NPbnYDPNS5fb"
+            />
+            <div>
+              <p class="font-headline font-bold text-sm text-on-surface">
+                @mia_reviews
+              </p>
+              <p class="font-label text-xs text-on-surface-variant">
+                Logged 3 days ago
+              </p>
+            </div>
+          </div>
+          <div
+            class="relative w-full aspect-[2/3] rounded-lg overflow-hidden poster-shadow group-hover:scale-[1.02] transition-transform duration-500"
+          >
+            <img
+              alt="Past Lives Mood"
+              class="w-full h-full object-cover"
+              data-alt="A quiet, melancholic view of a city skyline at dusk, evoking feelings of longing and distance. The sky is painted in soft hues of twilight blue and faded amber. The city lights are just beginning to twinkle, creating a beautiful bokeh effect. A highly romanticized, editorial cinematic capture."
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuBqjIOa5wd4j_WDtCHrZN2WHX-LQ9R0dHznpVjMw9YWHDXhsPR8GfPJ6eGW1ko8w0hCwh259HH8NQ_3l8JMXRthGdMqcDD56htwG6_NipLu-kQaqdiY8uebmqp2teYepfD3G8Uk0QjkyQok7ZUsc7N1pZRhe6jOqy912xionWaW7yQIO3lurxvDvMFUUTbpa70g5NFyLuipC29W1kdinhV3NbNXn7pNU_QeqXXbzwpa8btgd1T-LHFm50R74n-_p5zJ5peKHdt5suxl"
+            />
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-transparent to-transparent opacity-80"
+            ></div>
+            <div
+              class="absolute bottom-4 left-4 right-4 flex justify-between items-end"
+            >
+              <h3
+                class="font-headline font-bold text-xl text-on-surface drop-shadow-md"
+              >
+                Past Lives
+              </h3>
+              <span
+                class="material-symbols-outlined text-primary text-xl reevio-inline-style-001"
+               
+                >rate_review</span
+              >
+            </div>
+          </div>
+          <div class="flex items-center gap-1 text-primary">
+            <span
+              class="material-symbols-outlined reevio-inline-style-015"
+             
+              >star</span
+            >
+            <span
+              class="material-symbols-outlined reevio-inline-style-015"
+             
+              >star</span
+            >
+            <span
+              class="material-symbols-outlined reevio-inline-style-015"
+             
+              >star</span
+            >
+            <span
+              class="material-symbols-outlined text-outline reevio-inline-style-002"
+             
+              >star_border</span
+            >
+            <span
+              class="material-symbols-outlined text-outline reevio-inline-style-002"
+             
+              >star_border</span
+            >
+          </div>
+        </article>
+      </div>
+      </div>
+    </main>
+      <script src="/public/assets/js/reevio.js"></script>
+</body>
+</html>

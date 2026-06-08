@@ -1,0 +1,536 @@
+<!doctype html>
+<html class="dark" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Reevio - Dune: Part Two</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;700;900&amp;family=Manrope:wght@400;500;700&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link href="/public/assets/css/reevio.css" rel="stylesheet" /></head>
+  <body
+    class="bg-background text-on-surface font-body antialiased min-h-screen flex overflow-hidden reevio-page-film_details"
+  >
+<?php
+$activeNav = 'films';
+$showAdminLink = ($showAdminLink ?? false);
+include __DIR__ . '/partials/navigation.html';
+?>
+<!-- Main Scrollable Area -->
+    <div class="flex-1 h-screen overflow-y-auto relative bg-background">
+<main class="pb-24">
+        <!-- Header Section / Poster & Title -->
+        <div
+          class="px-8 md:px-12 xl:px-16 max-w-[1600px] mx-auto pt-32 pb-12 flex flex-col md:flex-row gap-8 md:gap-12 items-start md:items-end"
+        >
+          <!-- Poster -->
+          <div
+            class="w-48 md:w-64 shrink-0 rounded-xl overflow-hidden shadow-[0_20px_40px_rgba(0,0,0,0.5)] border border-outline-variant/20 aspect-[2/3]"
+          >
+            <img
+              alt="Dune: Part Two Poster"
+              class="w-full h-full object-cover"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuBznxf71T4sI-93EYIq15WI2J4gq1Tfz_XrolhOO7WuW6kem58B3dWARUYIx89Yh3p6-zsmaqS_5dQTNA1wIh3zjISSkLTN8RkVdtM-HIby5uA8qtUq8nJkuh6dBQecUcSiLHv__PtrDlxi4N9mOamvWSkjvjV2fnN76Bb87nUWqkFsH-fNANdpRaMBX0GrVvTqg6ts5r6OpAtEriTiDHcUE7I_1Oy1AleqWgvKvaJM6aBzgkePBmZIJCR9pG14N29vcZHJAU9xIBsp"
+            />
+          </div>
+          <!-- Title & Metadata -->
+          <div class="flex flex-col gap-4 pb-2 md:pb-4">
+            <h2
+              class="font-headline font-black text-5xl md:text-7xl xl:text-8xl text-on-surface tracking-tighter mb-2 shadow-sm"
+            >
+              Dune: Part Two
+            </h2>
+            <div
+              class="flex items-center gap-4 text-on-surface-variant font-label text-base md:text-lg font-medium flex-wrap"
+            >
+              <span class="">2024</span>
+              <span class="w-1.5 h-1.5 rounded-full bg-outline-variant"></span>
+              <span class="">Directed by Denis Villeneuve</span>
+              <span class="w-1.5 h-1.5 rounded-full bg-outline-variant"></span>
+              <span class="text-secondary">2h 46m</span>
+            </div>
+          </div>
+        </div>
+        <div
+          class="px-8 md:px-12 xl:px-16 max-w-[1600px] mx-auto flex flex-col xl:flex-row gap-12 xl:gap-16"
+        >
+          <!-- Left Column: Primary Content -->
+          <div class="w-full xl:w-[65%] flex flex-col gap-12">
+            <!-- Ratings & Actions Row -->
+            <div
+              class="bg-surface-container-low p-8 rounded-xl overflow-hidden shadow-sm"
+            >
+              <div
+                class="flex flex-col xl:flex-row gap-10 items-start xl:items-center"
+              >
+                <!-- Left side: Histogram and Summary -->
+                <div class="flex-1 flex flex-col md:flex-row gap-12 items-end">
+                  <!-- Histogram -->
+                  <div class="flex-1 min-w-0 w-full">
+                    <h3
+                      class="font-headline font-bold text-2xl text-on-surface mb-8"
+                    >
+                      Ratings
+                    </h3>
+                    <div class="h-48 flex items-end gap-3">
+                      <div
+                        class="flex-1 min-w-0 flex flex-col items-center justify-end gap-2 h-full"
+                      >
+                        <div
+                          class="w-full max-w-[24px] rounded-t-md bg-[#3b3227] reevio-inline-style-004"
+                         
+                        ></div>
+                        <span
+                          class="text-[11px] font-label text-on-surface-variant"
+                          >0.5</span
+                        >
+                      </div>
+                      <div
+                        class="flex-1 min-w-0 flex flex-col items-center justify-end gap-2 h-full"
+                      >
+                        <div
+                          class="w-full max-w-[24px] rounded-t-md bg-[#4a3b2d] reevio-inline-style-005"
+                         
+                        ></div>
+                        <span
+                          class="text-[11px] font-label text-on-surface-variant"
+                          >1</span
+                        >
+                      </div>
+                      <div
+                        class="flex-1 min-w-0 flex flex-col items-center justify-end gap-2 h-full"
+                      >
+                        <div
+                          class="w-full max-w-[24px] rounded-t-md bg-[#5b4734] reevio-inline-style-006"
+                         
+                        ></div>
+                        <span
+                          class="text-[11px] font-label text-on-surface-variant"
+                          >1.5</span
+                        >
+                      </div>
+                      <div
+                        class="flex-1 min-w-0 flex flex-col items-center justify-end gap-2 h-full"
+                      >
+                        <div
+                          class="w-full max-w-[24px] rounded-t-md bg-[#6c533b] reevio-inline-style-007"
+                         
+                        ></div>
+                        <span
+                          class="text-[11px] font-label text-on-surface-variant"
+                          >2</span
+                        >
+                      </div>
+                      <div
+                        class="flex-1 min-w-0 flex flex-col items-center justify-end gap-2 h-full"
+                      >
+                        <div
+                          class="w-full max-w-[24px] rounded-t-md bg-[#836246] reevio-inline-style-008"
+                         
+                        ></div>
+                        <span
+                          class="text-[11px] font-label text-on-surface-variant"
+                          >2.5</span
+                        >
+                      </div>
+                      <div
+                        class="flex-1 min-w-0 flex flex-col items-center justify-end gap-2 h-full"
+                      >
+                        <div
+                          class="w-full max-w-[24px] rounded-t-md bg-[#9a7352] reevio-inline-style-009"
+                         
+                        ></div>
+                        <span
+                          class="text-[11px] font-label text-on-surface-variant"
+                          >3</span
+                        >
+                      </div>
+                      <div
+                        class="flex-1 min-w-0 flex flex-col items-center justify-end gap-2 h-full"
+                      >
+                        <div
+                          class="w-full max-w-[24px] rounded-t-md bg-[#b78661] reevio-inline-style-010"
+                         
+                        ></div>
+                        <span
+                          class="text-[11px] font-label text-on-surface-variant"
+                          >3.5</span
+                        >
+                      </div>
+                      <div
+                        class="flex-1 min-w-0 flex flex-col items-center justify-end gap-2 h-full"
+                      >
+                        <div
+                          class="w-full max-w-[24px] rounded-t-md bg-[#d9a56f] reevio-inline-style-011"
+                         
+                        ></div>
+                        <span
+                          class="text-[11px] font-label text-on-surface-variant"
+                          >4</span
+                        >
+                      </div>
+                      <div
+                        class="flex-1 min-w-0 flex flex-col items-center justify-end gap-2 h-full"
+                      >
+                        <div
+                          class="w-full max-w-[24px] rounded-t-md bg-[#f0c783] shadow-[0_0_10px_rgba(255,215,155,0.2)] reevio-inline-style-012"
+                         
+                        ></div>
+                        <span
+                          class="text-[11px] font-label text-primary font-bold"
+                          >4.5</span
+                        >
+                      </div>
+                      <div
+                        class="flex-1 min-w-0 flex flex-col items-center justify-end gap-2 h-full"
+                      >
+                        <div
+                          class="w-full max-w-[24px] rounded-t-md bg-[#ffd79b] shadow-[0_0_14px_rgba(255,215,155,0.28)] reevio-inline-style-013"
+                         
+                        ></div>
+                        <span
+                          class="text-[11px] font-label text-primary font-bold"
+                          >5</span
+                        >
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Summary -->
+                  <div
+                    class="shrink-0 flex flex-col items-end text-right min-w-[120px] pb-2"
+                  >
+                    <div
+                      class="font-headline font-black text-7xl leading-none text-on-surface"
+                    >
+                      4.5
+                    </div>
+                    <div
+                      class="font-label text-sm uppercase tracking-[0.18em] text-on-surface-variant mt-4"
+                    >
+                      Average
+                    </div>
+                    <div class="font-label text-sm text-secondary mt-2">
+                      124k ratings
+                    </div>
+                  </div>
+                </div>
+                <!-- Right side: Actions -->
+                <div
+                  class="flex flex-row xl:flex-col gap-4 w-full xl:w-auto shrink-0 xl:pl-10 xl:border-l xl:border-outline-variant/20 xl:min-w-[220px]"
+                >
+                  <button
+                    class="flex-1 xl:flex-none border border-outline-variant/40 text-on-surface font-label font-medium px-5 py-4 rounded-xl flex items-center justify-center gap-3 hover:bg-surface-container-highest transition-colors"
+                  >
+                    <span class="material-symbols-outlined text-[24px]"
+                      >visibility</span
+                    >
+                    <span class="hidden xl:inline">Watch</span>
+                  </button>
+                  <button
+                    class="flex-1 xl:flex-none border border-secondary/40 text-secondary font-label font-medium px-5 py-4 rounded-xl flex items-center justify-center gap-3 hover:bg-secondary/10 transition-colors"
+                  >
+                    <span class="material-symbols-outlined text-[24px]"
+                      >bookmark_add</span
+                    >
+                    <span class="hidden xl:inline">Watchlist</span>
+                  </button>
+                  <button
+                    class="flex-1 xl:flex-none border border-secondary/40 text-secondary font-label font-medium px-5 py-4 rounded-xl flex items-center justify-center gap-3 hover:bg-secondary/10 transition-colors"
+                  >
+                    <span class="material-symbols-outlined text-[24px]"
+                      >format_list_bulleted_add</span
+                    >
+                    <span class="hidden xl:inline">Add to List</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <!-- Synopsis -->
+            <section>
+              <h3 class="font-headline font-bold text-2xl text-on-surface mb-6">
+                Synopsis
+              </h3>
+              <p
+                class="font-body text-lg text-on-surface-variant leading-relaxed max-w-4xl"
+              >
+                Paul Atreides unites with Chani and the Fremen while on a
+                warpath of revenge against the conspirators who destroyed his
+                family. Facing a choice between the love of his life and the
+                fate of the known universe, he endeavors to prevent a terrible
+                future only he can foresee.
+              </p>
+            </section>
+            <!-- Cast & Crew -->
+            <section>
+              <h3 class="font-headline font-bold text-2xl text-on-surface mb-6">
+                Cast &amp; Crew
+              </h3>
+              <div class="flex gap-6 overflow-x-auto no-scrollbar pb-6 snap-x">
+                <!-- Cast 1 -->
+                <div
+                  class="flex flex-col items-center gap-3 min-w-[100px] md:min-w-[120px] snap-start"
+                >
+                  <div
+                    class="w-20 h-20 md:w-28 md:h-28 rounded-full overflow-hidden border-2 border-outline-variant/30 hover:border-primary/50 transition-colors cursor-pointer"
+                  >
+                    <img
+                      alt="Timothée Chalamet"
+                      class="w-full h-full object-cover"
+                      data-alt="portrait of young man with intense gaze, cinematic portrait lighting, dark background"
+                      src="https://lh3.googleusercontent.com/aida-public/AB6AXuBoi1YVGg2_qSg47s6UAR1gZ0xNFCDgPY_vaZ1ckB6RWSSBUBzkv9yOOHQsV7DxGMhxJ8ynIYeGlejTwznvp-8mEHizDNbTlFbfAhPP-wKpxdaJDTEYGvgPfoZJmNvq3QFri8ed3bIC0TXDtScYjaj5xH2AZ9d9sxVHe7wXIxTqrSeAUzq8S3VgFOgsnSCCqFOj8m7OHfNF7OiAiqUSO50aMFNhKQ1Q4I4XOsd4uUPounBxVkDn_SL88MR81LvBmpMtRO69JJSuMECe"
+                    />
+                  </div>
+                  <span
+                    class="font-label text-sm md:text-base text-on-surface text-center line-clamp-2"
+                    >Timothée Chalamet</span
+                  >
+                </div>
+                <!-- Cast 2 -->
+                <div
+                  class="flex flex-col items-center gap-3 min-w-[100px] md:min-w-[120px] snap-start"
+                >
+                  <div
+                    class="w-20 h-20 md:w-28 md:h-28 rounded-full overflow-hidden border-2 border-outline-variant/30 hover:border-primary/50 transition-colors cursor-pointer"
+                  >
+                    <img
+                      alt="Zendaya"
+                      class="w-full h-full object-cover"
+                      data-alt="portrait of young woman with striking features, moody lighting, dark background"
+                      src="https://lh3.googleusercontent.com/aida-public/AB6AXuCGhX6v21xi9xSgijalS0yREL7EfNefpp4b1t-T4-t132_9g4H4Ez_CIinmo2BzP1WY07hZNaRoES793EnMPxN6r6LPP0W91XErx5MxVp4ZAONC9xvN2zV-5VRb0LRjFoFGESdV2HJw-BHEMXaq4vzP1j6wcI0KeODyNo8R9ensoPjCbo2iben8lFGdQTEPjymXjyW9GXLEiwGcBcGDXucFiUMCvSjoJ0dje79_IEjQQQkF8H3ZGzv7GK6SNQQdCuvlKa-soLhB7-ok"
+                    />
+                  </div>
+                  <span
+                    class="font-label text-sm md:text-base text-on-surface text-center line-clamp-2"
+                    >Zendaya</span
+                  >
+                </div>
+                <!-- Cast 3 -->
+                <div
+                  class="flex flex-col items-center gap-3 min-w-[100px] md:min-w-[120px] snap-start"
+                >
+                  <div
+                    class="w-20 h-20 md:w-28 md:h-28 rounded-full overflow-hidden border-2 border-outline-variant/30 hover:border-primary/50 transition-colors cursor-pointer"
+                  >
+                    <img
+                      alt="Rebecca Ferguson"
+                      class="w-full h-full object-cover"
+                      data-alt="portrait of older man with intense stare, dramatic shadows, dark background"
+                      src="https://lh3.googleusercontent.com/aida-public/AB6AXuCWDKPR8dZoF1oHDht43EYiyAHK1f6YFqegAok1DpnrDOrYPrzLftXFSy1BrP24kUTZQBjwS0kdBBhouSHNJju5aijGYDruBhzbhQymefNocoJm92mpucZncdPIScCSc4O9-j7TL_1i6slnT3t8vBJ-_M67MRNq8qbyPa94FkiThpBkGoYa_LfGJhdYOZgmH1hJotr-WTPVMYmrlYy0q2T1e6Vp2_RKkJmbLL-nvsaOCQfExorDQzCAlLfwzlrHJR_avUrIq5Z1PaQE"
+                    />
+                  </div>
+                  <span
+                    class="font-label text-sm md:text-base text-on-surface text-center line-clamp-2"
+                    >Rebecca Ferguson</span
+                  >
+                </div>
+                <!-- Cast 4 -->
+                <div
+                  class="flex flex-col items-center gap-3 min-w-[100px] md:min-w-[120px] snap-start"
+                >
+                  <div
+                    class="w-20 h-20 md:w-28 md:h-28 rounded-full overflow-hidden border-2 border-outline-variant/30 bg-surface-container-highest flex items-center justify-center hover:bg-surface-variant transition-colors cursor-pointer"
+                  >
+                    <span
+                      class="material-symbols-outlined text-outline-variant md:text-4xl"
+                      >person</span
+                    >
+                  </div>
+                  <span
+                    class="font-label text-sm md:text-base text-on-surface text-center line-clamp-2"
+                    >Javier Bardem</span
+                  >
+                </div>
+                <!-- Cast 5 -->
+                <div
+                  class="flex flex-col items-center gap-3 min-w-[100px] md:min-w-[120px] snap-start"
+                >
+                  <div
+                    class="w-20 h-20 md:w-28 md:h-28 rounded-full overflow-hidden border-2 border-outline-variant/30 bg-surface-container-highest flex items-center justify-center hover:bg-surface-variant transition-colors cursor-pointer"
+                  >
+                    <span
+                      class="material-symbols-outlined text-outline-variant md:text-4xl"
+                      >movie_creation</span
+                    >
+                  </div>
+                  <span
+                    class="font-label text-sm md:text-base text-secondary text-center line-clamp-2"
+                    >Denis Villeneuve</span
+                  >
+                </div>
+              </div>
+            </section>
+          </div>
+          <!-- Right Column: Secondary Content -->
+          <div class="w-full xl:w-[35%] flex flex-col gap-8">
+            <!-- Reviews Highlight -->
+            <section
+              class="bg-surface-container-high rounded-xl p-8 shadow-[0_20px_40px_rgba(0,0,0,0.4)]"
+            >
+              <div class="flex justify-between items-center mb-8">
+                <h3 class="font-headline font-bold text-xl text-on-surface">
+                  Community Reviews
+                </h3>
+                <a
+                  class="text-primary font-label text-sm hover:underline font-medium"
+                  href="#"
+                  >See All</a
+                >
+              </div>
+              <div class="flex flex-col gap-5">
+                <!-- Review Card 1 -->
+                <div
+                  class="bg-surface-container-lowest rounded-xl p-5 border border-outline-variant/15 hover:border-outline-variant/40 transition-colors"
+                >
+                  <div class="flex items-center gap-4 mb-4">
+                    <div
+                      class="w-10 h-10 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-bold text-sm"
+                    >
+                      AK
+                    </div>
+                    <div class="flex flex-col">
+                      <span
+                        class="font-label text-base text-on-surface font-medium"
+                        >Alex Kino</span
+                      >
+                      <div class="flex items-center gap-1 text-primary mt-0.5">
+                        <span
+                          class="material-symbols-outlined text-[16px] reevio-inline-style-001"
+                          data-weight="fill"
+                         
+                          >star</span
+                        >
+                        <span
+                          class="material-symbols-outlined text-[16px] reevio-inline-style-001"
+                          data-weight="fill"
+                         
+                          >star</span
+                        >
+                        <span
+                          class="material-symbols-outlined text-[16px] reevio-inline-style-001"
+                          data-weight="fill"
+                         
+                          >star</span
+                        >
+                        <span
+                          class="material-symbols-outlined text-[16px] reevio-inline-style-001"
+                          data-weight="fill"
+                         
+                          >star</span
+                        >
+                        <span
+                          class="material-symbols-outlined text-[16px] reevio-inline-style-001"
+                          data-weight="fill"
+                         
+                          >star</span
+                        >
+                      </div>
+                    </div>
+                  </div>
+                  <p
+                    class="font-body text-base text-on-surface-variant line-clamp-4 leading-relaxed"
+                  >
+                    A masterpiece of scale and sound design. Villeneuve manages
+                    to make the desert feel both suffocatingly intimate and
+                    terrifyingly vast. The sheer cinematic weight of this film
+                    is staggering.
+                  </p>
+                </div>
+                <!-- Review Card 2 -->
+                <div
+                  class="bg-surface-container-lowest rounded-xl p-5 border border-outline-variant/15 hover:border-outline-variant/40 transition-colors"
+                >
+                  <div class="flex items-center gap-4 mb-4">
+                    <div
+                      class="w-10 h-10 rounded-full bg-tertiary-container text-on-tertiary-container flex items-center justify-center font-bold text-sm"
+                    >
+                      SJ
+                    </div>
+                    <div class="flex flex-col">
+                      <span
+                        class="font-label text-base text-on-surface font-medium"
+                        >Sarah Jenkins</span
+                      >
+                      <div class="flex items-center gap-1 text-primary mt-0.5">
+                        <span
+                          class="material-symbols-outlined text-[16px] reevio-inline-style-001"
+                          data-weight="fill"
+                         
+                          >star</span
+                        >
+                        <span
+                          class="material-symbols-outlined text-[16px] reevio-inline-style-001"
+                          data-weight="fill"
+                         
+                          >star</span
+                        >
+                        <span
+                          class="material-symbols-outlined text-[16px] reevio-inline-style-001"
+                          data-weight="fill"
+                         
+                          >star</span
+                        >
+                        <span
+                          class="material-symbols-outlined text-[16px] reevio-inline-style-001"
+                          data-weight="fill"
+                         
+                          >star</span
+                        >
+                        <span
+                          class="material-symbols-outlined text-outline text-[16px]"
+                          >star_half</span
+                        >
+                      </div>
+                    </div>
+                  </div>
+                  <p
+                    class="font-body text-base text-on-surface-variant line-clamp-4 leading-relaxed"
+                  >
+                    Incredible visual storytelling. Austin Butler is genuinely
+                    terrifying as Feyd-Rautha. It dragged slightly in the
+                    middle, but the climax was worth every second of build-up.
+                  </p>
+                </div>
+              </div>
+            </section>
+            <!-- Details Box -->
+            <section
+              class="bg-surface-container-low rounded-xl p-8 border border-outline-variant/10"
+            >
+              <h4 class="font-headline font-bold text-lg text-on-surface mb-6">
+                Details
+              </h4>
+              <div class="flex flex-col gap-4 font-label text-base">
+                <div
+                  class="flex justify-between border-b border-surface-variant pb-3"
+                >
+                  <span class="text-on-surface-variant">Studios</span>
+                  <span class="text-on-surface text-right font-medium"
+                    >Legendary Pictures<br />Warner Bros.</span
+                  >
+                </div>
+                <div
+                  class="flex justify-between border-b border-surface-variant pb-3"
+                >
+                  <span class="text-on-surface-variant">Language</span>
+                  <span class="text-on-surface font-medium"
+                    >English, Chakobsa</span
+                  >
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-on-surface-variant">Budget</span>
+                  <span class="text-secondary font-medium">$190,000,000</span>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </main>
+    </div>
+      <script src="/public/assets/js/reevio.js"></script>
+</body>
+</html>

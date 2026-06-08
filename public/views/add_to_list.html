@@ -1,0 +1,240 @@
+<!doctype html>
+<html class="dark" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Reevio - Add to List</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;500;600;700;800&amp;family=Manrope:wght@400;500;600;700&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link href="/public/assets/css/reevio.css" rel="stylesheet" /></head>
+  <body
+    class="font-body min-h-screen flex antialiased bg-surface selection:bg-primary selection:text-on-primary reevio-page-add_to_list"
+  >
+<?php
+$activeNav = 'lists';
+$showAdminLink = ($showAdminLink ?? false);
+include __DIR__ . '/partials/navigation.html';
+?>
+<!-- Main Content Area -->
+    <main
+      class="ml-64 flex-1 flex flex-col p-12 min-h-screen relative overflow-hidden"
+    >
+      <!-- Decorative Background Element -->
+      <div
+        class="absolute top-[-20%] right-[-10%] w-[800px] h-[800px] bg-primary/5 rounded-full blur-[120px] pointer-events-none"
+      ></div>
+      <div
+        class="max-w-3xl w-full mx-auto mt-12 relative z-10 flex flex-col h-full"
+      >
+        <!-- Header Section -->
+        <header class="mb-10 text-center">
+          <h2 class="font-headline text-5xl font-bold mb-4 tracking-tight">
+            Select one or more lists
+          </h2>
+          <p
+            class="font-body text-body-md text-on-surface-variant max-w-xl mx-auto"
+          >
+            Choose where you want to save this film. You can add it to multiple
+            lists at once.
+          </p>
+        </header>
+        <!-- Search Bar -->
+        <div class="relative mb-8 group">
+          <span
+            class="material-symbols-outlined absolute left-4 top-1/2 transform -translate-y-1/2 text-on-surface-variant group-focus-within:text-secondary transition-colors"
+            >search</span
+          >
+          <input
+            class="w-full bg-surface-container-low border border-outline-variant/20 rounded-full py-4 pl-12 pr-4 text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary transition-all font-body text-body-md shadow-inner"
+            placeholder="Filter your lists..."
+            type="text"
+          />
+        </div>
+        <!-- List Container -->
+        <div
+          class="flex-1 overflow-y-auto pr-2 space-y-3 custom-scrollbar mb-8"
+        >
+          <!-- List Item (Selected) -->
+          <div
+            class="group bg-surface-container-high hover:bg-surface-container-highest border border-primary/30 rounded-xl p-4 flex items-center justify-between cursor-pointer transition-all duration-200 ambient-shadow transform hover:-translate-y-1"
+          >
+            <div class="flex items-center gap-4">
+              <div
+                class="w-16 h-16 rounded-lg bg-surface-container-lowest overflow-hidden flex-shrink-0 relative border border-outline-variant/15"
+              >
+                <!-- Montage placeholder -->
+                <div
+                  class="absolute inset-0 grid grid-cols-2 grid-rows-2 gap-0.5 p-0.5 opacity-60"
+                >
+                  <div class="bg-surface-variant rounded-sm"></div>
+                  <div class="bg-surface-variant rounded-sm"></div>
+                  <div class="bg-surface-variant rounded-sm"></div>
+                  <div class="bg-surface-variant rounded-sm"></div>
+                </div>
+              </div>
+              <div>
+                <h3
+                  class="font-headline text-lg font-semibold text-on-surface mb-1 group-hover:text-primary transition-colors"
+                >
+                  Favorites of All Time
+                </h3>
+                <p class="font-label text-label-md text-on-surface-variant">
+                  24 films
+                </p>
+              </div>
+            </div>
+            <div
+              class="text-primary mr-2 drop-shadow-[0_0_8px_rgba(255,215,155,0.6)]"
+            >
+              <span
+                class="material-symbols-outlined text-3xl reevio-inline-style-001"
+               
+                >check_circle</span
+              >
+            </div>
+          </div>
+          <!-- List Item (Unselected) -->
+          <div
+            class="group bg-surface-container-low hover:bg-surface-container-high border border-outline-variant/15 rounded-xl p-4 flex items-center justify-between cursor-pointer transition-all duration-200 hover:border-outline-variant/40"
+          >
+            <div class="flex items-center gap-4">
+              <div
+                class="w-16 h-16 rounded-lg bg-surface-container-lowest overflow-hidden flex-shrink-0 relative border border-outline-variant/15"
+              >
+                <div
+                  class="absolute inset-0 grid grid-cols-2 grid-rows-2 gap-0.5 p-0.5 opacity-40"
+                >
+                  <div class="bg-surface-variant rounded-sm"></div>
+                  <div class="bg-surface-variant rounded-sm"></div>
+                  <div class="bg-surface-variant rounded-sm"></div>
+                  <div class="bg-surface-variant rounded-sm"></div>
+                </div>
+              </div>
+              <div>
+                <h3
+                  class="font-headline text-lg font-semibold text-on-surface mb-1 group-hover:text-on-surface transition-colors"
+                >
+                  Sci-Fi Essentials
+                </h3>
+                <p class="font-label text-label-md text-on-surface-variant">
+                  112 films
+                </p>
+              </div>
+            </div>
+            <div
+              class="text-surface-variant mr-2 group-hover:text-outline-variant transition-colors"
+            >
+              <span
+                class="material-symbols-outlined text-3xl reevio-inline-style-002"
+               
+                >radio_button_unchecked</span
+              >
+            </div>
+          </div>
+          <!-- List Item (Unselected) -->
+          <div
+            class="group bg-surface-container-low hover:bg-surface-container-high border border-outline-variant/15 rounded-xl p-4 flex items-center justify-between cursor-pointer transition-all duration-200 hover:border-outline-variant/40"
+          >
+            <div class="flex items-center gap-4">
+              <div
+                class="w-16 h-16 rounded-lg bg-surface-container-lowest overflow-hidden flex-shrink-0 relative border border-outline-variant/15"
+              >
+                <div
+                  class="absolute inset-0 grid grid-cols-2 grid-rows-2 gap-0.5 p-0.5 opacity-40"
+                >
+                  <div class="bg-surface-variant rounded-sm"></div>
+                  <div class="bg-surface-variant rounded-sm"></div>
+                  <div class="bg-surface-variant rounded-sm"></div>
+                  <div class="bg-surface-variant rounded-sm"></div>
+                </div>
+              </div>
+              <div>
+                <h3
+                  class="font-headline text-lg font-semibold text-on-surface mb-1 group-hover:text-on-surface transition-colors"
+                >
+                  Desert Epics
+                </h3>
+                <p class="font-label text-label-md text-on-surface-variant">
+                  8 films
+                </p>
+              </div>
+            </div>
+            <div
+              class="text-surface-variant mr-2 group-hover:text-outline-variant transition-colors"
+            >
+              <span
+                class="material-symbols-outlined text-3xl reevio-inline-style-002"
+               
+                >radio_button_unchecked</span
+              >
+            </div>
+          </div>
+          <!-- List Item (Selected) -->
+          <div
+            class="group bg-surface-container-high hover:bg-surface-container-highest border border-primary/30 rounded-xl p-4 flex items-center justify-between cursor-pointer transition-all duration-200 ambient-shadow transform hover:-translate-y-1"
+          >
+            <div class="flex items-center gap-4">
+              <div
+                class="w-16 h-16 rounded-lg bg-surface-container-lowest overflow-hidden flex-shrink-0 relative border border-outline-variant/15"
+              >
+                <div
+                  class="absolute inset-0 grid grid-cols-2 grid-rows-2 gap-0.5 p-0.5 opacity-60"
+                >
+                  <div class="bg-surface-variant rounded-sm"></div>
+                  <div class="bg-surface-variant rounded-sm"></div>
+                  <div class="bg-surface-variant rounded-sm"></div>
+                  <div class="bg-surface-variant rounded-sm"></div>
+                </div>
+              </div>
+              <div>
+                <h3
+                  class="font-headline text-lg font-semibold text-on-surface mb-1 group-hover:text-primary transition-colors"
+                >
+                  Films to Rewatch
+                </h3>
+                <p class="font-label text-label-md text-on-surface-variant">
+                  45 films
+                </p>
+              </div>
+            </div>
+            <div
+              class="text-primary mr-2 drop-shadow-[0_0_8px_rgba(255,215,155,0.6)]"
+            >
+              <span
+                class="material-symbols-outlined text-3xl reevio-inline-style-001"
+               
+                >check_circle</span
+              >
+            </div>
+          </div>
+        </div>
+        <!-- Action Area -->
+        <div
+          class="pt-6 border-t border-surface-container-highest mt-auto flex flex-col gap-4"
+        >
+          <button
+            class="w-full bg-transparent border-2 border-secondary/40 text-secondary hover:bg-secondary/10 hover:border-secondary transition-all font-label text-label-md font-bold rounded-full py-4 flex items-center justify-center gap-2"
+          >
+            <span class="material-symbols-outlined">add</span>
+            Create New List
+          </button>
+          <button
+            class="w-full primary-gradient-btn text-on-primary font-headline text-lg font-bold rounded-full py-4 shadow-[0_8px_20px_rgba(255,179,0,0.25)] hover:shadow-[0_12px_28px_rgba(255,179,0,0.4)] transition-all transform hover:scale-[1.01]"
+          >
+            Apply Changes
+          </button>
+        </div>
+      </div>
+    </main><script src="/public/assets/js/reevio.js"></script>
+</body>
+</html>

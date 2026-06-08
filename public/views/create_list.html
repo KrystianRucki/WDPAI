@@ -1,0 +1,181 @@
+<!doctype html>
+<html class="dark" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Reevio - Create New List</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;700;900&amp;family=Manrope:wght@400;500;600&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link href="/public/assets/css/reevio.css" rel="stylesheet" /></head>
+  <body
+    class="bg-surface text-on-surface antialiased overflow-x-hidden min-h-screen flex reevio-page-create_list"
+  >
+<?php
+$activeNav = 'lists';
+$showAdminLink = ($showAdminLink ?? false);
+include __DIR__ . '/partials/navigation.html';
+?>
+<!-- Main Content Canvas -->
+    <main
+      class="ml-64 w-[calc(100%-16rem)] min-h-screen px-12 py-24 flex items-center justify-center relative overflow-y-auto"
+    >
+      <!-- Decorative Ambient Background -->
+      <div
+        class="absolute inset-0 pointer-events-none overflow-hidden"
+      >
+        <div
+          class="w-[800px] h-[800px] bg-primary/5 rounded-full blur-[120px] absolute -top-[200px] -right-[200px]"
+        ></div>
+        <div
+          class="w-[600px] h-[600px] bg-secondary/5 rounded-full blur-[100px] absolute bottom-[100px] -left-[100px]"
+        ></div>
+      </div>
+      <div class="w-full max-w-2xl relative z-10">
+        <!-- Header -->
+        <div class="mb-10 text-center">
+          <h1
+            class="font-headline text-4xl font-bold text-on-surface tracking-tight mb-2"
+          >
+            Create New List
+          </h1>
+          <p class="font-body text-on-surface-variant">
+            Curate your cinematic universe.
+          </p>
+        </div>
+        <!-- Form Card -->
+        <div
+          class="bg-surface-container-low rounded-2xl p-10 ambient-shadow border border-outline-variant/15 relative overflow-hidden"
+        >
+          <!-- Subtle Gradient Accent top of card -->
+          <div
+            class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/30 to-transparent"
+          ></div>
+          <form action="#" class="flex flex-col gap-8">
+            <!-- List Name -->
+            <div class="flex flex-col gap-2">
+              <label
+                class="font-label text-xs uppercase tracking-widest text-on-surface-variant pl-1"
+                for="list-name"
+                >List Name</label
+              >
+              <input
+                class="bg-surface-container-lowest border-0 border-b border-outline-variant focus:ring-0 focus:border-secondary transition-colors duration-300 text-on-surface placeholder:text-on-surface-variant/50 font-body text-lg px-4 py-3 rounded-t-lg w-full"
+                id="list-name"
+                placeholder="e.g., A24 Masterpieces"
+                type="text"
+              />
+            </div>
+            <!-- Description -->
+            <div class="flex flex-col gap-2">
+              <label
+                class="font-label text-xs uppercase tracking-widest text-on-surface-variant pl-1"
+                for="list-desc"
+                >Description (Optional)</label
+              >
+              <textarea
+                class="bg-surface-container-lowest border border-outline-variant/30 focus:ring-1 focus:ring-secondary/40 focus:border-secondary/50 transition-colors duration-300 text-on-surface placeholder:text-on-surface-variant/50 font-body text-base p-4 rounded-xl resize-none w-full shadow-inner"
+                id="list-desc"
+                placeholder="What's the theme of this collection?"
+                rows="4"
+              ></textarea>
+            </div>
+            <div class="h-px w-full bg-surface-container-highest my-2"></div>
+            <!-- Toggles -->
+            <div class="flex flex-col gap-6">
+              <!-- Privacy Toggle -->
+              <div class="flex items-center justify-between group">
+                <div>
+                  <h3
+                    class="font-headline font-semibold text-on-surface group-hover:text-primary transition-colors"
+                  >
+                    Public List
+                  </h3>
+                  <p class="font-body text-sm text-on-surface-variant">
+                    Allow others to view and follow this list.
+                  </p>
+                </div>
+                <div
+                  class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in"
+                >
+                  <input
+                    checked=""
+                    class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer z-10 opacity-0"
+                    id="privacy-toggle"
+                    name="toggle"
+                    type="checkbox"
+                  />
+                  <label
+                    class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"
+                    for="privacy-toggle"
+                  ></label>
+                </div>
+              </div>
+              <!-- Ranked List Toggle -->
+              <div class="flex items-center justify-between group">
+                <div>
+                  <h3
+                    class="font-headline font-semibold text-on-surface group-hover:text-primary transition-colors"
+                  >
+                    Ranked List
+                  </h3>
+                  <p class="font-body text-sm text-on-surface-variant">
+                    Order matters. Display numbers next to films.
+                  </p>
+                </div>
+                <div
+                  class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in"
+                >
+                  <input
+                    class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer z-10 opacity-0"
+                    id="ranked-toggle"
+                    name="toggle"
+                    type="checkbox"
+                  />
+                  <label
+                    class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"
+                    for="ranked-toggle"
+                  ></label>
+                </div>
+              </div>
+            </div>
+            <!-- Actions -->
+            <div
+              class="flex items-center justify-end gap-4 mt-6 pt-6 border-t border-surface-container-highest"
+            >
+              <button
+                class="font-body font-semibold text-on-surface-variant hover:text-secondary px-6 py-3 rounded-full transition-colors"
+                type="button"
+              >
+                Cancel
+              </button>
+              <button
+                class="btn-primary-gradient text-on-primary font-bold py-3 px-8 rounded-full flex items-center justify-center gap-2 transition-transform hover:scale-105 active:scale-95 shadow-lg shadow-primary/20"
+                type="submit"
+              >
+                Create List
+                <span class="material-symbols-outlined text-sm"
+                  >arrow_forward</span
+                >
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </main>
+    <script>
+      // Simple script to toggle visual state of custom toggle switches if needed beyond CSS
+      document.querySelectorAll(".toggle-checkbox").forEach((toggle) => {
+        toggle.addEventListener("change", function () {
+          // The CSS handles the visual transition based on :checked pseudo-class
+        });
+      });
+    </script>
+      <script src="/public/assets/js/reevio.js"></script>
+</body>
+</html>

@@ -1,0 +1,198 @@
+<!doctype html>
+<html class="dark" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Log Film - Reevio</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;700;800;900&family=Manrope:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+      rel="stylesheet"
+    />
+    <link href="/public/assets/css/reevio.css" rel="stylesheet" /></head>
+
+  <body class="bg-surface text-on-surface antialiased overflow-x-hidden reevio-page-log_selected">
+    <div class="cinematic-glow"></div>
+<?php
+$activeNav = 'films';
+$showAdminLink = ($showAdminLink ?? false);
+include __DIR__ . '/partials/navigation.html';
+?>
+<!-- Main content -->
+    <main class="relative z-10 ml-64 min-h-screen w-[calc(100%-16rem)] px-4 pb-24 pt-[8.7rem] lg:px-5 xl:px-6">
+      <div class="mx-auto max-w-[920px]">
+        <div class="mb-8">
+          <a
+            href="#"
+            class="mb-7 inline-flex items-center gap-2 rounded-full border border-outline-variant/20 bg-surface-container-low/70 px-4 py-2.5 font-label text-sm font-bold text-primary transition-colors hover:bg-surface-container-high hover:text-secondary"
+          >
+            <span class="material-symbols-outlined text-[20px]">arrow_back</span>
+            Back to search
+          </a>
+
+          <p class="mb-3 font-label text-xs font-bold uppercase tracking-[0.28em] text-secondary">
+            Log film
+          </p>
+
+          <h1 class="font-headline text-[28px] font-black tracking-tight text-on-surface">
+            Log your watch
+          </h1>
+        </div>
+
+        <div class="grid gap-6 lg:grid-cols-[280px_minmax(0,1fr)]">
+          <!-- Selected film -->
+          <aside class="rounded-3xl border border-outline-variant/15 bg-surface-container-low p-5 ambient-shadow">
+            <div class="relative mb-5 aspect-[2/3] overflow-hidden rounded-2xl bg-surface-container-highest poster-shadow ghost-border">
+              <img
+                alt="Dune: Part Two poster"
+                class="h-full w-full object-cover"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDAkCwsmKRuL5MUGjoApr5kDC3B6dMwDa0WSgKmco1jNaDLFEg5lrwsMzhFHkLBTxuzbPQVlsAgW-POAS4R8dDD0fUwTE6TLUK0__cwwx28CFpGe50jZKQgLhnhZDapC44bnzyFw-gyp-p_qDOzSf3E8BRAVCGvT_Pj6XbTQ1Bmwtl_JkLQhNGYTFdYvr2DUlqU8mXBHCrLXf0UaRE_AYklucKh-SK2LyzOhiCYTrLux2Us5hRavcsAj-DTDTJH3Wg0Q58csU4FmoOE"
+              />
+              <div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest/65 via-transparent to-transparent"></div>
+            </div>
+
+            <h2 class="font-headline text-2xl font-black leading-tight text-primary">
+              Dune: Part Two
+            </h2>
+            <p class="mt-2 font-label text-sm text-on-surface-variant">
+              2024 • Denis Villeneuve
+            </p>
+            <p class="mt-4 font-label text-xs font-bold uppercase tracking-wider text-secondary">
+              Sci-Fi • Adventure • Drama
+            </p>
+
+            <a
+              href="#"
+              class="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full border border-outline-variant/20 bg-surface-container-high px-4 py-3 font-label text-sm font-bold text-on-surface-variant transition-colors hover:text-primary"
+            >
+              <span class="material-symbols-outlined text-[18px]">sync_alt</span>
+              Change film
+            </a>
+          </aside>
+
+          <!-- Log form -->
+          <section class="rounded-3xl border border-outline-variant/15 bg-surface-container-low p-6 ambient-shadow">
+            <div class="grid gap-4 md:grid-cols-2">
+              <button
+                class="flex items-center justify-between rounded-2xl border border-outline-variant/15 bg-surface-container-lowest p-5 text-left transition-colors hover:bg-surface-container-high"
+                type="button"
+              >
+                <div>
+                  <p class="font-label text-xs font-bold uppercase tracking-wider text-on-surface-variant">
+                    Date watched
+                  </p>
+                  <p class="mt-2 flex items-center gap-2 font-body text-base text-on-surface">
+                    Today
+                    <span class="material-symbols-outlined text-[18px] text-secondary">edit_calendar</span>
+                  </p>
+                </div>
+
+                <span class="material-symbols-outlined text-on-surface-variant">
+                  chevron_right
+                </span>
+              </button>
+
+              <div
+                class="flex items-center justify-between rounded-2xl border border-outline-variant/15 bg-surface-container-lowest p-5"
+              >
+                <div>
+                  <p class="font-label text-xs font-bold uppercase tracking-wider text-on-surface-variant">
+                    Status
+                  </p>
+                  <p class="mt-2 font-body text-base text-on-surface">
+                    Watched
+                  </p>
+                </div>
+
+                <button
+                  class="relative h-7 w-14 rounded-full bg-primary transition-colors"
+                  type="button"
+                  aria-label="Watched toggle"
+                >
+                  <span class="absolute right-1 top-1 h-5 w-5 rounded-full bg-on-primary shadow-sm"></span>
+                </button>
+              </div>
+            </div>
+
+            <div class="mt-6 rounded-2xl border border-outline-variant/15 bg-surface-container-lowest p-6 text-center">
+              <label class="mb-4 block font-label text-xs font-bold uppercase tracking-wider text-on-surface-variant">
+                Your rating
+              </label>
+
+              <div class="flex items-center justify-center gap-2">
+                <button class="focus:outline-none" type="button">
+                  <span class="material-symbols-outlined star-glow text-5xl text-primary filled">star</span>
+                </button>
+                <button class="focus:outline-none" type="button">
+                  <span class="material-symbols-outlined star-glow text-5xl text-primary filled">star</span>
+                </button>
+                <button class="focus:outline-none" type="button">
+                  <span class="material-symbols-outlined star-glow text-5xl text-primary filled">star</span>
+                </button>
+                <button class="focus:outline-none" type="button">
+                  <span class="material-symbols-outlined star-glow text-5xl text-primary filled">star_half</span>
+                </button>
+                <button class="focus:outline-none" type="button">
+                  <span class="material-symbols-outlined text-5xl text-surface-container-highest">star</span>
+                </button>
+              </div>
+
+              <p class="mt-3 font-label text-sm font-bold text-secondary">
+                3.5 / 5.0
+              </p>
+            </div>
+
+            <button
+              class="mt-6 flex w-full items-center justify-center gap-2 rounded-2xl border border-outline-variant/15 bg-surface-container-lowest px-5 py-4 text-primary transition-colors hover:bg-surface-container-high hover:text-secondary"
+              type="button"
+            >
+              <span class="material-symbols-outlined text-[20px]">refresh</span>
+              <span class="font-label text-sm font-bold">I've watched this before</span>
+            </button>
+
+            <div class="mt-6">
+              <label class="mb-3 block font-label text-xs font-bold uppercase tracking-wider text-on-surface-variant">
+                Review
+              </label>
+              <textarea
+                class="input-recessed w-full resize-none rounded-2xl p-5 font-body text-base text-on-surface placeholder:text-on-surface-variant/50 focus:ring-0"
+                placeholder="Write your review... (Optional)"
+                rows="6"
+              ></textarea>
+            </div>
+
+            <div
+              class="mt-6 flex items-center justify-between rounded-2xl border border-outline-variant/15 bg-surface-container-lowest p-5"
+            >
+              <span class="font-label text-sm font-bold text-on-surface">
+                Contains spoilers
+              </span>
+
+              <button
+                class="relative h-7 w-14 rounded-full bg-surface-container-highest transition-colors hover:bg-surface-bright"
+                type="button"
+                aria-label="Spoilers toggle"
+              >
+                <span class="absolute left-1 top-1 h-5 w-5 rounded-full bg-on-surface-variant shadow-sm"></span>
+              </button>
+            </div>
+
+            <button
+              class="mt-7 flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#ffd79b] to-[#ffb300] py-4 font-headline text-lg font-bold tracking-wide text-[#281900] shadow-[0_10px_20px_rgba(255,215,155,0.2)] transition-transform hover:scale-[1.02] active:scale-95"
+              type="button"
+            >
+              <span class="material-symbols-outlined filled">check_circle</span>
+              Save Log
+            </button>
+          </section>
+        </div>
+      </div>
+    </main>
+      <script src="/public/assets/js/reevio.js"></script>
+</body>
+</html>

@@ -1,0 +1,261 @@
+<!doctype html>
+<html class="dark" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Reevio - User Watchlist</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;700;800;900&family=Manrope:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+      rel="stylesheet"
+    />
+    <link href="/public/assets/css/reevio.css" rel="stylesheet" /></head>
+
+  <body class="bg-surface text-on-surface antialiased overflow-x-hidden reevio-page-users_watchlist">
+    <div class="cinematic-glow"></div>
+<?php
+$activeNav = 'profile';
+$showAdminLink = ($showAdminLink ?? false);
+include __DIR__ . '/partials/navigation.html';
+?>
+<!-- Main content -->
+    <main class="relative z-10 ml-64 min-h-screen w-[calc(100%-16rem)] px-4 pb-24 pt-[8.7rem] lg:px-5 xl:px-6">
+      <div class="mx-auto max-w-[1120px]">
+        <a
+          href="#"
+          class="mb-8 inline-flex items-center gap-2 rounded-full border border-outline-variant/20 bg-surface-container-low/70 px-4 py-2.5 font-label text-sm font-bold text-primary transition-colors hover:bg-surface-container-high hover:text-secondary"
+        >
+          <span class="material-symbols-outlined text-[20px]">arrow_back</span>
+          Back to profile
+        </a>
+
+        <!-- Watchlist counter -->
+        <section class="mb-6 flex max-w-[860px] items-center justify-between rounded-2xl border border-outline-variant/15 bg-surface-container-low px-5 py-4">
+          <span class="font-label text-xs font-bold uppercase tracking-[0.2em] text-on-surface-variant">
+            Watchlist
+          </span>
+
+          <span class="font-label text-xs font-bold uppercase tracking-[0.2em] text-secondary">
+            48 total
+          </span>
+        </section>
+
+        <!-- Watchlist entries -->
+        <section class="max-w-[860px]">
+          <div class="space-y-4">
+            <!-- Film 1 -->
+            <article
+              class="group rounded-3xl border border-outline-variant/15 bg-surface-container-low p-4 ambient-shadow transition-colors hover:bg-surface-container-high"
+            >
+              <div class="flex items-center gap-5">
+                <div class="h-32 w-[86px] shrink-0 overflow-hidden rounded-xl poster-shadow ghost-border">
+                  <img
+                    alt="Dune: Part Two poster"
+                    class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuDAkCwsmKRuL5MUGjoApr5kDC3B6dMwDa0WSgKmco1jNaDLFEg5lrwsMzhFHkLBTxuzbPQVlsAgW-POAS4R8dDD0fUwTE6TLUK0__cwwx28CFpGe50jZKQgLhnhZDapC44bnzyFw-gyp-p_qDOzSf3E8BRAVCGvT_Pj6XbTQ1Bmwtl_JkLQhNGYTFdYvr2DUlqU8mXBHCrLXf0UaRE_AYklucKh-SK2LyzOhiCYTrLux2Us5hRavcsAj-DTDTJH3Wg0Q58csU4FmoOE"
+                  />
+                </div>
+
+                <div class="min-w-0 flex-1">
+                  <h2 class="truncate font-headline text-2xl font-black leading-tight text-on-surface transition-colors group-hover:text-primary">
+                    Dune: Part Two
+                  </h2>
+
+                  <p class="mt-1 text-sm text-on-surface-variant">
+                    2024 • 2h 46m
+                  </p>
+
+                  <div class="mt-3 flex flex-wrap items-center gap-2">
+                    <span class="material-symbols-outlined filled text-[17px] text-primary">star</span>
+                    <span class="font-label text-sm font-bold text-primary">4.5</span>
+                    <span class="text-xs text-on-surface-variant/70">124k ratings</span>
+                  </div>
+                </div>
+
+                <button
+                  class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-on-surface-variant transition-colors hover:bg-surface-container-lowest hover:text-primary"
+                  type="button"
+                  aria-label="More options"
+                >
+                  <span class="material-symbols-outlined">more_vert</span>
+                </button>
+              </div>
+            </article>
+
+            <!-- Film 2 -->
+            <article
+              class="group rounded-3xl border border-outline-variant/15 bg-surface-container-low p-4 ambient-shadow transition-colors hover:bg-surface-container-high"
+            >
+              <div class="flex items-center gap-5">
+                <div class="h-32 w-[86px] shrink-0 overflow-hidden rounded-xl poster-shadow ghost-border">
+                  <img
+                    alt="Poor Things poster"
+                    class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuAnCiq7XcI4qV2QsbViwW976U3wsriRpuCnB5TL9DP84G-LcTO_38BnV6dwuj31j40xEbIm6U16Yr0mZRls1dsB6gO_hII7TsYk_vcso8QkFtlB5sbzuIYpoFMW2XJ61SYdNelYSlCsSDda-WNRO1olCFin6AttZJ-9tjEC3GwvaEA40th7jm9RnpfspNo9sA_RzQajJPrMVOOENCTusxhBlXjQwGRERwA69-BhsrHpMvHwEHo_XtXoX7ScExdSCXcP3v8osJRsgt0C"
+                  />
+                </div>
+
+                <div class="min-w-0 flex-1">
+                  <h2 class="truncate font-headline text-2xl font-black leading-tight text-on-surface transition-colors group-hover:text-primary">
+                    Poor Things
+                  </h2>
+
+                  <p class="mt-1 text-sm text-on-surface-variant">
+                    2023 • 2h 21m
+                  </p>
+
+                  <div class="mt-3 flex flex-wrap items-center gap-2">
+                    <span class="material-symbols-outlined filled text-[17px] text-primary">star</span>
+                    <span class="font-label text-sm font-bold text-primary">4.2</span>
+                    <span class="text-xs text-on-surface-variant/70">86k ratings</span>
+                  </div>
+                </div>
+
+                <button
+                  class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-on-surface-variant transition-colors hover:bg-surface-container-lowest hover:text-primary"
+                  type="button"
+                  aria-label="More options"
+                >
+                  <span class="material-symbols-outlined">more_vert</span>
+                </button>
+              </div>
+            </article>
+
+            <!-- Film 3 -->
+            <article
+              class="group rounded-3xl border border-outline-variant/15 bg-surface-container-low p-4 ambient-shadow transition-colors hover:bg-surface-container-high"
+            >
+              <div class="flex items-center gap-5">
+                <div class="h-32 w-[86px] shrink-0 overflow-hidden rounded-xl poster-shadow ghost-border">
+                  <img
+                    alt="Arrival poster"
+                    class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuDSndE9aE_Cc634QvUB0eKB-zXMqgAQfdJcpAcR_r0k9UbTZu910IPtmvWIO4cT2524AoChiv02OK7QmBY7DKYrPzyU-7Ew94pqOPv9JkHNDcKHNKSev0kA3UHGvqyxjRjoDW6vj92-vHk98xsvfxTj6F5tT__CcCfINjQ9p8wq1pbD4K9Qm4RejB38dESKXvmNPf9B8iNaIxzaW6dK6Prfvon296z71jILppqvXi4DYs7zkxm1obbeX-mYE5_s2WzmndCsIluAfehi"
+                  />
+                </div>
+
+                <div class="min-w-0 flex-1">
+                  <h2 class="truncate font-headline text-2xl font-black leading-tight text-on-surface transition-colors group-hover:text-primary">
+                    Arrival
+                  </h2>
+
+                  <p class="mt-1 text-sm text-on-surface-variant">
+                    2016 • 1h 56m
+                  </p>
+
+                  <div class="mt-3 flex flex-wrap items-center gap-2">
+                    <span class="material-symbols-outlined filled text-[17px] text-primary">star</span>
+                    <span class="font-label text-sm font-bold text-primary">4.1</span>
+                    <span class="text-xs text-on-surface-variant/70">152k ratings</span>
+                  </div>
+                </div>
+
+                <button
+                  class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-on-surface-variant transition-colors hover:bg-surface-container-lowest hover:text-primary"
+                  type="button"
+                  aria-label="More options"
+                >
+                  <span class="material-symbols-outlined">more_vert</span>
+                </button>
+              </div>
+            </article>
+
+            <!-- Film 4 -->
+            <article
+              class="group rounded-3xl border border-outline-variant/15 bg-surface-container-low p-4 ambient-shadow transition-colors hover:bg-surface-container-high"
+            >
+              <div class="flex items-center gap-5">
+                <div class="h-32 w-[86px] shrink-0 overflow-hidden rounded-xl poster-shadow ghost-border">
+                  <img
+                    alt="Sacred Deer poster"
+                    class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuCINa2nk1mCWVujUoA2nntdcbAOnfKHNRQADLVU0UlTO9YpLRsJWMbQecXDksnvNHEs4qPDteSE0LRwYO-xkeiW1oVVlH4vWjxak6H2KfUd6ksOppTjLUYD9lN__e2r2XDfTfPpxklO9yG374lVSNz1gIv1B9AlQSJIM1OpAGy2mWwnrp_G2HILkfLD4WXvEGzv5XMTdiai9TZ8utoxIbYM-red1uS0FtFB0ZLChrDK-U8ntg3Mj91WeLZLNoiPp7PRS1ITci2ZghPK"
+                  />
+                </div>
+
+                <div class="min-w-0 flex-1">
+                  <h2 class="truncate font-headline text-2xl font-black leading-tight text-on-surface transition-colors group-hover:text-primary">
+                    Sacred Deer
+                  </h2>
+
+                  <p class="mt-1 text-sm text-on-surface-variant">
+                    2017 • 2h 01m
+                  </p>
+
+                  <div class="mt-3 flex flex-wrap items-center gap-2">
+                    <span class="material-symbols-outlined filled text-[17px] text-primary">star</span>
+                    <span class="font-label text-sm font-bold text-primary">3.8</span>
+                    <span class="text-xs text-on-surface-variant/70">42k ratings</span>
+                  </div>
+                </div>
+
+                <button
+                  class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-on-surface-variant transition-colors hover:bg-surface-container-lowest hover:text-primary"
+                  type="button"
+                  aria-label="More options"
+                >
+                  <span class="material-symbols-outlined">more_vert</span>
+                </button>
+              </div>
+            </article>
+
+            <!-- Film 5 -->
+            <article
+              class="group rounded-3xl border border-outline-variant/15 bg-surface-container-low p-4 ambient-shadow transition-colors hover:bg-surface-container-high"
+            >
+              <div class="flex items-center gap-5">
+                <div class="h-32 w-[86px] shrink-0 overflow-hidden rounded-xl poster-shadow ghost-border">
+                  <img
+                    alt="Challengers poster"
+                    class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuCoBxueiGUdGbjLx1t-iFOdD7UOJWOlPy79rfcu1aRFE5n27qWUjp_3l45eOtjDJg4hutiKCAcjitf8yelTKS74Q9t_DuXlG6607r8n3qaMiVJ14vaAOPGWwrB_y3f_YOjAWWNITe6aNVxDdpu2doCzFh0vkkXpvvLrtUC9aFecL7E41suz3WTABVC_2MIFX8nc_BRXKdPLwCzrcoi_VYPYON5avEoVfvdTeYccxIbMI-pEruPsIoycNiRr4kPlem2Uc21EUkxGDE4T"
+                  />
+                </div>
+
+                <div class="min-w-0 flex-1">
+                  <h2 class="truncate font-headline text-2xl font-black leading-tight text-on-surface transition-colors group-hover:text-primary">
+                    Challengers
+                  </h2>
+
+                  <p class="mt-1 text-sm text-on-surface-variant">
+                    2024 • 2h 11m
+                  </p>
+
+                  <div class="mt-3 flex flex-wrap items-center gap-2">
+                    <span class="material-symbols-outlined filled text-[17px] text-primary">star</span>
+                    <span class="font-label text-sm font-bold text-primary">4.0</span>
+                    <span class="text-xs text-on-surface-variant/70">98k ratings</span>
+                  </div>
+                </div>
+
+                <button
+                  class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-on-surface-variant transition-colors hover:bg-surface-container-lowest hover:text-primary"
+                  type="button"
+                  aria-label="More options"
+                >
+                  <span class="material-symbols-outlined">more_vert</span>
+                </button>
+              </div>
+            </article>
+          </div>
+
+          <div class="mt-8 flex justify-center">
+            <button
+              class="inline-flex items-center gap-2 rounded-full border border-secondary/35 px-8 py-3 font-label text-sm font-bold uppercase tracking-widest text-secondary transition-colors hover:border-secondary/70 hover:bg-secondary/10"
+              type="button"
+            >
+              <span class="material-symbols-outlined text-[18px]">expand_more</span>
+              Load more
+            </button>
+          </div>
+        </section>
+      </div>
+    </main>
+      <script src="/public/assets/js/reevio.js"></script>
+</body>
+</html>

@@ -1,0 +1,200 @@
+<!doctype html>
+<html class="dark" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Reevio - Community Lists</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;700;900&amp;family=Manrope:wght@400;500;600;700&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link href="/public/assets/css/reevio.css" rel="stylesheet" /></head>
+  <body class="bg-surface text-on-surface antialiased min-h-screen flex reevio-page-feed_lists">
+<?php
+$activeNav = 'lists';
+$showAdminLink = ($showAdminLink ?? false);
+include __DIR__ . '/partials/navigation.html';
+?>
+<!-- Main Content -->
+    <main class="relative z-10 ml-64 min-h-screen w-[calc(100%-16rem)] px-4 pb-24 pt-[8.7rem] lg:px-5 xl:px-6">
+      <div class="max-w-[1120px]">
+        <header class="mb-7">
+          <h1 class="font-headline text-[28px] font-black tracking-tight text-on-surface">
+            Community Lists
+          </h1>
+        </header>
+      <!-- Bento Grid / Lists -->
+      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-10">
+        <!-- List Card 1 -->
+        <article data-href="list_details.html"
+          class="group relative block bg-surface-container-low rounded-2xl p-6 ghost-border transition-all duration-500 hover:-translate-y-2 hover:bg-surface-container-high cursor-pointer ambient-shadow"
+        >
+          <div class="relative h-64 mb-6 perspective-1000">
+            <!-- Layered Posters -->
+            <div class="absolute inset-0 flex items-end justify-center pb-4">
+              <img
+                alt="Poster 3"
+                class="absolute w-32 h-48 object-cover rounded-lg shadow-2xl -rotate-12 -ml-20 opacity-60 group-hover:rotate-[-16deg] group-hover:-ml-24 transition-all duration-500"
+                data-alt="Cinematic movie poster showing a lone figure walking down a rainy neon-lit street at night, cyberpunk aesthetic, high contrast, vivid teal and orange colors."
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuA7mlZzQcL3xcPv1SnHVXd0jstpjImn85sCSVErXaK8OrBzrECFKt3RFS0NJBWx3A309gsTiKfukdS8cgEGIYfgFW3gArW3jNaq6U8QqWYmEAoVBDZFEJpC9zRnPgVb7B8PAFeD7Pb-Jic9hRY-cdqV5doyO2Aaosi5GI0rpsUkmRmeYjyJ8H--OZNGtxKPjpaM-QITmyw3z1zOJHjiFMSEtfvkq4zbdht3TVYUA6fXnMm-SgzDLNYMMMhxN4SKiAMID358wvGS41lA"
+              />
+              <img
+                alt="Poster 2"
+                class="absolute w-36 h-52 object-cover rounded-lg shadow-2xl rotate-6 ml-20 opacity-80 group-hover:rotate-[12deg] group-hover:ml-24 transition-all duration-500"
+                data-alt="Abstract cinematic poster featuring a giant glowing orb hovering over a brutalist concrete structure, moody lighting, dark atmospheric sky."
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuC5wAWAKqQ7JEZBdpGm11KMF0xYf9jMkox3a2hv5PfATp4jCS1pB82SEO5CzD9-Y2xHPhKXqCsG8UoYnmNGvrkx2-8MIG9Q388ivygz4tQeZ5gRzwiGVD2BTUhGdOJu6VutZFpFoMjy8upCBFXNxPp71RHT9TxAV71IWqoJAhZvHQukuyWHhsN3ZQFxo1nM9ntnFX8KOTB9zKdS97Tysd79rJz0O9HhKvvsbtWwfW6L0SvdfilWk6wLZ0hYv2sB0qTNXrV07Pitir2J"
+              />
+              <img
+                alt="Poster 1"
+                class="absolute w-40 h-56 object-cover rounded-lg shadow-2xl z-10 group-hover:-translate-y-4 transition-all duration-500 ambient-shadow border border-outline-variant/20"
+                data-alt="Striking minimalist movie poster with a single bright red flower blooming against a pitch black background, elegant editorial design."
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDnw1NFQsB2ejj-hjoJH-Cw-E2awMafBVvqJABs9T9JrmjAHZ-elRxi6H_CxTyx9nWfNHX5pXNgB1xhgodkwnJVaX4h6GCBkl3i-c4d2mYrOZ3AnGvcGmujugkmgBVyQSRODBdko2wOcC9LsrctCcDVUmMGfr4q5YXDZjiky99gt1sqHJbAgjucUEaStNeKrOxYDBJB2TDxjiKy9l3AuRDRG3EwV-DZGPmLypqAdrO2_qF6skHgnTrv60b2ye3U6V-j9UMwBg4alVbP"
+              />
+            </div>
+            <!-- Badge -->
+            <div
+              class="absolute top-0 right-0 glass-panel px-3 py-1 rounded-full text-xs font-bold text-primary font-body uppercase tracking-widest z-20 shadow-lg"
+            >
+              15 Films
+            </div>
+          </div>
+          <div class="space-y-3 relative z-10">
+            <h2
+              class="font-headline text-2xl font-bold text-on-surface group-hover:text-primary transition-colors line-clamp-2"
+            >
+              Neon Noir &amp; Cyberpunk Visions
+            </h2>
+            <div class="flex items-center gap-3">
+              <img
+                alt="Curator Avatar"
+                class="w-8 h-8 rounded-full object-cover ghost-border"
+                data-alt="Small portrait of a man with short hair wearing a dark turtleneck, lit with cinematic moody lighting against a black background."
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuARqaba7MNmmNsCCiEQdSJBo6yx7YGXfFeCiScPy67M9nEHuTbHVW3YI3KPldWWHYrhO9GXblFZGvTV2rHoNUcmGiOU-Ce2TJ0-8F9U7gdpZICXzvOoRSAj7DMwxwKbqyuvk352BMN7bOt34C8_Aj5y_WHZFKZyj2am39sxghcnSgwFGDL5Ow-X1x9sow3VjaED-7dwT-3D0z7IGZhTmadS_wtmWVH5SAxiyd0yx6wxGpgxoXJyAwmHkbGs65jOrfIx9rq3Dw2J2n4l"
+              />
+              <span class="font-body text-sm text-on-surface-variant"
+                >Curated by
+                <span class="text-on-surface font-medium"
+                  >Elena Rostova</span
+                ></span
+              >
+            </div>
+          </div>
+        </article>
+        <!-- List Card 2 -->
+        <article data-href="list_details.html"
+          class="group relative block bg-surface-container-low rounded-2xl p-6 ghost-border transition-all duration-500 hover:-translate-y-2 hover:bg-surface-container-high cursor-pointer ambient-shadow"
+        >
+          <div class="relative h-64 mb-6 perspective-1000">
+            <!-- Layered Posters -->
+            <div class="absolute inset-0 flex items-end justify-center pb-4">
+              <img
+                alt="Poster 3"
+                class="absolute w-32 h-48 object-cover rounded-lg shadow-2xl -rotate-12 -ml-20 opacity-60 group-hover:rotate-[-16deg] group-hover:-ml-24 transition-all duration-500"
+                data-alt="Vintage style horror movie poster featuring an old creepy house silhouetted against a full moon, dark desaturated colors, eerie mood."
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCjJmPI72UUBUJMt0RV-UYQFWjq_pvgqgzj5Y_Gkzy5YKhcGXmIjJiyj1-FmJxq1Z4aulcv1slblmHDFGjMqvAEceT0BH-CbSVGPJtA-CyoX-EmIeF60vNip52b9MqdNevT3x93KXdc6js4Om4dT7VO7LhhBUTD_DFJVG7mLrx-Kl0_OotitlC1hRQro2L4Mlm9dhgaiYM8cSuDpEmGsUZ73tfEZcj_vLN6WlJXsslF32omg_irBl7eNhQVNRviU-Fdkn5Ycnsrtiu7"
+              />
+              <img
+                alt="Poster 2"
+                class="absolute w-36 h-52 object-cover rounded-lg shadow-2xl rotate-6 ml-20 opacity-80 group-hover:rotate-[12deg] group-hover:ml-24 transition-all duration-500"
+                data-alt="Cinematic frame of a dark dense forest at twilight, heavy fog rolling through the trees, creating a mysterious suspenseful atmosphere."
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCIyaBR1Nb4ZfyJjl7xjNwe8T9sb2IozKgXqL1nSKGgCLO-fFPnLeDtbhQAEq2gInY6E3yogJOY8MfIveIvM4opE52HmlODIe67JBeHWyZVyGO-ioaiFN09xJodpol-y4ReiOHYLrCONgFEahzeAEEOeugb1I_NpvHkYN5XJgzifUrrO3GissDfqty3EmsbHCYKJZILJo1qHYyll0ANPJLUlpaG16FEVaaXwe59mNyylXE41pAuP25xOSPKgvbGsCheZxK4MuGsDug3"
+              />
+              <img
+                alt="Poster 1"
+                class="absolute w-40 h-56 object-cover rounded-lg shadow-2xl z-10 group-hover:-translate-y-4 transition-all duration-500 ambient-shadow border border-outline-variant/20"
+                data-alt="Dramatic close up of a woman's eye looking terrified in the dark, lit only by a harsh slit of light, intense psychological thriller aesthetic."
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuAVCVc3_7kVT0l8JwM3dC7K2nB20Val092oa9cOIrWzgyDdslOyuAok3QSjlxRRzRx7cTHR2aQTmQc9bROxb96XixpHzA7yzNq5N430CCW3CiR_HizN0oKkXzM63zCoiXNy5yZ2wuKgG786KO1c7FplGwvPbmwvZk76MhmhYc9o2TtuzZI2EHPKTAC0fRnZWxP7lwDWdomrk-v4c0W61RT_H_PIYHBP0IU-F5hi4RF4lx-j-DQDPuKrHsSn2s9tXZCMsZJIsRIxwMZN"
+              />
+            </div>
+            <!-- Badge -->
+            <div
+              class="absolute top-0 right-0 glass-panel px-3 py-1 rounded-full text-xs font-bold text-primary font-body uppercase tracking-widest z-20 shadow-lg"
+            >
+              42 Films
+            </div>
+          </div>
+          <div class="space-y-3 relative z-10">
+            <h2
+              class="font-headline text-2xl font-bold text-on-surface group-hover:text-primary transition-colors line-clamp-2"
+            >
+              The Psychological Thriller Masterclass
+            </h2>
+            <div class="flex items-center gap-3">
+              <img
+                alt="Curator Avatar"
+                class="w-8 h-8 rounded-full object-cover ghost-border"
+                data-alt="Professional avatar photo of a woman smiling subtly, lit softly in a dark studio setting, giving a sense of authority and editorial taste."
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuB3zo3uPU7Q3lyymCx7x4U16lBIaYH3Vc-yoQCDaHPIhau2xFQ231B3zkCftrBVQfKT1eQlHlnLn1mqARqGvJWhA8uG0bE75-YO9mxGhBiaWYxzcUEmxrQPS60MU3y8u77xVPJrrJ1o15cUL2AGeIQ3s4YurKocDGOqUfDNOIKCMjiW2VgbX75dcuUX367ZROGacHb3KSES3eZhBsgiCc7DyLEefG1iWUbNkqcc0Jk82jr6Xc__LqXdsjeME4CzrOFcwMy35p4xBfjX"
+              />
+              <span class="font-body text-sm text-on-surface-variant"
+                >Curated by
+                <span class="text-on-surface font-medium"
+                  >David Chen</span
+                ></span
+              >
+            </div>
+          </div>
+        </article>
+        <!-- List Card 3 -->
+        <article data-href="list_details.html"
+          class="group relative block bg-surface-container-low rounded-2xl p-6 ghost-border transition-all duration-500 hover:-translate-y-2 hover:bg-surface-container-high cursor-pointer ambient-shadow"
+        >
+          <div class="relative h-64 mb-6 perspective-1000">
+            <!-- Layered Posters -->
+            <div class="absolute inset-0 flex items-end justify-center pb-4">
+              <img
+                alt="Poster 3"
+                class="absolute w-32 h-48 object-cover rounded-lg shadow-2xl -rotate-12 -ml-20 opacity-60 group-hover:rotate-[-16deg] group-hover:-ml-24 transition-all duration-500"
+                data-alt="Wide cinematic shot of an empty diner at night, neon lights glowing through the windows, creating a sense of isolation and americana."
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuB1EAyXOlh4oKulDyytGbFSRGlWqDelR34kyoHekh-Oef7ADkidbf9dcyCqUPE6eo96aLsS8xiEPuEWtv80H2V5Hk86T1efATOKlPGAo7f8jFM0s7P5LBx_pVyrK_fgQtAK8ZjQTuDalFNzxs5wNu3hCB5KOvCj983sCkc5rBsxPJithZfn83MU8X-nBPC9f4TL3Z-05XHAvVyjedbB0ujKkSWUYzsqmTyzTnbAgFfnyRwwRPlRKatuMiRYnmmAM5aqxNh43WDYUf-3"
+              />
+              <img
+                alt="Poster 2"
+                class="absolute w-36 h-52 object-cover rounded-lg shadow-2xl rotate-6 ml-20 opacity-80 group-hover:rotate-[12deg] group-hover:ml-24 transition-all duration-500"
+                data-alt="Cinematic shot looking down a long empty desert highway stretching to the horizon under a dusty golden hour sky, indie film aesthetic."
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBTVuuxPJTGbpr7S9aeb7iz50DRBpV3CAe98ibBR9ghNq5Vw3DHNN179fVyBzTKSEjQbvMevfixZka3Cr5_Kf8kyN1RTHNh84PsRE18URuawvrwcB-4nS3O-E6ztit-oHnvU0_ZMnVNn_sl7a44XkTgC8JMYQS8cZRNIooYiSYguf2d0zVKt9cTVu5okOnXowjc_kqy97OFpyB79ofVAvnoTzfmH7gFEqcPJH5Oh2tRuE3u_McID_grZQPmVDr29MPQqp0Z2x934CXR"
+              />
+              <img
+                alt="Poster 1"
+                class="absolute w-40 h-56 object-cover rounded-lg shadow-2xl z-10 group-hover:-translate-y-4 transition-all duration-500 ambient-shadow border border-outline-variant/20"
+                data-alt="Indie cinema poster showing an old vintage camera on a tripod in an empty sunlit room, nostalgic, sepia toned, soft focus."
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuC50sKbN3gvLsBV5gBm5Nfpntw536Hj5gAft2ozdKwMewQt8J1QG0XNrkK3A4oUB5cEpSKAGztiT1cv1nilb_p2EANsNz9WHhophPdB-71sfvlujsjJWViVoDgiZ60Cp47kaUDPqn9ZOTDFwjBtqHNK1Gzr1ZRAOl1oGrAuuedhImdrA0QLCH5Sd521_yn-rQvb1ij3gtztE-FlKwxXcdjYQim5kKWJLzZ4xx8Qt553yyPIJDyGT41GXvPVRhQV5nYdbGRhecU3814W"
+              />
+            </div>
+            <!-- Badge -->
+            <div
+              class="absolute top-0 right-0 glass-panel px-3 py-1 rounded-full text-xs font-bold text-primary font-body uppercase tracking-widest z-20 shadow-lg"
+            >
+              108 Films
+            </div>
+          </div>
+          <div class="space-y-3 relative z-10">
+            <h2
+              class="font-headline text-2xl font-bold text-on-surface group-hover:text-primary transition-colors line-clamp-2"
+            >
+              American Independent Cinema: 90s Era
+            </h2>
+            <div class="flex items-center gap-3">
+              <div
+                class="w-8 h-8 rounded-full bg-secondary text-on-secondary flex items-center justify-center font-bold text-sm ghost-border"
+              >
+                MC
+              </div>
+              <span class="font-body text-sm text-on-surface-variant"
+                >Curated by
+                <span class="text-on-surface font-medium"
+                  >Marcus Cole</span
+                ></span
+              >
+            </div>
+          </div>
+        </article>
+      </div>
+    </main>
+      <script src="/public/assets/js/reevio.js"></script>
+</body>
+</html>

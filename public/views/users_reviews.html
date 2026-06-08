@@ -1,0 +1,210 @@
+<!doctype html>
+<html class="dark" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Reevio - User Reviews</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;700;800;900&family=Manrope:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+      rel="stylesheet"
+    />
+    <link href="/public/assets/css/reevio.css" rel="stylesheet" /></head>
+
+  <body class="bg-surface text-on-surface antialiased overflow-x-hidden reevio-page-users_reviews">
+    <div class="cinematic-glow"></div>
+<?php
+$activeNav = 'profile';
+$showAdminLink = ($showAdminLink ?? false);
+include __DIR__ . '/partials/navigation.html';
+?>
+<!-- Main content -->
+    <main class="relative z-10 ml-64 min-h-screen w-[calc(100%-16rem)] px-4 pb-24 pt-[8.7rem] lg:px-5 xl:px-6">
+      <div class="mx-auto max-w-[1120px]">
+        <a
+          href="#"
+          class="mb-8 inline-flex items-center gap-2 rounded-full border border-outline-variant/20 bg-surface-container-low/70 px-4 py-2.5 font-label text-sm font-bold text-primary transition-colors hover:bg-surface-container-high hover:text-secondary"
+        >
+          <span class="material-symbols-outlined text-[20px]">arrow_back</span>
+          Back to profile
+        </a>
+
+        <!-- Reviews counter -->
+        <section class="mb-6 flex max-w-[860px] items-center justify-between rounded-2xl border border-outline-variant/15 bg-surface-container-low px-5 py-4">
+          <span class="font-label text-xs font-bold uppercase tracking-[0.2em] text-on-surface-variant">
+            Reviews
+          </span>
+
+          <span class="font-label text-xs font-bold uppercase tracking-[0.2em] text-secondary">
+            3 total
+          </span>
+        </section>
+
+        <!-- Reviews entries -->
+        <section class="max-w-[860px]">
+          <div class="space-y-4">
+            <!-- Review 1 -->
+            <article
+              class="group rounded-3xl border border-outline-variant/15 bg-surface-container-low p-5 ambient-shadow transition-colors hover:bg-surface-container-high"
+            >
+              <div class="flex gap-5">
+                <div class="h-36 w-24 shrink-0 overflow-hidden rounded-xl poster-shadow ghost-border">
+                  <img
+                    alt="Dune: Part Two poster"
+                    class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuCbeKc1RyJit1qy2kFg87L23CUg0SLRvd9iHmVa-0asp5D3YyjM9cQHtAEZ8LsLN299jn23_CF9qH6j9p5xPmUJsLUt_GQ1PqG3-JEJywR-o4p4C2SAIF6QtuSKQ2Kp1MKTrfpFKHc67bp2Nya_0PgWN8MG7kmYebKyeCLBGu_EZkXpziUgwpM1XicXpEznydOh9Wbs4H4qa_xnXyphxWuBVsbuu3ew2snJAMLAoizQq0kqfqQCoNL1UT05haSs2AOlbFKkLLtSrOB0"
+                  />
+                </div>
+
+                <div class="min-w-0 flex-1">
+                  <div class="mb-2 flex flex-wrap items-baseline gap-2">
+                    <h2 class="font-headline text-2xl font-black leading-tight text-on-surface transition-colors group-hover:text-primary">
+                      Dune: Part Two
+                    </h2>
+                    <span class="font-label text-sm text-on-surface-variant">2024</span>
+                  </div>
+
+                  <div class="mb-4 flex items-center gap-1 text-primary">
+                    <span class="material-symbols-outlined filled text-[18px]">star</span>
+                    <span class="material-symbols-outlined filled text-[18px]">star</span>
+                    <span class="material-symbols-outlined filled text-[18px]">star</span>
+                    <span class="material-symbols-outlined filled text-[18px]">star</span>
+                    <span class="material-symbols-outlined filled text-[18px]">star</span>
+                  </div>
+
+                  <p class="line-clamp-4 text-base leading-relaxed text-on-surface-variant">
+                    An absolute cinematic triumph. Villeneuve delivers a stunning visual spectacle
+                    that improves upon the first part in every way.
+                  </p>
+
+                  <div class="mt-5 flex items-center gap-3 font-label text-xs text-on-surface-variant">
+                    <span class="inline-flex items-center gap-1">
+                      <span class="material-symbols-outlined text-[16px] text-secondary">favorite</span>
+                      128 likes
+                    </span>
+
+                    <span class="h-1 w-1 rounded-full bg-outline-variant"></span>
+
+                    <span>Reviewed 2 days ago</span>
+                  </div>
+                </div>
+              </div>
+            </article>
+
+            <!-- Review 2 -->
+            <article
+              class="group rounded-3xl border border-outline-variant/15 bg-surface-container-low p-5 ambient-shadow transition-colors hover:bg-surface-container-high"
+            >
+              <div class="flex gap-5">
+                <div class="h-36 w-24 shrink-0 overflow-hidden rounded-xl poster-shadow ghost-border">
+                  <img
+                    alt="Past Lives poster"
+                    class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuCjmjOBaAHt3E3HOybQjTw-kyLevPYt9IsZCMRqEnGVXBxlRbOAS82zGP_DrWrimo4reW6UqthfO8A0A8q7r5GM8KxgIg3PU6uyT2X5cRr5OHEBcMXUF4lMa01Y0ku0VRI3QHaLc4DPCmWtgyLKZ7IME1wHX_nHEXhOu9kUK1UjlhUi0edL5Mu51Nq_LZs4WHdhcYKk_pPiYWpUympkJZB-tutrMor91Cts0NHFRT3b7JM3ai-_wRwCM92nJCLimBcSDXIWN9k9BKPs"
+                  />
+                </div>
+
+                <div class="min-w-0 flex-1">
+                  <div class="mb-2 flex flex-wrap items-baseline gap-2">
+                    <h2 class="font-headline text-2xl font-black leading-tight text-on-surface transition-colors group-hover:text-primary">
+                      Past Lives
+                    </h2>
+                    <span class="font-label text-sm text-on-surface-variant">2023</span>
+                  </div>
+
+                  <div class="mb-4 flex items-center gap-1 text-primary">
+                    <span class="material-symbols-outlined filled text-[18px]">star</span>
+                    <span class="material-symbols-outlined filled text-[18px]">star</span>
+                    <span class="material-symbols-outlined filled text-[18px]">star</span>
+                    <span class="material-symbols-outlined filled text-[18px]">star</span>
+                    <span class="material-symbols-outlined filled text-[18px]">star</span>
+                  </div>
+
+                  <p class="line-clamp-4 text-base leading-relaxed text-on-surface-variant">
+                    A deeply moving and restrained meditation on fate, love, and the lives
+                    we don't lead. Beautifully written and acted.
+                  </p>
+
+                  <div class="mt-5 flex items-center gap-3 font-label text-xs text-on-surface-variant">
+                    <span class="inline-flex items-center gap-1">
+                      <span class="material-symbols-outlined text-[16px] text-secondary">favorite</span>
+                      94 likes
+                    </span>
+
+                    <span class="h-1 w-1 rounded-full bg-outline-variant"></span>
+
+                    <span>Reviewed 5 days ago</span>
+                  </div>
+                </div>
+              </div>
+            </article>
+
+            <!-- Review 3 -->
+            <article
+              class="group rounded-3xl border border-outline-variant/15 bg-surface-container-low p-5 ambient-shadow transition-colors hover:bg-surface-container-high"
+            >
+              <div class="flex gap-5">
+                <div class="h-36 w-24 shrink-0 overflow-hidden rounded-xl poster-shadow ghost-border">
+                  <img
+                    alt="Poor Things poster"
+                    class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuAzF5J8iXjmmbyi_5cb7NOAqXKZwkinHBkhgF7SPMSKIXCeRvk2btW8slQL-mXeMf-KBCETm1E9P7BnDy-I3LTGmR5KTplbNETXTFLvSkKQYkfjhfg8kbTHFtmyuIgGGYZMBB9Hd07ecLP20kp2ubf3UiB1TUSRgZwteG28uCTdgMAkAlws8VbiQpeXQKWSQgSouj4R_FaqXJV8Oh7oChTuCaC1VrBdvv8J-Bwdm2asP--jRh7CafVZYuV2c4ZePrf2u_k1TfIrVDwW"
+                  />
+                </div>
+
+                <div class="min-w-0 flex-1">
+                  <div class="mb-2 flex flex-wrap items-baseline gap-2">
+                    <h2 class="font-headline text-2xl font-black leading-tight text-on-surface transition-colors group-hover:text-primary">
+                      Poor Things
+                    </h2>
+                    <span class="font-label text-sm text-on-surface-variant">2023</span>
+                  </div>
+
+                  <div class="mb-4 flex items-center gap-1 text-primary">
+                    <span class="material-symbols-outlined filled text-[18px]">star</span>
+                    <span class="material-symbols-outlined filled text-[18px]">star</span>
+                    <span class="material-symbols-outlined filled text-[18px]">star</span>
+                    <span class="material-symbols-outlined filled text-[18px]">star</span>
+                    <span class="material-symbols-outlined text-[18px]">star</span>
+                  </div>
+
+                  <p class="line-clamp-4 text-base leading-relaxed text-on-surface-variant">
+                    Wildly inventive, hilarious, and bizarre. Emma Stone gives the performance
+                    of her career in this strange coming-of-age tale.
+                  </p>
+
+                  <div class="mt-5 flex items-center gap-3 font-label text-xs text-on-surface-variant">
+                    <span class="inline-flex items-center gap-1">
+                      <span class="material-symbols-outlined text-[16px] text-secondary">favorite</span>
+                      72 likes
+                    </span>
+
+                    <span class="h-1 w-1 rounded-full bg-outline-variant"></span>
+
+                    <span>Reviewed 1 week ago</span>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <div class="mt-8 flex justify-center">
+            <button
+              class="inline-flex items-center gap-2 rounded-full border border-secondary/35 px-8 py-3 font-label text-sm font-bold uppercase tracking-widest text-secondary transition-colors hover:border-secondary/70 hover:bg-secondary/10"
+              type="button"
+            >
+              <span class="material-symbols-outlined text-[18px]">expand_more</span>
+              Load more
+            </button>
+          </div>
+        </section>
+      </div>
+    </main>
+      <script src="/public/assets/js/reevio.js"></script>
+</body>
+</html>

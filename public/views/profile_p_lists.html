@@ -1,0 +1,372 @@
+<!doctype html>
+<html class="dark" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Reevio - Profile Lists</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;700;800;900&family=Manrope:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+      rel="stylesheet"
+    />
+    <link href="/public/assets/css/reevio.css" rel="stylesheet" /></head>
+
+  <body class="bg-surface text-on-surface antialiased overflow-x-hidden reevio-page-profile_p_lists">
+    <div class="cinematic-glow"></div>
+<?php
+$activeNav = 'profile';
+$showAdminLink = ($showAdminLink ?? false);
+include __DIR__ . '/partials/navigation.html';
+?>
+<!-- Main content -->
+    <main class="relative z-10 ml-64 min-h-screen w-[calc(100%-16rem)] px-4 pb-24 pt-[8.7rem] lg:px-5 xl:px-6">
+      <div class="mx-auto max-w-[1120px]">
+        <!-- Profile tabs -->
+        <nav
+          class="mb-10 flex w-fit items-center gap-2 rounded-full border border-outline-variant/20 bg-surface-container-low px-2 py-2"
+          aria-label="Profile sections"
+        >
+          <a
+            class="rounded-full px-5 py-2.5 font-label text-sm font-bold text-on-surface-variant transition-colors hover:bg-surface-container-high hover:text-on-surface"
+            href="profile_p_main.html"
+          >
+            Profile
+          </a>
+
+          <a
+            class="rounded-full px-5 py-2.5 font-label text-sm font-bold text-on-surface-variant transition-colors hover:bg-surface-container-high hover:text-on-surface"
+            href="profile_p_diary.html"
+          >
+            Diary
+          </a>
+
+          <a
+            class="rounded-full bg-primary px-5 py-2.5 font-label text-sm font-bold text-on-primary shadow-[0_0_16px_rgba(255,215,155,0.18)]"
+            href="profile_p_lists.html"
+          >
+            Lists
+          </a>
+
+          <a
+            class="rounded-full px-5 py-2.5 font-label text-sm font-bold text-on-surface-variant transition-colors hover:bg-surface-container-high hover:text-on-surface"
+            href="profile_p_watchlist.html"
+          >
+            Watchlist
+          </a>
+        </nav>
+
+        <!-- Header -->
+        <header class="mb-8 flex items-end justify-between gap-8 pr-44">
+          <div>
+            <p class="mb-3 font-label text-xs font-bold uppercase tracking-[0.28em] text-secondary">
+              Your profile
+            </p>
+
+            <h1 class="font-headline text-[32px] font-black tracking-tight text-on-surface">
+              Lists
+            </h1>
+          </div>
+
+          <button
+            class="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-3 font-label text-sm font-bold text-on-primary shadow-[0_0_18px_rgba(255,215,155,0.24)] transition-all hover:shadow-[0_0_26px_rgba(255,215,155,0.36)]"
+            type="button"
+          >
+            <span class="material-symbols-outlined text-[18px]">add</span>
+            New list
+          </button>
+        </header>
+
+        <!-- Lists grid -->
+        <section class="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+          <!-- List Card 1 -->
+          <article data-href="list_details.html" class="group rounded-3xl border border-outline-variant/15 bg-surface-container-low p-5 ambient-shadow transition-colors hover:bg-surface-container-high">
+            <div class="flex gap-5">
+              <div class="relative h-36 w-24 shrink-0">
+                <div class="absolute inset-0 -rotate-6 translate-x-2 -translate-y-1 scale-90 overflow-hidden rounded-xl bg-surface-container-high opacity-60 poster-shadow">
+                  <img
+                    alt="Neon Noir Essentials back poster"
+                    class="h-full w-full object-cover grayscale opacity-50"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuB4VUHc3Zla7_33GYWo4MrJysqCvbDomx-vRlXBiWiSFTgwBw8VHaCc3iGyh2qOkAk9acHtLvV0L9vH5QGrVUACx8FYFHqFj5NeBmmz6ghkEQWwnZivRZCIN9sla8YN-Rp2AKrBjjdWR4mob1Bgz2GT9IUYwL0gmqUI6ZXoyDiXk2PYRBJ0OA2Pv-cW45FYDLNEcLmmcSvRY88WQkSu5eor9DYfA8BKmfzGGA256mkwP4gVuYX5m00tVw9fQzQf0TlIHKKMPLQF09C9"
+                  />
+                </div>
+
+                <div class="absolute inset-0 rotate-3 translate-x-1 scale-95 overflow-hidden rounded-xl bg-surface-container-highest opacity-80 poster-shadow">
+                  <img
+                    alt="Neon Noir Essentials middle poster"
+                    class="h-full w-full object-cover grayscale opacity-70"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuA3i_4VLH4bOvqFFnHG_lmhK1hFivh009R_mtL02b73IPp8YR6fFYTkUw8U1mE0FOXbM06kiaGpZIMUWI0k4nZhVFuB890ZzANKndFh8qCGta6PAUaqlUOxRpZstaKelWTNx67lghe7fdjhRqoSCH_3ErnzQZH0S9mDcurlhltdCOlvM1mwwRcQb2W_aLmQgVl05nJwiwa2ZyALOOGjCKfP5HLJKVL3oajOsBe5IhxTDoWXrfkqFHXU0elhvlkZIyMIgXtSCBC893Dc"
+                  />
+                </div>
+
+                <div class="absolute inset-0 overflow-hidden rounded-xl border border-white/10 bg-surface-container poster-shadow">
+                  <img
+                    alt="Neon Noir Essentials front poster"
+                    class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuCcYwydJo8MBPDk0BWaK2gEzpLoOsppgeVMikhnVKYLFTRUjr7zxxLlc6SlhOH11wQiij48f_3TVDULV7p3YOkoWZAzUdyMRv3L3SvUzt3xjeUI5O6dx01xnRsJ_1YjzVIlZbT0J1RuVDVi0hfYzYkvLWsenZPbgByzlCUHE1aLno0F4etLESrehTH0T0N3O6hQOTY5dzgxp-2H5q6MtfEf0ArY95WjsguyKc7q-IaCXBtvPqbdCS2pqG26Wi5jp2P0j6mc8jn2bbJk"
+                  />
+                  <div class="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-surface-container-lowest to-transparent opacity-80"></div>
+                </div>
+              </div>
+
+              <div class="flex min-w-0 flex-1 flex-col justify-center">
+                <h2 class="font-headline text-xl font-black leading-tight text-on-surface transition-colors group-hover:text-primary">
+                  Neon Noir Essentials
+                </h2>
+
+                <p class="mt-3 flex items-center gap-2 font-label text-sm text-on-surface-variant">
+                  <span class="material-symbols-outlined text-[17px]">movie</span>
+                  24 films
+                </p>
+
+                <p class="mt-4 text-sm leading-relaxed text-on-surface-variant">
+                  Moody city nights, neon reflections, and stylish crime stories.
+                </p>
+              </div>
+            </div>
+          </article>
+
+          <!-- List Card 2 -->
+          <article data-href="list_details.html" class="group rounded-3xl border border-outline-variant/15 bg-surface-container-low p-5 ambient-shadow transition-colors hover:bg-surface-container-high">
+            <div class="flex gap-5">
+              <div class="relative h-36 w-24 shrink-0">
+                <div class="absolute inset-0 -rotate-3 -translate-x-1 -translate-y-1 scale-90 overflow-hidden rounded-xl bg-surface-container-high opacity-60 poster-shadow">
+                  <img
+                    alt="Sci-Fi Masterpieces back poster"
+                    class="h-full w-full object-cover grayscale opacity-50"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuAov76b4dgd993IGoLOxhpwG4K-SU42OOfdM6kT1XZZdLnrmMFqeT2sv-sgGtUs737KW6TYs7_ZLkj1uJqeqvcZ9JZRED1Pp6N9ZQkERmF6ciXq7XVfzSMrL60vEkUXuhcUjiGDU-uzXaAIcvh2T7E_JVD2tcTrhfr2otuJ9bLlxnkU2ps6WufVNH_jIrQCr6l3-f9HJDzG4GGfhmoSN4qWwmV79xrBVkPuhq1wcE5QYwAfVlL4_k1QMZZYhwtErzGlY9HEPg7OlsnH"
+                  />
+                </div>
+
+                <div class="absolute inset-0 rotate-6 translate-x-1 scale-95 overflow-hidden rounded-xl bg-surface-container-highest opacity-80 poster-shadow">
+                  <img
+                    alt="Sci-Fi Masterpieces middle poster"
+                    class="h-full w-full object-cover grayscale opacity-70"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuBGbQd8oVPXTZp3jznBONQdvE1p80oELZ0fwXsCHvLvu7dVu8-LQd3R0GOlJ3XFJDmumPjdhLoTK-bmsD5UsPlgcU7jil6_ytAC8kbU3Qu6g2wlfB32P0gBkg3UfNud1eTuYWC0c61HEUmclfouZ4hLjAGXw0FLoFsdBQLKQFF7B1ehpVZYuTAZubV2eV4GoHHHtAuYy9Mb72NEwkzNId5gL3d-DJp562csPlziak18UAQ6r6u8Z_aHUvPfZF12fP0XpI8eMqpxVJQq"
+                  />
+                </div>
+
+                <div class="absolute inset-0 overflow-hidden rounded-xl border border-white/10 bg-surface-container poster-shadow">
+                  <img
+                    alt="Sci-Fi Masterpieces front poster"
+                    class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuB_RK8FrotcXrZtYjW_ADfQ5dlQimH_yxCaMSLsHFyEhwXFZxKizRfd9jnwJW4GsFmYnNJ4605Sx4Qnseps3ZRBzBBK1Trlr60KnI99HYcVmG5apq8ZuPgKptBJ0UpcGMrHc4l0tjFwDIOlIErTfDA8MMEn1DQOTgcdJ0iWSGVAyhgfBh33zUx3LoZm5zZfXoDR6RUMn7iCuHG9CjuuNBwqlqZj7KhdGIk0QNywo6celRXWnrk5XKn6XFsHWZpnRFBo3gr7iNf0XW_i"
+                  />
+                  <div class="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-surface-container-lowest to-transparent opacity-80"></div>
+                </div>
+              </div>
+
+              <div class="flex min-w-0 flex-1 flex-col justify-center">
+                <h2 class="font-headline text-xl font-black leading-tight text-on-surface transition-colors group-hover:text-primary">
+                  Sci-Fi Masterpieces
+                </h2>
+
+                <p class="mt-3 flex items-center gap-2 font-label text-sm text-on-surface-variant">
+                  <span class="material-symbols-outlined text-[17px]">movie</span>
+                  50 films
+                </p>
+
+                <p class="mt-4 text-sm leading-relaxed text-on-surface-variant">
+                  Grand visions of space, technology, memory, and humanity.
+                </p>
+              </div>
+            </div>
+          </article>
+
+          <!-- List Card 3 -->
+          <article data-href="list_details.html" class="group rounded-3xl border border-outline-variant/15 bg-surface-container-low p-5 ambient-shadow transition-colors hover:bg-surface-container-high">
+            <div class="flex gap-5">
+              <div class="relative h-36 w-24 shrink-0">
+                <div class="absolute inset-0 rotate-4 translate-x-1 -translate-y-1 scale-90 overflow-hidden rounded-xl bg-surface-container-high opacity-60 poster-shadow">
+                  <img
+                    alt="Auteur Cinema back poster"
+                    class="h-full w-full object-cover grayscale opacity-50"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuChbPh-cjYNrnV1IAcXpnRkHHNuQL4gLOAhIeMJjIeGFU0Y2hHlHnjWi35Vh83lGRSrSHOJXDF8Er96g7xyXLmB9xLgPIkfOz3jQD1_B2siqccVYw4NDOSNcTII9-OpAOVDwPPmjDT4ni_281NLhD_CWYDg72tHqr_rtkZZTeG7LI8y43B8cI0zQ_pyf_teUMWWWs5wZkWPukMcu1EcjUeH8dF_NzKUHCFKJAIkqA1z5_5NCjZo715G2KZCP512ZKblHhoBKkIp9ml9"
+                  />
+                </div>
+
+                <div class="absolute inset-0 -rotate-2 -translate-x-1 scale-95 overflow-hidden rounded-xl bg-surface-container-highest opacity-80 poster-shadow">
+                  <img
+                    alt="Auteur Cinema middle poster"
+                    class="h-full w-full object-cover grayscale opacity-70"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuBu7fcEk2Cpdp-2jMqrBuZBOygIsW-QFeLGC0KaUB_eLeq1HF5lDTyv3r9c9-LyOL9cex2Iy1xexocGIKfIWM1U-wYmFkIBMGu7puVjwaHIveun1iq-YwwecwbEaaFbiTxBMxVoUcCodw8Gy1fB8kF92OQxc6u4-6vUVWP1YFlo7V8dxbe1Zlw-UcqntMsF7TYieY1MuexXOyUDzZM9gPvmOFcjeN8E7JiCzmbTZMpCXHO5aVmS6pUcFRd_nn9qKZkSqtqCDeZyjGGZ"
+                  />
+                </div>
+
+                <div class="absolute inset-0 overflow-hidden rounded-xl border border-white/10 bg-surface-container poster-shadow">
+                  <img
+                    alt="Auteur Cinema front poster"
+                    class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuCIDfSUlCkiNTqw3i96Kjak1rKBKWXx5FtoLiYdLmiAkTvnerSCBPJs3uo-U-orBq2nfTqYQSy0MdSEd0ncDcB2FY4nO0hFusu517I7gDuLSOq_rClz4EOba-La_AG_OO7gKsTFVwzV0xasvh5m_hniXpsRwhLoaO0I33JHSuYh54t_XSwlJEWGHXejRBY5DaXE0uDlBpoQ6X0kifMBzcPk8cdTZRdmYIt2ZvqG0sTrSFfBPpSKa6u0AOnzchmMlUyB8xKTStG7Y4k9"
+                  />
+                  <div class="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-surface-container-lowest to-transparent opacity-80"></div>
+                </div>
+              </div>
+
+              <div class="flex min-w-0 flex-1 flex-col justify-center">
+                <h2 class="font-headline text-xl font-black leading-tight text-on-surface transition-colors group-hover:text-primary">
+                  Auteur Cinema
+                </h2>
+
+                <p class="mt-3 flex items-center gap-2 font-label text-sm text-on-surface-variant">
+                  <span class="material-symbols-outlined text-[17px]">movie</span>
+                  18 films
+                </p>
+
+                <p class="mt-4 text-sm leading-relaxed text-on-surface-variant">
+                  Distinct voices, formal obsession, and director-driven cinema.
+                </p>
+              </div>
+            </div>
+          </article>
+
+          <!-- List Card 4 -->
+          <article data-href="list_details.html" class="group rounded-3xl border border-outline-variant/15 bg-surface-container-low p-5 ambient-shadow transition-colors hover:bg-surface-container-high">
+            <div class="flex gap-5">
+              <div class="relative h-36 w-24 shrink-0">
+                <div class="absolute inset-0 -rotate-5 translate-x-1 -translate-y-1 scale-90 overflow-hidden rounded-xl bg-surface-container-high opacity-60 poster-shadow">
+                  <img
+                    alt="Indie Gems back poster"
+                    class="h-full w-full object-cover grayscale opacity-50"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuDimukxMgjs-1tcr4iqbqdEFkOn_QzhmWI1DSnEzwintqwKA8utf_ZMlL0euJvmogJLIZGIE5rT-RQ_XqydVJ3fcpftMsHwXuIc_hKrSZXshWmwuxLuJoQSppAFAaN3fqlJW0KptWiZoO72rxbUL-gYl9mBFToUC6DZ31tZHg0JmKQV4NNKVi9o6u1UA34tbRc7AhKMFxAm8gWEXcn9yJ-uP8vKc672UvkO0KaHYXL7Zd6s2CFQ9hKaGw1yXHmmHe-3R4ky8DhvVBrc"
+                  />
+                </div>
+
+                <div class="absolute inset-0 rotate-2 -translate-x-1 scale-95 overflow-hidden rounded-xl bg-surface-container-highest opacity-80 poster-shadow">
+                  <img
+                    alt="Indie Gems middle poster"
+                    class="h-full w-full object-cover grayscale opacity-70"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuBD8aQyG4CUPeOLzQoTPRBX0x5x7lAzpLZgC4tu8uahDQTWLjS8WXtB8mtRlGUxnTYoJYX3YAAQwzn3kEE7TdNguAW0HtRvzPVKWm10z4W4LpmgHYMzNdtSkTSMlmPjKx3g8YyRXRqLoqNxNYx7PVEWQwbW8Gn0D3qTHpcFmEB33j_nm93IynZZAXp_7-EABLflUw--Npwahgw3015Za4LGmKbj_o-vj0dORYxutAAth749fyfR5M0HKvUpcbPwyZNiL1rs62bMJOal"
+                  />
+                </div>
+
+                <div class="absolute inset-0 overflow-hidden rounded-xl border border-white/10 bg-surface-container poster-shadow">
+                  <img
+                    alt="Indie Gems front poster"
+                    class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuAvN33e6-tFZPbEMyveCk3YHK31GcJ9iClpjZlSmj4-Vmlsnr38-cd2zAt8Ln9asLh_sU6EF_XlmGxSDfkhpwXEzLfjOn1wCHD9Qh2YKXBi5uWb2qz_JByvB2NFb7rMEAelB0C5c9ugcH3B5UR-89frirGWp9iWsyyrezo50UHZ5TKNoFgFWsfbMBVV0YRjMihLUMJ0UDpbgCyZixlFrGFOCK7S045Yikwa1IMCVW7IwRtn3JkWXeE8uVA-5xx9fkkZaLpbJFTFqP7E"
+                  />
+                  <div class="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-surface-container-lowest to-transparent opacity-80"></div>
+                </div>
+              </div>
+
+              <div class="flex min-w-0 flex-1 flex-col justify-center">
+                <h2 class="font-headline text-xl font-black leading-tight text-on-surface transition-colors group-hover:text-primary">
+                  Indie Gems
+                </h2>
+
+                <p class="mt-3 flex items-center gap-2 font-label text-sm text-on-surface-variant">
+                  <span class="material-symbols-outlined text-[17px]">movie</span>
+                  12 films
+                </p>
+
+                <p class="mt-4 text-sm leading-relaxed text-on-surface-variant">
+                  Small-scale stories with a huge emotional footprint.
+                </p>
+              </div>
+            </div>
+          </article>
+
+          <!-- List Card 5 -->
+          <article data-href="list_details.html" class="group rounded-3xl border border-outline-variant/15 bg-surface-container-low p-5 ambient-shadow transition-colors hover:bg-surface-container-high">
+            <div class="flex gap-5">
+              <div class="relative h-36 w-24 shrink-0">
+                <div class="absolute inset-0 -rotate-3 translate-x-1 -translate-y-1 scale-90 overflow-hidden rounded-xl bg-surface-container-high opacity-60 poster-shadow">
+                  <img
+                    alt="Mind-Bending Mindscapes back poster"
+                    class="h-full w-full object-cover grayscale opacity-50"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuB4VUHc3Zla7_33GYWo4MrJysqCvbDomx-vRlXBiWiSFTgwBw8VHaCc3iGyh2qOkAk9acHtLvV0L9vH5QGrVUACx8FYFHqFj5NeBmmz6ghkEQWwnZivRZCIN9sla8YN-Rp2AKrBjjdWR4mob1Bgz2GT9IUYwL0gmqUI6ZXoyDiXk2PYRBJ0OA2Pv-cW45FYDLNEcLmmcSvRY88WQkSu5eor9DYfA8BKmfzGGA256mkwP4gVuYX5m00tVw9fQzQf0TlIHKKMPLQF09C9"
+                  />
+                </div>
+
+                <div class="absolute inset-0 rotate-2 translate-x-1 scale-95 overflow-hidden rounded-xl bg-surface-container-highest opacity-80 poster-shadow">
+                  <img
+                    alt="Mind-Bending Mindscapes middle poster"
+                    class="h-full w-full object-cover grayscale opacity-70"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuBGbQd8oVPXTZp3jznBONQdvE1p80oELZ0fwXsCHvLvu7dVu8-LQd3R0GOlJ3XFJDmumPjdhLoTK-bmsD5UsPlgcU7jil6_ytAC8kbU3Qu6g2wlfB32P0gBkg3UfNud1eTuYWC0c61HEUmclfouZ4hLjAGXw0FLoFsdBQLKQFF7B1ehpVZYuTAZubV2eV4GoHHHtAuYy9Mb72NEwkzNId5gL3d-DJp562csPlziak18UAQ6r6u8Z_aHUvPfZF12fP0XpI8eMqpxVJQq"
+                  />
+                </div>
+
+                <div class="absolute inset-0 overflow-hidden rounded-xl border border-white/10 bg-surface-container poster-shadow">
+                  <img
+                    alt="Mind-Bending Mindscapes front poster"
+                    class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuAov76b4dgd993IGoLOxhpwG4K-SU42OOfdM6kT1XZZdLnrmMFqeT2sv-sgGtUs737KW6TYs7_ZLkj1uJqeqvcZ9JZRED1Pp6N9ZQkERmF6ciXq7XVfzSMrL60vEkUXuhcUjiGDU-uzXaAIcvh2T7E_JVD2tcTrhfr2otuJ9bLlxnkU2ps6WufVNH_jIrQCr6l3-f9HJDzG4GGfhmoSN4qWwmV79xrBVkPuhq1wcE5QYwAfVlL4_k1QMZZYhwtErzGlY9HEPg7OlsnH"
+                  />
+                  <div class="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-surface-container-lowest to-transparent opacity-80"></div>
+                </div>
+              </div>
+
+              <div class="flex min-w-0 flex-1 flex-col justify-center">
+                <h2 class="font-headline text-xl font-black leading-tight text-on-surface transition-colors group-hover:text-primary">
+                  Mind-Bending Mindscapes
+                </h2>
+
+                <p class="mt-3 flex items-center gap-2 font-label text-sm text-on-surface-variant">
+                  <span class="material-symbols-outlined text-[17px]">movie</span>
+                  15 films
+                </p>
+
+                <p class="mt-4 text-sm leading-relaxed text-on-surface-variant">
+                  Puzzles, dream logic, identity twists, and unstable realities.
+                </p>
+              </div>
+            </div>
+          </article>
+
+          <!-- List Card 6 -->
+          <article data-href="list_details.html" class="group rounded-3xl border border-outline-variant/15 bg-surface-container-low p-5 ambient-shadow transition-colors hover:bg-surface-container-high">
+            <div class="flex gap-5">
+              <div class="relative h-36 w-24 shrink-0">
+                <div class="absolute inset-0 rotate-4 -translate-x-1 -translate-y-1 scale-90 overflow-hidden rounded-xl bg-surface-container-high opacity-60 poster-shadow">
+                  <img
+                    alt="Modern Noir Favorites back poster"
+                    class="h-full w-full object-cover grayscale opacity-50"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuA3i_4VLH4bOvqFFnHG_lmhK1hFivh009R_mtL02b73IPp8YR6fFYTkUw8U1mE0FOXbM06kiaGpZIMUWI0k4nZhVFuB890ZzANKndFh8qCGta6PAUaqlUOxRpZstaKelWTNx67lghe7fdjhRqoSCH_3ErnzQZH0S9mDcurlhltdCOlvM1mwwRcQb2W_aLmQgVl05nJwiwa2ZyALOOGjCKfP5HLJKVL3oajOsBe5IhxTDoWXrfkqFHXU0elhvlkZIyMIgXtSCBC893Dc"
+                  />
+                </div>
+
+                <div class="absolute inset-0 -rotate-2 translate-x-1 scale-95 overflow-hidden rounded-xl bg-surface-container-highest opacity-80 poster-shadow">
+                  <img
+                    alt="Modern Noir Favorites middle poster"
+                    class="h-full w-full object-cover grayscale opacity-70"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuBu7fcEk2Cpdp-2jMqrBuZBOygIsW-QFeLGC0KaUB_eLeq1HF5lDTyv3r9c9-LyOL9cex2Iy1xexocGIKfIWM1U-wYmFkIBMGu7puVjwaHIveun1iq-YwwecwbEaaFbiTxBMxVoUcCodw8Gy1fB8kF92OQxc6u4-6vUVWP1YFlo7V8dxbe1Zlw-UcqntMsF7TYieY1MuexXOyUDzZM9gPvmOFcjeN8E7JiCzmbTZMpCXHO5aVmS6pUcFRd_nn9qKZkSqtqCDeZyjGGZ"
+                  />
+                </div>
+
+                <div class="absolute inset-0 overflow-hidden rounded-xl border border-white/10 bg-surface-container poster-shadow">
+                  <img
+                    alt="Modern Noir Favorites front poster"
+                    class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuCcYwydJo8MBPDk0BWaK2gEzpLoOsppgeVMikhnVKYLFTRUjr7zxxLlc6SlhOH11wQiij48f_3TVDULV7p3YOkoWZAzUdyMRv3L3SvUzt3xjeUI5O6dx01xnRsJ_1YjzVIlZbT0J1RuVDVi0hfYzYkvLWsenZPbgByzlCUHE1aLno0F4etLESrehTH0T0N3O6hQOTY5dzgxp-2H5q6MtfEf0ArY95WjsguyKc7q-IaCXBtvPqbdCS2pqG26Wi5jp2P0j6mc8jn2bbJk"
+                  />
+                  <div class="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-surface-container-lowest to-transparent opacity-80"></div>
+                </div>
+              </div>
+
+              <div class="flex min-w-0 flex-1 flex-col justify-center">
+                <h2 class="font-headline text-xl font-black leading-tight text-on-surface transition-colors group-hover:text-primary">
+                  Modern Noir Favorites
+                </h2>
+
+                <p class="mt-3 flex items-center gap-2 font-label text-sm text-on-surface-variant">
+                  <span class="material-symbols-outlined text-[17px]">movie</span>
+                  8 films
+                </p>
+
+                <p class="mt-4 text-sm leading-relaxed text-on-surface-variant">
+                  Recent films that keep noir’s shadows alive.
+                </p>
+              </div>
+            </div>
+          </article>
+        </section>
+      </div>
+    </main>
+      <script src="/public/assets/js/reevio.js"></script>
+</body>
+</html>

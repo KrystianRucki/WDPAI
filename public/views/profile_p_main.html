@@ -1,0 +1,147 @@
+<!doctype html>
+<html class="dark" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Reevio - Profile</title>
+  <link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;700;800;900&family=Manrope:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <link href="/public/assets/css/reevio.css" rel="stylesheet" />
+
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            background: "#131313",
+            surface: "#131313",
+            "surface-container-lowest": "#0e0e0e",
+            "surface-container-low": "#1c1b1b",
+            "surface-container-high": "#2a2a2a",
+            "surface-container-highest": "#353534",
+            "surface-variant": "#353534",
+            "outline-variant": "#514532",
+            primary: "#ffd79b",
+            "primary-container": "#ffb300",
+            "on-primary": "#432c00",
+            secondary: "#bdf4ff",
+            "on-surface": "#e5e2e1",
+            "on-surface-variant": "#d6c4ac"
+          },
+          borderRadius: { xl: "0.75rem", "2xl": "1.5rem", "3xl": "2rem", full: "9999px" },
+          fontFamily: {
+            headline: ["Epilogue", "sans-serif"],
+            display: ["Epilogue", "sans-serif"],
+            body: ["Manrope", "sans-serif"],
+            label: ["Manrope", "sans-serif"]
+          }
+        }
+      }
+    };
+  </script></head>
+<body class="bg-surface text-on-surface antialiased overflow-x-hidden reevio-page-profile_p_main">
+  <div class="cinematic-glow"></div>
+<?php
+$activeNav = 'profile';
+$showAdminLink = ($showAdminLink ?? false);
+include __DIR__ . '/partials/navigation.html';
+?>
+<main class="relative z-10 ml-64 min-h-screen w-[calc(100%-16rem)] px-4 pb-24 pt-[8.7rem] lg:px-5 xl:px-6">
+    <div class="mx-auto max-w-[1120px]">
+      <nav class="mb-10 flex w-fit items-center gap-2 rounded-full border border-outline-variant/20 bg-surface-container-low px-2 py-2">
+        <a class="rounded-full bg-primary px-5 py-2.5 font-label text-sm font-bold text-on-primary" href="profile_p_main.html">Profile</a>
+        <a class="rounded-full px-5 py-2.5 font-label text-sm font-bold text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface" href="profile_p_diary.html">Diary</a>
+        <a class="rounded-full px-5 py-2.5 font-label text-sm font-bold text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface" href="profile_p_lists.html">Lists</a>
+        <a class="rounded-full px-5 py-2.5 font-label text-sm font-bold text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface" href="profile_p_watchlist.html">Watchlist</a>
+      </nav>
+
+      <section class="mb-8 rounded-3xl border border-outline-variant/15 bg-surface-container-low p-8 ambient-shadow">
+        <div class="grid gap-8 lg:grid-cols-[minmax(0,1fr)_420px] lg:items-center">
+          <div class="flex items-center gap-7">
+            <div class="relative shrink-0">
+              <div class="h-32 w-32 rounded-full bg-surface-container-high p-1 shadow-[0_20px_40px_rgba(0,0,0,0.4)]">
+                <img alt="Jane Doe avatar" class="h-full w-full rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDCHn9hcdD51ua6_kqya0mlyrTKogs-KaPjo0Hwt0IT5lnkySOVGkL2TctcmVGbikPTVFBUNBa1uhLdiYpEkKWD1kcKFEkn4QxkceHXk-LqBdL03wGb9q-9vdTiTXlM3oqDtbgGrxe5ALH_xsNLWnb8VDidaBQgyYmHhXM4eLkuemY7KkXYO9_jRWLX-gRt5jLvS4uj22Ag6RX5lQ34GhO3ArgFxcB71XA8BnrulK1IhmOwhhCEFyhVQOhhEPhXytwR59I7X-TlA-5Q" />
+              </div>
+              <div class="absolute bottom-2 right-2 flex h-8 w-8 items-center justify-center rounded-full border-2 border-surface bg-primary"><span class="material-symbols-outlined text-[16px] text-on-primary filled">workspace_premium</span></div>
+            </div>
+            <div>
+              <p class="mb-3 font-label text-xs font-bold uppercase tracking-[0.28em] text-secondary">Your profile</p>
+              <h1 class="font-headline text-5xl font-black tracking-tight text-on-surface">Jane Doe</h1>
+              <p class="mt-2 font-label text-lg text-secondary">@janecinema</p>
+              <div class="mt-6 flex gap-8">
+                <a href="followers.html" class="group"><span class="block font-headline text-2xl font-black text-on-surface group-hover:text-primary">1.2k</span><span class="font-label text-xs font-bold uppercase tracking-wider text-on-surface-variant group-hover:text-primary">Followers</span></a>
+                <a href="following.html" class="group"><span class="block font-headline text-2xl font-black text-on-surface group-hover:text-primary">340</span><span class="font-label text-xs font-bold uppercase tracking-wider text-on-surface-variant group-hover:text-primary">Following</span></a>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <a href="users_films.html" class="rounded-2xl border border-outline-variant/15 bg-surface-container-lowest p-5 hover:bg-surface-container-high"><span class="font-headline text-3xl font-black text-primary">452</span><span class="mt-1 block font-label text-xs font-bold uppercase tracking-wider text-on-surface-variant">Films</span></a>
+            <a href="users_lists.html" class="rounded-2xl border border-outline-variant/15 bg-surface-container-lowest p-5 hover:bg-surface-container-high"><span class="font-headline text-3xl font-black text-primary">12</span><span class="mt-1 block font-label text-xs font-bold uppercase tracking-wider text-on-surface-variant">Lists</span></a>
+            <a href="users_reviews.html" class="rounded-2xl border border-outline-variant/15 bg-surface-container-lowest p-5 hover:bg-surface-container-high"><span class="font-headline text-3xl font-black text-primary">84</span><span class="mt-1 block font-label text-xs font-bold uppercase tracking-wider text-on-surface-variant">Reviews</span></a>
+            <a href="users_watchlist.html" class="rounded-2xl border border-outline-variant/15 bg-surface-container-lowest p-5 hover:bg-surface-container-high"><span class="font-headline text-3xl font-black text-secondary">105</span><span class="mt-1 block font-label text-xs font-bold uppercase tracking-wider text-on-surface-variant">Watchlist</span></a>
+          </div>
+        </div>
+      </section>
+
+      <div class="grid gap-8 xl:grid-cols-[minmax(0,1fr)_380px]">
+        <section class="rounded-3xl border border-outline-variant/15 bg-surface-container-low p-7 ambient-shadow">
+          <div class="mb-6 flex items-end justify-between">
+            <h2 class="font-headline text-[28px] font-black tracking-tight text-on-surface">Favorite Films</h2>
+            <a href="#" class="font-label text-xs font-bold uppercase tracking-wider text-secondary hover:text-primary">Edit favorites</a>
+          </div>
+          <div class="grid grid-cols-2 gap-5 md:grid-cols-4">
+            <a class="group block text-left transition-transform duration-200 hover:scale-[1.02]" href="film_details.html"><div class="relative aspect-[2/3] overflow-hidden rounded-xl border border-outline-variant/15 poster-shadow"><img alt="Favorite film poster" class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA-vn_BMUM1eCDVyzdca9JfnGJ9i4lZJixRpr4-ktFi8lButWsPWGhUzC-vHdlwt9ZNiTQ3yPxK-ZJMKxQPn7ckKt8WLrsUJU2PSfcHXKCUo-aEe1x_Hq_Vq22Fd-FnMc5-4SfFoyPx4KhwfZRkz-7h8d5eGxY3B7cOhuMPR7qg55DHWi8zgWHsIGmhazFMfTW2LMlOircZA8uoUu8cVtoAYa96KrbQKV9iheWQk48oXOpL1ZpxHgcVkNxnpAyMA7cSSaoOeqhLBsaf" /><div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest/70 to-transparent"></div></div></a>
+            <a class="group block text-left transition-transform duration-200 hover:scale-[1.02]" href="film_details.html"><div class="relative aspect-[2/3] overflow-hidden rounded-xl border border-outline-variant/15 poster-shadow"><img alt="Favorite film poster" class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCRiDvN-nwlpYjtIgr4Fy2I1G56DcqZbu_PKQesKX6tC1__5gUEGdnaIAsVfwfFEOHHUJrnJk8JssRpO5HfHN1oyZVIfZB8w7kcXBJGoNPSjg-4Mf_2sEb-by1P1WoPfhkTIwKToV6YwkbmWNavw84xwEsMixNcLn_kLlZp9dMteaMx6Xh3dbCBCmzZsg85HZ37F2hxo1e2Gb5jtTo_0rH0AkvV8pc-wqzAsWJbQJSHIUiEwbW7qu5jq1YwFuvc6ifpSsj7CyDmTu-n" /><div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest/70 to-transparent"></div></div></a>
+            <a class="group block text-left transition-transform duration-200 hover:scale-[1.02]" href="film_details.html"><div class="relative aspect-[2/3] overflow-hidden rounded-xl border border-outline-variant/15 poster-shadow"><img alt="Favorite film poster" class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDSndE9aE_Cc634QvUB0eKB-zXMqgAQfdJcpAcR_r0k9UbTZu910IPtmvWIO4cT2524AoChiv02OK7QmBY7DKYrPzyU-7Ew94pqOPv9JkHNDcKHNKSev0kA3UHGvqyxjRjoDW6vj92-vHk98xsvfxTj6F5tT__CcCfINjQ9p8wq1pbD4K9Qm4RejB38dESKXvmNPf9B8iNaIxzaW6dK6Prfvon296z71jILppqvXi4DYs7zkxm1obbeX-mYE5_s2WzmndCsIluAfehi" /><div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest/70 to-transparent"></div></div></a>
+            <a class="group block text-left transition-transform duration-200 hover:scale-[1.02]" href="film_details.html"><div class="relative aspect-[2/3] overflow-hidden rounded-xl border border-outline-variant/15 poster-shadow"><img alt="Favorite film poster" class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA-vn_BMUM1eCDVyzdca9JfnGJ9i4lZJixRpr4-ktFi8lButWsPWGhUzC-vHdlwt9ZNiTQ3yPxK-ZJMKxQPn7ckKt8WLrsUJU2PSfcHXKCUo-aEe1x_Hq_Vq22Fd-FnMc5-4SfFoyPx4KhwfZRkz-7h8d5eGxY3B7cOhuMPR7qg55DHWi8zgWHsIGmhazFMfTW2LMlOircZA8uoUu8cVtoAYa96KrbQKV9iheWQk48oXOpL1ZpxHgcVkNxnpAyMA7cSSaoOeqhLBsaf" /><div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest/70 to-transparent"></div></div></a>
+          </div>
+        </section>
+
+        <section class="rounded-3xl border border-outline-variant/15 bg-surface-container-low p-7 ambient-shadow">
+          <h2 class="mb-7 font-headline text-[28px] font-black tracking-tight text-primary">Rating Distribution</h2>
+          <div class="mb-4 flex h-44 items-end gap-2">
+            <div class="group relative flex-1 rounded-t-sm bg-surface-container-highest transition-colors hover:bg-secondary h-[5%]">
+              <span class="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 rounded-full bg-surface-container-lowest px-2 py-1 font-label text-xs font-bold text-secondary opacity-0 shadow-[0_8px_18px_rgba(0,0,0,0.45)] transition-opacity group-hover:opacity-100">12</span>
+            </div>
+            <div class="group relative flex-1 rounded-t-sm bg-surface-container-highest transition-colors hover:bg-secondary h-[8%]">
+              <span class="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 rounded-full bg-surface-container-lowest px-2 py-1 font-label text-xs font-bold text-secondary opacity-0 shadow-[0_8px_18px_rgba(0,0,0,0.45)] transition-opacity group-hover:opacity-100">18</span>
+            </div>
+            <div class="group relative flex-1 rounded-t-sm bg-surface-container-highest transition-colors hover:bg-secondary h-[15%]">
+              <span class="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 rounded-full bg-surface-container-lowest px-2 py-1 font-label text-xs font-bold text-secondary opacity-0 shadow-[0_8px_18px_rgba(0,0,0,0.45)] transition-opacity group-hover:opacity-100">34</span>
+            </div>
+            <div class="group relative flex-1 rounded-t-sm bg-surface-container-highest transition-colors hover:bg-secondary h-[25%]">
+              <span class="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 rounded-full bg-surface-container-lowest px-2 py-1 font-label text-xs font-bold text-secondary opacity-0 shadow-[0_8px_18px_rgba(0,0,0,0.45)] transition-opacity group-hover:opacity-100">56</span>
+            </div>
+            <div class="group relative flex-1 rounded-t-sm bg-surface-container-highest transition-colors hover:bg-secondary h-[40%]">
+              <span class="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 rounded-full bg-surface-container-lowest px-2 py-1 font-label text-xs font-bold text-secondary opacity-0 shadow-[0_8px_18px_rgba(0,0,0,0.45)] transition-opacity group-hover:opacity-100">92</span>
+            </div>
+            <div class="group relative flex-1 rounded-t-sm bg-surface-container-highest transition-colors hover:bg-secondary h-[60%]">
+              <span class="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 rounded-full bg-surface-container-lowest px-2 py-1 font-label text-xs font-bold text-secondary opacity-0 shadow-[0_8px_18px_rgba(0,0,0,0.45)] transition-opacity group-hover:opacity-100">135</span>
+            </div>
+            <div class="group relative flex-1 rounded-t-sm bg-primary shadow-[0_0_15px_rgba(255,215,155,0.3)] h-full">
+              <span class="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 rounded-full bg-surface-container-lowest px-2 py-1 font-label text-xs font-bold text-primary opacity-0 shadow-[0_8px_18px_rgba(0,0,0,0.45)] transition-opacity group-hover:opacity-100">480</span>
+            </div>
+            <div class="group relative flex-1 rounded-t-sm bg-surface-container-highest transition-colors hover:bg-secondary h-[80%]">
+              <span class="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 rounded-full bg-surface-container-lowest px-2 py-1 font-label text-xs font-bold text-secondary opacity-0 shadow-[0_8px_18px_rgba(0,0,0,0.45)] transition-opacity group-hover:opacity-100">360</span>
+            </div>
+            <div class="group relative flex-1 rounded-t-sm bg-surface-container-highest transition-colors hover:bg-secondary h-[45%]">
+              <span class="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 rounded-full bg-surface-container-lowest px-2 py-1 font-label text-xs font-bold text-secondary opacity-0 shadow-[0_8px_18px_rgba(0,0,0,0.45)] transition-opacity group-hover:opacity-100">210</span>
+            </div>
+            <div class="group relative flex-1 rounded-t-sm bg-surface-container-highest transition-colors hover:bg-secondary h-[20%]">
+              <span class="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 rounded-full bg-surface-container-lowest px-2 py-1 font-label text-xs font-bold text-secondary opacity-0 shadow-[0_8px_18px_rgba(0,0,0,0.45)] transition-opacity group-hover:opacity-100">95</span>
+            </div>
+          </div>
+          <div class="flex justify-between font-label text-xs text-on-surface-variant"><span>0.5</span><span>5.0</span></div>
+          <div class="mt-7 rounded-2xl border border-outline-variant/15 bg-surface-container-lowest p-5">
+            <p class="font-label text-xs font-bold uppercase tracking-wider text-on-surface-variant">Most common rating</p>
+            <p class="mt-2 font-headline text-3xl font-black text-primary">3.5 stars</p>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+    <script src="/public/assets/js/reevio.js"></script>
+</body>
+</html>

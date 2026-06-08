@@ -1,0 +1,199 @@
+<!doctype html>
+<html class="dark" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Reevio - Search Users</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;600;700;800;900&family=Manrope:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+      rel="stylesheet"
+    />
+    <link href="/public/assets/css/reevio.css" rel="stylesheet" /></head>
+
+  <body class="bg-surface text-on-surface font-body min-h-screen antialiased search-compact-page reevio-page-search_users">
+    <div class="cinematic-glow"></div>
+<?php
+$activeNav = 'search';
+$showAdminLink = ($showAdminLink ?? false);
+include __DIR__ . '/partials/navigation.html';
+?>
+<!-- MAIN CONTENT AREA -->
+    <div class="relative z-10 min-h-screen pl-64">
+<!-- SEARCH USERS BODY -->
+      <main class="w-full relative z-10">
+        <div class="max-w-7xl mx-auto px-8 pb-20 pt-6">
+          <!-- SEARCH BAR -->
+          <div class="mb-5 max-w-3xl">
+            <div
+              class="relative flex items-center bg-surface-container-lowest rounded-full px-5 py-4 shadow-[0_20px_40px_rgba(0,0,0,0.4)] ring-1 ring-outline-variant/15 focus-within:ring-secondary focus-within:ring-2 focus-within:shadow-[0_0_20px_rgba(189,244,255,0.18)] transition-all"
+            >
+              <span
+                class="material-symbols-outlined text-on-surface-variant mr-3"
+                >search</span
+              >
+
+              <input
+                class="bg-transparent border-none focus:ring-0 text-on-surface font-body w-full placeholder-on-surface-variant text-lg outline-none"
+                placeholder="Search films, directors, actors..."
+                type="text"
+                value="cinephile99"
+              />
+
+              <button
+                class="ml-2 text-on-surface-variant hover:text-on-surface transition-colors"
+                aria-label="Clear search"
+              >
+                <span class="material-symbols-outlined text-xl">cancel</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- CATEGORY CHIPS -->
+          <div class="flex gap-3 pb-10 overflow-x-auto scrollbar-hide">
+            <button
+              class="bg-surface-container-high text-on-surface-variant rounded-full px-6 py-2.5 font-label text-sm font-medium whitespace-nowrap hover:bg-surface-bright hover:text-on-surface transition-colors"
+            >
+              Films
+            </button>
+
+            <button
+              class="bg-surface-container-high text-on-surface-variant rounded-full px-6 py-2.5 font-label text-sm font-medium whitespace-nowrap hover:bg-surface-bright hover:text-on-surface transition-colors"
+            >
+              Actors
+            </button>
+
+            <button
+              class="glass-gradient-cta text-on-primary rounded-full px-6 py-2.5 font-label text-sm font-bold whitespace-nowrap shadow-[0_0_15px_rgba(255,215,155,0.25)]"
+            >
+              Users
+            </button>
+
+            <button
+              class="bg-surface-container-high text-on-surface-variant rounded-full px-6 py-2.5 font-label text-sm font-medium whitespace-nowrap hover:bg-surface-bright hover:text-on-surface transition-colors"
+            >
+              Lists
+            </button>
+          </div>
+
+          <!-- RESULTS SECTION -->
+          <section>
+            <h2 class="font-headline text-2xl font-bold text-on-surface mb-5">
+              Live Results
+            </h2>
+
+            <div
+              class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6 xl:gap-8"
+            >
+              <!-- USER CARD -->
+              <article
+                class="relative rounded-xl overflow-hidden shadow-[0_20px_40px_rgba(0,0,0,0.4)] bg-surface-container-low group cursor-pointer aspect-[2/3]"
+              >
+                <img
+                  alt="cinephile99 profile"
+                  class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuAtUhyUOFE12M063uUZv7dp6S5OTD5HO1pDsg76_rYk49jlLSyFZMXbWkPg1rDTqf-TN1T75DAkqKPqps2_vMk5DW6DC8uDaA4oSQxer5wCchB5mbQlSYwMkB7NgE40oMcK3dCgdjx03cYTceKWu5SUTrevjlDxIO0AZjX9UDucnzkpRPr8KsoD4AP_T95IOc_bGQR0YqFFYCh3LwWLntcz27UBHCmgUJHFjws_W1mH0viDnLJFD2m6vYn9nP-hBKWw8w2-McjdBU7E"
+                />
+
+                <div
+                  class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-surface-container-lowest/35 to-transparent flex flex-col justify-end p-5"
+                >
+                  <h3
+                    class="font-headline text-xl font-bold text-on-surface leading-tight group-hover:text-primary transition-colors"
+                  >
+                    cinephile99
+                  </h3>
+
+                  <p class="font-label text-xs text-on-surface-variant mt-1">
+                    User profile
+                  </p>
+                </div>
+              </article>
+
+              <!-- USER CARD -->
+              <article
+                class="relative rounded-xl overflow-hidden shadow-[0_20px_40px_rgba(0,0,0,0.4)] bg-surface-container-low group cursor-pointer aspect-[2/3]"
+              >
+                <img
+                  alt="arthouse_anya profile"
+                  class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuBNsNxWM46yzZJZUS4mncGjzQaNZZu-KVQFT49PSo5O5OTFBboqlNXvdTCQXlKC0LcWaX9a4toQzYFTk9Q3xElx2WPwd6sWQKhSur-c5RNhAmJZrgVMf3CgEk0MIAIW-f7_GVWbMVPXTEs1lgL6P1hPUXymp6UAJbHTrh0zL2M8ToTYf4GtHjYCVZIsq1z0o8LK6wk0_JkZ5bsiz7ibrMhvgXj1DkFCiAAQOmMUBl4ggX25KgKBqNZLkmg1rmtqicPmE68Zu4suL9TD"
+                />
+
+                <div
+                  class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-surface-container-lowest/35 to-transparent flex flex-col justify-end p-5"
+                >
+                  <h3
+                    class="font-headline text-xl font-bold text-on-surface leading-tight group-hover:text-primary transition-colors"
+                  >
+                    arthouse_anya
+                  </h3>
+
+                  <p class="font-label text-xs text-on-surface-variant mt-1">
+                    User profile
+                  </p>
+                </div>
+              </article>
+
+              <!-- USER CARD -->
+              <article
+                class="relative rounded-xl overflow-hidden shadow-[0_20px_40px_rgba(0,0,0,0.4)] bg-surface-container-low group cursor-pointer aspect-[2/3]"
+              >
+                <img
+                  alt="noirframes profile"
+                  class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuAf9C1geuQ9Xqa35lOQ-0nH3AoI-6Zi7nixfjxgC1iIWSQKgjhH0X5Rn0l60-uTJEhld0Fanp3UQE5zdtfLRrTNkMayAyE5FCOCFIIEhah6XnCb4hqFr5AAyOwU77XHP4QNcv2LsP5lVC26RAkZZvJwKSXhtD-4nFcY8ukWUIhvyGu214I5gElpEOdHasFLDF8bYlJyu_dSb62fvGc7ArplPN0C2PgUlNzvxuEHDHVAZNiROCfqqSYRWEi-G6ayY2ZkMfbKnXf6fzsv"
+                />
+
+                <div
+                  class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-surface-container-lowest/35 to-transparent flex flex-col justify-end p-5"
+                >
+                  <h3
+                    class="font-headline text-xl font-bold text-on-surface leading-tight group-hover:text-primary transition-colors"
+                  >
+                    noirframes
+                  </h3>
+
+                  <p class="font-label text-xs text-on-surface-variant mt-1">
+                    User profile
+                  </p>
+                </div>
+              </article>
+
+              <!-- USER CARD -->
+              <article
+                class="relative rounded-xl overflow-hidden shadow-[0_20px_40px_rgba(0,0,0,0.4)] bg-surface-container-low group cursor-pointer aspect-[2/3]"
+              >
+                <img
+                  alt="framecollector profile"
+                  class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuD2utYlC9xdhDqrBM3bzBnQ6PE315u-ld7SuTU4Spysj0Oy2sbaGLWgsQ7anxIQ7N6GxXGO6iTKU6k1lAs_3XIFxIioKovKE1FnPkayiuAQAOwqAqkvZZWS11F4Rlnjms1fDNuDr3z9uLZKDzK4mb25RUA_82apHA4V4OTdDYYcOiuHSVqxwU4KhBwfd6BgyDfUXxm_RVpE3Yq59khwzRF8XbCVvnDrR3_FvIQ2lL4ItPbaLNyWkpaN6boqHYemS0YUMQvjpst1vkbp"
+                />
+
+                <div
+                  class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-surface-container-lowest/35 to-transparent flex flex-col justify-end p-5"
+                >
+                  <h3
+                    class="font-headline text-xl font-bold text-on-surface leading-tight group-hover:text-primary transition-colors"
+                  >
+                    framecollector
+                  </h3>
+
+                  <p class="font-label text-xs text-on-surface-variant mt-1">
+                    User profile
+                  </p>
+                </div>
+              </article>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+      <script src="/public/assets/js/reevio.js"></script>
+</body>
+</html>

@@ -1,0 +1,205 @@
+<!doctype html>
+<html class="dark" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Review: Dune: Part Two - Reevio</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;700;900&amp;family=Manrope:wght@400;500;700&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link href="/public/assets/css/reevio.css" rel="stylesheet" /></head>
+  <body class="font-body antialiased flex reevio-page-review_details">
+    <!-- SideNavBar (from JSON) -->
+<?php
+$activeNav = 'reviews';
+$showAdminLink = ($showAdminLink ?? false);
+include __DIR__ . '/partials/navigation.html';
+?>
+<!-- Main Content Canvas -->
+    <main
+      class="relative z-10 ml-64 min-h-screen pt-24 px-8 xl:px-12 pb-24 w-[calc(100%-16rem)]"
+    >
+      <!-- Review Header / Poster Area -->
+      <article
+        class="mx-auto max-w-6xl flex flex-col lg:flex-row gap-12 relative"
+      >
+        <!-- Poster Column (Asymmetric left anchor) -->
+        <div class="w-full lg:w-1/3 flex-shrink-0">
+          <div class="sticky top-32">
+            <div
+              class="relative rounded-xl overflow-hidden ambient-shadow ghost-border aspect-[2/3]"
+            >
+              <img
+                alt="Cinematic sand dunes"
+                class="w-full h-full object-cover"
+                data-alt="A striking cinematic poster-style image featuring vast, sweeping sand dunes bathed in deep amber and warm orange light under a dark, starry sci-fi sky. The composition feels grand and monumental, reminiscent of epic science fiction world-building. Deep blacks and rich golden tones dominate the palette, creating a dramatic, moody, and highly atmospheric aesthetic fitting for a premium editorial review of a sci-fi blockbuster."
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBO3AtXbKrbawaUqPSxENJ8mRr7x75oazWxbMFbOJG8jzieXZ7W9lybbPiXC-ez_aDgSawoqmEgstngjlX4ldWdisw1ZeO78J4sXJJCNyBJggq_dbr6umtuTgTQvj-vNCyOF1cfsGYCMb8S69XlYTP_Lj93mu_hTmDFLVOHEJ0k8Oe5UHm-wz-kPnuvOjJBbwZKj6iWuQv6BYw0z3pq5dCc1NsftmmJToYY4nkIg5RHQ7BGYY5UU3i5ZHq-pM4_L1cAo7x2R3mfnl4f"
+              />
+              <!-- Bottom Gradient Overlay -->
+              <div
+                class="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-surface-container-lowest to-transparent pointer-events-none"
+              ></div>
+            </div>
+            <div class="mt-6 flex flex-col gap-2">
+              <h2 class="font-headline text-2xl font-bold text-on-surface">
+                Dune: Part Two
+              </h2>
+              <div
+                class="flex items-center gap-2 text-on-surface-variant text-sm font-label"
+              >
+                <span class="">2024</span>
+                <span class="w-1 h-1 rounded-full bg-surface-variant"></span>
+                <span class="">Denis Villeneuve</span>
+              </div>
+              <!-- Star Rating Component -->
+              <div
+                class="flex items-center gap-1 mt-2 text-primary reevio-inline-style-019"
+               
+              >
+                <span
+                  class="material-symbols-outlined text-lg reevio-inline-style-001"
+                 
+                  >star</span
+                >
+                <span
+                  class="material-symbols-outlined text-lg reevio-inline-style-001"
+                 
+                  >star</span
+                >
+                <span
+                  class="material-symbols-outlined text-lg reevio-inline-style-001"
+                 
+                  >star</span
+                >
+                <span
+                  class="material-symbols-outlined text-lg reevio-inline-style-001"
+                 
+                  >star</span
+                >
+                <span
+                  class="material-symbols-outlined text-lg reevio-inline-style-001"
+                 
+                  >star</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Review Content Column -->
+        <div class="w-full lg:w-2/3 flex flex-col pt-4">
+          <!-- Reviewer Info -->
+          <div
+            class="flex items-center justify-between mb-8 pb-8 border-b border-surface-container-low"
+          >
+            <div class="flex items-center gap-4">
+              <div
+                class="w-12 h-12 rounded-full bg-surface-container-high overflow-hidden ghost-border"
+              >
+                <img
+                  alt="Reviewer Avatar"
+                  class="w-full h-full object-cover"
+                  data-alt="A stylized portrait of a cinephile used as a user avatar. The lighting is moody and cinematic, with deep shadows and a subtle teal neon rim light illuminating the subject's face against a dark charcoal background. The mood is serious and artistic, perfectly fitting the high-end noir editorial theme of the application."
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuBWvqfFyWI5kdCDMWaARHgmtGWHzB-jKruTlRdnp6fmUfhy1iwqPPjYyoRJ0MlAZKlNcvaXC9v8WrSlCTFlTbp17i0z5ZZpBEmzZoVeLGvmdj59ap-RbJRONBb2zAi1BJN2sX0_ap-gt0jiMOyCA-MP1hIxQEl9O4yjMuO0WfZF3D7SABpu58SOJewpX_7v_h7PX1UjdXTS1uomA1kliB1DxrSUS2d72NRjB__yu4OpkyLrzl-AkwQWaGkClMIr2Z9DanfAyv8cC_v2"
+                />
+              </div>
+              <div>
+                <p class="font-bold text-on-surface">cinephile99</p>
+                <p
+                  class="text-xs text-on-surface-variant font-label uppercase tracking-wider mt-1"
+                >
+                  Reviewed on March 1, 2024
+                </p>
+              </div>
+            </div>
+            <button
+              class="flex items-center gap-2 text-on-surface-variant hover:text-secondary transition-colors duration-200"
+            >
+              <span class="material-symbols-outlined">share</span>
+            </button>
+          </div>
+          <!-- Review Body -->
+          <div class="prose prose-invert max-w-none">
+            <h1
+              class="font-headline text-4xl lg:text-5xl font-bold text-primary leading-tight mb-8"
+            >
+              A visual symphony that redefines the modern blockbuster.
+            </h1>
+            <p
+              class="text-on-surface text-base lg:text-lg leading-relaxed mb-6 font-body"
+            >
+              Denis Villeneuve doesn't just make movies; he constructs immense,
+              brutalist cathedrals of cinema and invites us to worship. Dune:
+              Part Two is an astonishing achievement, a film that somehow
+              manages to balance intimate character study with holy-war
+              spectacle on a scale rarely seen since Lawrence of Arabia.
+            </p>
+            <p
+              class="text-on-surface text-base lg:text-lg leading-relaxed mb-8 font-body"
+            >
+              The sound design alone demands a theatrical experience. Every
+              thumper strike reverberates through your bones, and Hans Zimmer’s
+              score roars with a terrifying, religious fervor. It's an
+              overwhelming sensory experience that completely envelops you in
+              the sands of Arrakis.
+            </p>
+            <!-- Stylized Blockquote -->
+            <blockquote
+              class="my-12 relative p-8 bg-surface-container-low rounded-xl ghost-border overflow-hidden"
+            >
+              <div class="absolute top-0 left-0 w-1 h-full bg-primary"></div>
+              <p
+                class="font-headline text-2xl lg:text-3xl text-on-surface font-medium leading-snug relative z-10 italic"
+              >
+                "It’s rare to see a film of this scale maintain such a precise,
+                authorial voice. This is the new gold standard for sci-fi."
+              </p>
+            </blockquote>
+            <p
+              class="text-on-surface text-base lg:text-lg leading-relaxed mb-12 font-body"
+            >
+              Timothée Chalamet’s transformation from reluctant heir to
+              terrifying messiah is anchored by a quiet, intense menace.
+              Supported by breathtaking cinematography by Greig Fraser, every
+              frame looks like a Renaissance painting cast in sand and spice.
+            </p>
+          </div>
+          <!-- Engagement & Actions -->
+          <div
+            class="flex items-center justify-between mt-12 pt-8 border-t border-surface-container-low"
+          >
+            <div class="flex items-center gap-6">
+              <button
+                class="flex items-center gap-2 text-primary hover:text-primary-container transition-colors group"
+              >
+                <span
+                  class="material-symbols-outlined group-hover:scale-110 transition-transform reevio-inline-style-001"
+                 
+                  >favorite</span
+                >
+                <span class="font-bold">2.4k</span>
+              </button>
+              <a class="flex items-center gap-2 text-on-surface-variant hover:text-secondary transition-colors" href="review_comments.html">
+                <span class="material-symbols-outlined">chat_bubble</span>
+                <span class="font-medium">142 Comments</span>
+              </a>
+            </div>
+            <a
+              class="px-6 py-2 rounded-full border border-secondary/40 text-secondary hover:bg-secondary/10 transition-colors font-label uppercase text-sm tracking-wide"
+              href="review_comments.html"
+            >
+              Comment
+            </a>
+          </div>
+        </div>
+      </article>
+    </main>
+      <script src="/public/assets/js/reevio.js"></script>
+</body>
+</html>

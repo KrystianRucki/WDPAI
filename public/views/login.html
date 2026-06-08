@@ -1,37 +1,131 @@
 <!doctype html>
-<html lang="en">
+<html class="dark" lang="en">
   <head>
-    <?php include __DIR__ . '/partials/head.html'; ?>
-    <link rel="stylesheet" type="text/css" href="public/styles/login.css" />
-    <title>Login</title>
-  </head>
-  <body class="auth-page login-page">
-    <main class="auth-shell">
-      <form class="auth-form" method="POST" action="\login">
-        <div class="auth-heading">
-          <span class="eyebrow">Welcome back</span>
-          <h1>Login</h1>
-        </div>
-
-        <?php if(isset($messages)): ?>
-
-        <p class="messages">
-          <?= $messages ?>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Reevio - Login</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;700;900&amp;family=Manrope:wght@400;500;700&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link href="/public/assets/css/reevio.css" rel="stylesheet" /></head>
+  <body
+    class="bg-surface text-on-surface font-body min-h-screen w-full relative auth-page reevio-page-login"
+    data-mode="connect"
+  >
+    <!-- Cinematic Background Image -->
+    <div class="fixed inset-0 z-0">
+      <img
+        alt="Cinematic Background"
+        class="w-full h-full object-cover opacity-40 mix-blend-overlay"
+        data-alt="Dark, moody cinematic scene of an empty theater or film set with subtle warm ambient light flares"
+        src="https://lh3.googleusercontent.com/aida-public/AB6AXuC6RL0O-rbJhR_wRwGckUIK_eWGnojY00D8AlnOr2GjoOuBkUU0wiFE5AO0MqX4WBEZaDWtyySnE4_uxTRkwI5cULXHCv0SWTrLpfS9AcFlr8xYn6qiTKc7QI8r-_0LN3GwdPhTyGjEsrwPt69yBmTlvdInV-VLFhItr_r6TkF0rt83quTLxroCRlbBFNpo5XmR3MWzlTXtqoYIZJHvxnZG6nDBApkIqvt7C8a5Q207jiG5eQQu2GDjbErJHiD3RSjoKgZe-dKwY_zA"
+      />
+      <!-- Gradient Overlay for depth and text legibility -->
+      <div
+        class="absolute inset-0 bg-gradient-to-b from-surface/20 via-surface/80 to-surface"
+      ></div>
+    </div>
+    <!-- Main Content Container -->
+    <div
+      class="relative z-10 flex flex-col min-h-screen w-full max-w-md mx-auto justify-center px-8 pb-20"
+    >
+      <!-- Brand Hero -->
+      <div class="text-center mb-10">
+        <h1
+          class="font-display font-black text-6xl tracking-tighter text-primary mb-2 drop-shadow-[0_0_15px_rgba(255,215,155,0.3)]"
+        >
+          REEVIO
+        </h1>
+        <p
+          class="font-label text-sm text-on-surface-variant uppercase tracking-[0.2em]"
+        >
+          Curating The Cinematic Experience
         </p>
-
+      </div>
+      <!-- Login Form -->
+      <form class="space-y-6 w-full flex flex-col justify-start" method="POST" action="/login">
+        <!-- Email Input -->
+        <div class="relative">
+          <div
+            class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"
+          >
+            <span class="material-symbols-outlined text-outline">mail</span>
+          </div>
+          <input
+            class="w-full bg-surface-container-lowest border-0 rounded-xl py-4 pl-12 pr-4 text-on-surface placeholder-on-surface-variant/50 focus:ring-2 focus:ring-secondary focus:bg-surface-container-low transition-all duration-300"
+            id="email"
+            name="email"
+            placeholder="Email Address"
+            type="email"
+          />
+        </div>
+        <!-- Password Input -->
+        <div class="relative">
+          <div
+            class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"
+          >
+            <span class="material-symbols-outlined text-outline">lock</span>
+          </div>
+          <input
+            class="w-full bg-surface-container-lowest border-0 rounded-xl py-4 pl-12 pr-12 text-on-surface placeholder-on-surface-variant/50 focus:ring-2 focus:ring-secondary focus:bg-surface-container-low transition-all duration-300"
+            id="password"
+            name="password"
+            placeholder="Password"
+            type="password"
+          />
+          <button
+            class="absolute inset-y-0 right-0 pr-4 flex items-center text-outline hover:text-secondary transition-colors"
+            type="button"
+           data-password-toggle aria-label="Show password">
+            <span class="material-symbols-outlined">visibility_off</span>
+          </button>
+        </div>
+        <?php if (isset($messages) && $messages): ?>
+          <p class="rounded-xl border border-error/30 bg-error/10 px-4 py-3 text-sm font-bold text-error">
+            <?= htmlspecialchars($messages, ENT_QUOTES, 'UTF-8'); ?>
+          </p>
         <?php endif; ?>
-        <label>
-          Email
-          <input name="email" type="email" placeholder="Twój email" />
-        </label>
-        <label>
-          Password
-          <input name="password" type="password" placeholder="Twoje hasło" />
-        </label>
-        <button type="submit">Login</button>
 
-        <a class="auth-link" href="/register">Zarejestruj się</a>
+        <!-- Forgot Password Link -->
+        <div class="flex justify-end">
+          <a
+            class="font-label text-sm text-secondary hover:text-secondary-fixed-dim transition-colors"
+            href="#"
+          >
+            Forgot Password?
+          </a>
+        </div>
+        <!-- Primary CTA -->
+        <button
+          class="w-full py-4 mt-2 rounded-full bg-gradient-to-r from-primary to-primary-container text-on-primary font-headline font-bold text-lg shadow-[0_10px_25px_rgba(255,215,155,0.2)] hover:shadow-[0_10px_30px_rgba(255,215,155,0.4)] transform hover:scale-[1.02] transition-all duration-300 active:scale-95"
+          type="submit"
+        >
+          LOG IN
+        </button>
       </form>
-    </main>
-  </body>
+      <!-- Footer / Social Login Area -->
+      <div class="mt-8 flex flex-col items-center">
+        <!-- Social Buttons -->
+        <!-- Sign Up Link -->
+        <p class="font-label text-sm text-on-surface-variant">
+          Don't have an account?
+          <a
+            class="text-secondary font-bold hover:underline underline-offset-4 ml-1"
+            href="/register"
+            >Sign Up</a
+          >
+        </p>
+      </div>
+    </div>
+      <script src="/public/assets/js/reevio.js"></script>
+</body>
 </html>

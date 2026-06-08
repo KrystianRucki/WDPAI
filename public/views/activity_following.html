@@ -1,0 +1,270 @@
+<!doctype html>
+<html class="dark" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Reevio - Activity</title>
+
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;500;700;800;900&family=Manrope:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+      rel="stylesheet"
+    />
+    <link href="/public/assets/css/reevio.css" rel="stylesheet" /></head>
+
+  <body class="bg-surface text-on-surface antialiased overflow-x-hidden reevio-page-activity_following">
+    <div class="cinematic-glow"></div>
+<?php
+$activeNav = 'activity';
+$showAdminLink = ($showAdminLink ?? false);
+include __DIR__ . '/partials/navigation.html';
+?>
+<!-- Main content -->
+    <main class="relative z-10 ml-64 min-h-screen w-[calc(100%-16rem)] px-4 pb-24 pt-[8.7rem] lg:px-5 xl:px-6">
+      <div class="mx-auto max-w-[1120px]">
+        <!-- Header -->
+        <header class="mb-10 flex items-end justify-between gap-8 pr-44">
+          <div>
+            <p class="mb-3 font-label text-xs font-bold uppercase tracking-[0.28em] text-secondary">
+              Social activity
+            </p>
+
+            <h1 class="font-headline text-[32px] font-black tracking-tight text-on-surface">
+              Activity
+            </h1>
+          </div>
+
+          <div
+            class="flex items-center gap-2 rounded-full border border-outline-variant/20 bg-surface-container-low px-2 py-2"
+          >
+            <button
+              class="rounded-full bg-primary px-5 py-2.5 font-label text-sm font-bold text-on-primary shadow-[0_0_16px_rgba(255,215,155,0.18)]"
+              type="button"
+            >
+              Following
+            </button>
+
+            <a
+              class="rounded-full px-5 py-2.5 font-label text-sm font-bold text-on-surface-variant transition-colors hover:bg-surface-container-high hover:text-on-surface"
+              href="activity_you.html"
+            >
+              You
+            </a>
+          </div>
+        </header>
+
+        <!-- Desktop timeline -->
+        <section class="relative">
+          <div class="timeline-line absolute left-1/2 top-0 h-full w-px -translate-x-1/2"></div>
+
+          <div class="space-y-10">
+            <!-- Review Action -->
+            <article class="relative grid grid-cols-[1fr_64px_1fr] items-start gap-6">
+              <div class="col-start-1">
+                <a href="review_details.html"
+                  class="relative rounded-3xl border border-outline-variant/15 bg-surface-container-low p-5 ambient-shadow before:absolute before:right-[-8px] before:top-7 before:h-4 before:w-4 before:rotate-45 before:bg-surface-container-low activity-click-card"
+                 aria-label="Open review">
+                  <div class="mb-4 flex items-start justify-between gap-4">
+                    <div class="font-label text-sm text-on-surface-variant">
+                      <span class="font-bold text-on-surface">Elena R.</span>
+                      reviewed
+                      <span class="mt-1 block text-xs text-secondary">2 hours ago</span>
+                    </div>
+
+                    <span
+                      class="flex h-9 w-9 items-center justify-center rounded-full bg-surface-container-high text-primary"
+                    >
+                      <span class="material-symbols-outlined text-[18px]">rate_review</span>
+                    </span>
+                  </div>
+
+                  <div class="flex gap-4">
+                    <div class="h-28 w-[74px] shrink-0 overflow-hidden rounded-xl poster-shadow">
+                      <img
+                        alt="Neon Drift poster"
+                        class="h-full w-full object-cover"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuBcB4aU2lqfl-4WsSSYrXZNACH5yw30gN21aYrmYnUBc00CNx0UYze_k2UXm6-lgR22SFYNMMJdUR2hL4vUK1WcDR1bRaauoYKkd5DhcVD5GY_5oa96UXrj2lJJqcudype8rWIq0L1DJC9ua5aOg4kO-XBcYBOs5_6iGpqW642h3AkDkGokaGuz1hO1FpkaRrbI0uHXRQ_BM-F9ORuAeveS1AZ-I6_ijyM44p9HKQJihYgGB0N4MiyO5_Ff8mBjXYJJIipK9_IZIdbf"
+                      />
+                    </div>
+
+                    <div class="min-w-0 flex-1">
+                      <h3 class="mb-1 font-headline text-xl font-bold leading-tight text-on-surface">
+                        Neon Drift
+                      </h3>
+
+                      <div class="mb-2 flex text-primary">
+                        <span class="material-symbols-outlined fill-icon text-[17px]">star</span>
+                        <span class="material-symbols-outlined fill-icon text-[17px]">star</span>
+                        <span class="material-symbols-outlined fill-icon text-[17px]">star</span>
+                        <span class="material-symbols-outlined fill-icon text-[17px]">star</span>
+                        <span class="material-symbols-outlined text-outline text-[17px]">star_half</span>
+                      </div>
+
+                      <p class="text-sm leading-relaxed text-on-surface-variant italic">
+                        “Visually stunning but emotionally hollow. The cinematography carries the entire runtime,
+                        masking a plot we've seen a hundred times before.”
+                      </p>
+                    </div>
+                  </div>
+                </a>
+              </div>
+
+              <div class="col-start-2 flex justify-center">
+                <div class="relative z-10 h-14 w-14 overflow-hidden rounded-full border-4 border-background bg-surface-container-high shadow-lg">
+                  <img
+                    alt="Elena R. avatar"
+                    class="h-full w-full object-cover"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuDPvanvZnDyt6f_vz2M9nFBzoFnc60ZOvQfxVfocwFUDrkDvy0i1anzlubAcvB5NqdKBfS-BF4k3i67wJTufJJIq8ZzRjQZlZotOXR7M-8RK78xGT9Ar3-wvehLSgq7x5g8lNvrYRYLJb8S95k3-9-5mW9rYNmTEcYgoDgPA84OBNVu8j97mzQEoqiOvOp0H8t1dPJT8YYGpgdMrKWWfTma_t1LMQqxnFWLWHbaMQzT8vRv45EfvbbAcTdbZ-We-IJxMXYPvyqCRA84"
+                  />
+                </div>
+              </div>
+
+              <div class="col-start-3"></div>
+            </article>
+
+            <!-- List Creation Action -->
+            <article class="relative grid grid-cols-[1fr_64px_1fr] items-start gap-6">
+              <div class="col-start-1"></div>
+
+              <div class="col-start-2 flex justify-center">
+                <div class="relative z-10 h-14 w-14 overflow-hidden rounded-full border-4 border-background bg-surface-container-high shadow-lg">
+                  <img
+                    alt="Marcus T. avatar"
+                    class="h-full w-full object-cover"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuAFlcshkOcN0Na51b-GJvlch420BN3IiJZP-nOfx_s0pkGuOOSZ0xRz67uLvQ0D2yL4IvYIjzND6LURmp7cMf4bRoF8xUCAncukaVBOHQhtkhH3U54E8_nbFT__s8_NvetEd9mbsmLgmWqJRkGW-W7Qp64oJRp-zjxQ2eZUwJCgtWiinvuRBp75RQvFsbPol1YQKg1P-ktsDMEm0RljdeVmD-AppFeGu8LsULPGsNSNt6Nwvnu_47Ic87FVfdKQT3AppSdyAtuEdVvA"
+                  />
+                </div>
+              </div>
+
+              <div class="col-start-3">
+                <a href="list_details.html"
+                  class="relative rounded-3xl border border-outline-variant/15 bg-surface-container-low p-5 ambient-shadow before:absolute before:left-[-8px] before:top-7 before:h-4 before:w-4 before:rotate-45 before:bg-surface-container-low activity-click-card"
+                 aria-label="Open created list">
+                  <div class="mb-4 flex items-start justify-between gap-4">
+                    <div class="font-label text-sm text-on-surface-variant">
+                      <span class="font-bold text-on-surface">Marcus T.</span>
+                      created a list
+                      <span class="mt-1 block text-xs text-secondary">5 hours ago</span>
+                    </div>
+
+                    <span
+                      class="flex h-9 w-9 items-center justify-center rounded-full bg-surface-container-high text-primary"
+                    >
+                      <span class="material-symbols-outlined text-[18px]">format_list_bulleted</span>
+                    </span>
+                  </div>
+
+                  <div class="rounded-2xl bg-surface-container-high p-4">
+                    <h3 class="mb-1 font-headline text-xl font-bold text-on-surface">
+                      Neo-Noir Essentials
+                    </h3>
+
+                    <p class="mb-4 font-label text-xs text-on-surface-variant">
+                      12 Films • Ranked
+                    </p>
+
+                    <div class="flex -space-x-4">
+                      <img
+                        alt="List poster"
+                        class="relative z-30 h-20 w-14 rounded-lg border-2 border-surface-container-high object-cover poster-shadow"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuDmxsdna9ZpAqS2bsm5TVMM7Syz0lGEVKC2-XD8rKpVB7vLaACaBhinJDEYkCx08EQGi6LhayPym0Hnuf4LeISM3XYWmGHCtyn8grepTAkbmCBFQZPi-I6eqLyNsQ6U6xrQEVlSR5Jo0tMTTwL6GnrzxUEmqyI1vM7s632X7zPNGKEIgoH-eqIvPUP1anowMkf20EOkcTjZI76BmP9MeX1iw0VlsvjTvV-RbIm_yaCDUivZerJiHZgPKdB2o0dUTHcQ8PG7SksXaqpW"
+                      />
+                      <img
+                        alt="List poster"
+                        class="relative z-20 h-20 w-14 rounded-lg border-2 border-surface-container-high object-cover poster-shadow"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuAjbNGjSVlbHYVaecPZr_uUXOwkRRZ8cHle9K8Cu35OuyusYU5fYRkMSVbzp9Vf6ItwhzCyBaSomikMUBD-zLpsspCMcpnydu38n6Bc6YOHLm3vF9LGB_glSt6fve0WoqKy1TyPM1ws6YTDFuSbp3xa6kxpa33h0-seMdaH8nlNxpV2Y40J_y-L8wMHUlgv_BGWdporYw22YsQ-TEVXdWpQK82cvToKBw5N121Q5vreuJMnMCNiOPoBOI4VONj2KxEvoGHkiJrO_xKg"
+                      />
+                      <img
+                        alt="List poster"
+                        class="relative z-10 h-20 w-14 rounded-lg border-2 border-surface-container-high object-cover poster-shadow"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuBgnya5qFE83rfpRiwoIO8OwkmkJsqXGhauKaogDus7PyfvS-kCymeldVLFdJsZsx9YI58Ls45tXt9gqs1fSV5E4hLa1vC3auk3fL5w_BoSKTO0LrRwfOpECCdSysfWqgwTT9m0b0k3CFUMMmfcXjNdFThYMbQEJrXolJJ9PBJdCTwWqwSZk0LCHA_ZyGkNnaYfQLjFNRIAMKz2AW-u96_cVvhpvU5t1S8qHUxui6R40x3fzxGTO9I1Q0L2xGKfVBOKw8NBulATHknX"
+                      />
+                      <div class="relative z-0 flex h-20 w-14 items-center justify-center rounded-lg border-2 border-surface-container-high bg-surface-container-lowest">
+                        <span class="font-label text-xs font-bold text-on-surface-variant">+9</span>
+                      </div>
+                    </div>
+                  </div>
+                </a>
+              </div>
+            </article>
+
+            <!-- Logged Film Action -->
+            <article class="relative grid grid-cols-[1fr_64px_1fr] items-start gap-6">
+              <div class="col-start-1">
+                <a href="film_details.html"
+                  class="relative rounded-3xl border border-outline-variant/15 bg-surface-container-low p-5 ambient-shadow before:absolute before:right-[-8px] before:top-7 before:h-4 before:w-4 before:rotate-45 before:bg-surface-container-low activity-click-card"
+                 aria-label="Open logged film">
+                  <div class="mb-4 flex items-start justify-between gap-4">
+                    <div class="font-label text-sm text-on-surface-variant">
+                      <span class="font-bold text-on-surface">Sarah J.</span>
+                      logged
+                      <span class="mt-1 block text-xs text-secondary">Yesterday</span>
+                    </div>
+
+                    <span
+                      class="flex h-9 w-9 items-center justify-center rounded-full bg-surface-container-high text-primary"
+                    >
+                      <span class="material-symbols-outlined text-[18px]">check_circle</span>
+                    </span>
+                  </div>
+
+                  <div class="flex items-center gap-4">
+                    <div class="h-24 w-16 shrink-0 overflow-hidden rounded-xl poster-shadow">
+                      <img
+                        alt="The Grand Illusion poster"
+                        class="h-full w-full object-cover"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuCG85SCvg5rr88xj30JW74gK3cMrRJ-X63mYkrXDgt-ec1FtytRQ-3nIbra0h-u4rjCDhT6_18lairoe8_huH00Q8qBSbkrJew_HWdY9_1mEvfAJ5aRKgZvenNCcAQm63GovBPO6eYYE55hR2VhxYtAuOhdOAu6Sqc2Nu6bhP8RbdVpx8-8lNwLPbEGuAZZVqXSi7ecOL7gFfGOUx8i2zshVkOCFF2LNxImT9T1Y9ztikVmQmHUaCeu-9S4_zJiAF4oL__UOt2CLwHs"
+                      />
+                    </div>
+
+                    <div>
+                      <h3 class="mb-1 font-headline text-lg font-bold leading-tight text-on-surface">
+                        The Grand Illusion
+                      </h3>
+
+                      <div class="flex text-primary">
+                        <span class="material-symbols-outlined fill-icon text-[17px]">star</span>
+                        <span class="material-symbols-outlined fill-icon text-[17px]">star</span>
+                        <span class="material-symbols-outlined fill-icon text-[17px]">star</span>
+                        <span class="material-symbols-outlined fill-icon text-[17px]">star</span>
+                        <span class="material-symbols-outlined fill-icon text-[17px]">star</span>
+                      </div>
+                    </div>
+                  </div>
+                </a>
+              </div>
+
+              <div class="col-start-2 flex justify-center">
+                <div class="relative z-10 h-14 w-14 overflow-hidden rounded-full border-4 border-background bg-surface-container-high shadow-lg">
+                  <img
+                    alt="Sarah J. avatar"
+                    class="h-full w-full object-cover"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuBhmSr9JjETs6g3-3qDTkhD5nDXUhWgvFlVFpPVtIu2-Xckvn2q4X_hys9jYdZWB_wgz2ZX5fhxasCaenxBc7w2CgcC_wuchNaSL0Qqnw06ClGQ8cR4aYZ-w2MKO3I0Hd-0lLlCYQSPqyC43zdXI5PTlpCTjPjGtJTA9GfuBiGxsM2lYKEozTpRp857l1HlA9HmTDTxIT9YvxKprpgIJurUOyk-Ve1GoHZ47WaEk_ywHnRufQr24fLPTZ_KvSCKUwRMMEB6qhE6Log8"
+                  />
+                </div>
+              </div>
+
+              <div class="col-start-3"></div>
+            </article>
+          </div>
+        </section>
+
+        <div class="mt-12 flex justify-center">
+          <button
+            class="inline-flex items-center gap-2 rounded-full border border-secondary/35 px-8 py-3 font-label text-sm font-bold uppercase tracking-widest text-secondary transition-colors hover:border-secondary/70 hover:bg-secondary/10"
+            type="button"
+          >
+            <span class="material-symbols-outlined text-[18px]">expand_more</span>
+            Load more activity
+          </button>
+        </div>
+      </div>
+    </main>
+      <script src="/public/assets/js/reevio.js"></script>
+</body>
+</html>

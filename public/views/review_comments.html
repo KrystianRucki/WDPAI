@@ -1,0 +1,309 @@
+<!DOCTYPE html><html class="dark" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Reevio - Comments</title>
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;600;800&amp;family=Manrope:wght@400;500;700&amp;family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+    <link href="/public/assets/css/reevio.css" rel="stylesheet" /></head>
+<body class="bg-surface text-on-surface flex w-full min-h-screen antialiased reevio-page-review_comments">
+<!-- Sidebar Navigation (Desktop) -->
+<?php
+$activeNav = 'reviews';
+$showAdminLink = ($showAdminLink ?? false);
+include __DIR__ . '/partials/navigation.html';
+?>
+<!-- Main Content Area -->
+<main class="relative ml-64 min-h-screen w-[calc(100%-16rem)] bg-background">
+  <div class="absolute top-0 left-1/4 w-1/2 h-72 bg-primary/5 rounded-full blur-[110px] pointer-events-none"></div>
+
+  <div class="relative z-10 mx-auto max-w-7xl px-10 xl:px-14 pt-24 pb-24">
+    <!-- Page Header -->
+    <header class="mb-10 pr-44">
+      <div class="flex items-start justify-between gap-8">
+        <div>
+          <a
+            href="#"
+            class="inline-flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors group mb-7"
+            aria-label="Back to review"
+          >
+            <span class="material-symbols-outlined text-[20px] group-hover:-translate-x-1 transition-transform">arrow_back</span>
+            <span class="font-label text-xs uppercase tracking-[0.24em] font-bold">Back to review</span>
+          </a>
+
+          <h1 class="font-display text-5xl font-bold text-primary tracking-tight mb-3">
+            Comments
+          </h1>
+          <p class="font-body text-on-surface-variant text-base max-w-2xl">
+            Join the discussion under <span class="text-on-surface font-semibold">cinephile99’s</span> review of
+            <span class="text-secondary font-semibold">Dune: Part Two</span>.
+          </p>
+        </div>
+
+        <div class="hidden lg:flex items-center gap-3 pt-10">
+          <button
+            class="inline-flex items-center gap-2 text-on-surface-variant hover:text-secondary transition-colors px-4 py-2.5 rounded-full bg-surface-container-low hover:bg-surface-container-high border border-outline-variant/10"
+            type="button"
+          >
+            <span class="material-symbols-outlined text-[18px]">sort</span>
+            <span class="font-label text-sm">Newest first</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <div class="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_340px] gap-8 items-start">
+      <!-- Left column: comments -->
+      <section class="space-y-8">
+        <!-- Comment Input Area -->
+        <div class="bg-surface-container-lowest rounded-3xl border border-outline-variant/15 shadow-[0_20px_40px_rgba(0,0,0,0.28)] p-6">
+          <div class="flex gap-4">
+            <img
+              alt="Your Avatar"
+              class="w-12 h-12 rounded-full object-cover border border-outline-variant/20 flex-shrink-0"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuCjr3W9muI8NWw8HJPGAlQ3J1VXOJ_z6YhdNn4ynrNBOUTkTPfFFkw0aDrqX9upuvfMkXM_36l7FwSj9AXlpVzEtQNituYXChsY04aZD8ez_JzCSNbAUXn7nWEaVaNAeyhObg_oB7QTS9_sTsWUPna8MvMIJtfrw7wSUWD-VSM5OcydfMtj6qxTRvqmtbWZ9FIgKhLEBCO7N_3kL6XTEXonw4UqDqxlw5sWU8-PEcUojNMVkAlQ-FgALZmj5DUSa9LLjFCfA_zmReY4"
+            />
+
+            <div class="flex-1">
+              <div class="recessed-input rounded-2xl overflow-hidden">
+                <textarea
+                  class="w-full bg-transparent border-none text-on-surface placeholder:text-on-surface-variant/50 focus:ring-0 resize-none py-4 px-5 font-body text-sm min-h-[112px] reevio-inline-style-018"
+                  placeholder="Add a thoughtful comment..."
+                  rows="4"
+                 
+                ></textarea>
+              </div>
+
+              <div class="flex items-center justify-between gap-4 mt-4">
+                <p class="text-xs text-on-surface-variant font-label">
+                  Keep it cinematic, useful, and spoiler-aware.
+                </p>
+
+                <button
+                  class="bg-gradient-cta text-on-primary font-label text-sm uppercase tracking-widest font-bold px-7 py-2.5 rounded-full hover:shadow-[0_6px_20px_rgba(255,215,155,0.26)] transition-all active:scale-95"
+                  type="button"
+                >
+                  Post
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Comments Thread -->
+        <div class="space-y-5">
+          <!-- Comment 1 -->
+          <article class="group bg-surface-container-low rounded-3xl border border-outline-variant/10 p-6 shadow-[0_16px_34px_rgba(0,0,0,0.18)] hover:bg-surface-container-high/70 transition-colors">
+            <div class="flex gap-5">
+              <img
+                alt="@mia_reviews Avatar"
+                class="w-12 h-12 rounded-full object-cover border border-outline-variant/20 flex-shrink-0"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBEMUB3ArnuRwaap9h63EZ-ZCMFnwBRIgFnU6VCltcVbRO68u9ivGXRpgjHsWI1W9Zwuav9pQN6DWL1Tc2UFQaotqHmfT-LDh6OFPOwN9Hfevel0WbqIpakxA5y0Q7m4OvspDirI8yW50Ln5GjF4OokbRaeCVro-3qZMPNTk48-3owbWRl9Z0Ip-hNjEzwNUZZ5DaZLylErnIJME23qT7jdTmG92onMVWNhFQntfa7wuL1j-simMfpTGtVw2hMX3mSjO5c0TjZtslW0"
+              />
+
+              <div class="flex-1 min-w-0">
+                <div class="flex justify-between items-start gap-4 mb-3">
+                  <div>
+                    <h4 class="font-label font-bold text-on-surface">@mia_reviews</h4>
+                    <span class="text-xs text-on-surface-variant/70 font-body">2 hours ago</span>
+                  </div>
+
+                  <button class="text-on-surface-variant/50 hover:text-on-surface transition-colors" type="button">
+                    <span class="material-symbols-outlined text-lg">more_horiz</span>
+                  </button>
+                </div>
+
+                <p class="font-body text-on-surface-variant leading-relaxed text-sm">
+                  The cinematography in the third act completely carried the narrative flaws.
+                  You can really feel Deakins' influence in those wide desert shots.
+                  Brilliant lighting choices throughout.
+                </p>
+
+                <div class="flex items-center gap-6 mt-5 pt-5 border-t border-outline-variant/10">
+                  <button class="flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors text-xs font-label" type="button">
+                    <span class="material-symbols-outlined text-base">favorite</span>
+                    <span>24</span>
+                  </button>
+
+                  <button class="flex items-center gap-2 text-on-surface-variant hover:text-secondary transition-colors text-xs font-label" type="button">
+                    <span class="material-symbols-outlined text-base">reply</span>
+                    <span>Reply</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- Comment 2 with nested reply -->
+          <article class="group bg-surface-container-low rounded-3xl border border-outline-variant/10 p-6 shadow-[0_16px_34px_rgba(0,0,0,0.18)] hover:bg-surface-container-high/70 transition-colors">
+            <div class="flex gap-5">
+              <img
+                alt="@alex_watches Avatar"
+                class="w-12 h-12 rounded-full object-cover border border-outline-variant/20 flex-shrink-0"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCmd8_SYwNHEw-Bxl-zhvzoFhfMxfe-siZjWNvhd8hlKeZHjWh-NId5oMm8Jz0cnR2v3trtaC4cGP-Y3i3txjxFBG7BiexGX0a071RsJBzUk6l2HwiGZWKSvtljPiAMVGQ_e_mODbJtJvOA1-pW-ktyCf4zlFZVlKtxlyQZTJ2TXBlcOrS8u-mY4dUrIBbPWWGUQfzFKVE57YhpDspNsXSlFrf3DaHMCJVE2oBcvQCVbYaYeU0yRg3iCRXM8wA28fE-XkZsshzSYdpc"
+              />
+
+              <div class="flex-1 min-w-0">
+                <div class="flex justify-between items-start gap-4 mb-3">
+                  <div>
+                    <h4 class="font-label font-bold text-on-surface">@alex_watches</h4>
+                    <span class="text-xs text-on-surface-variant/70 font-body">5 hours ago</span>
+                  </div>
+
+                  <button class="text-on-surface-variant/50 hover:text-on-surface transition-colors" type="button">
+                    <span class="material-symbols-outlined text-lg">more_horiz</span>
+                  </button>
+                </div>
+
+                <p class="font-body text-on-surface-variant leading-relaxed text-sm">
+                  I totally disagree. The pacing was completely off and the lighting felt too artificial.
+                  It pulled me right out of the experience.
+                </p>
+
+                <div class="flex items-center gap-6 mt-5 pt-5 border-t border-outline-variant/10">
+                  <button class="flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors text-xs font-label" type="button">
+                    <span class="material-symbols-outlined text-base">favorite</span>
+                    <span>4</span>
+                  </button>
+
+                  <button class="flex items-center gap-2 text-on-surface-variant hover:text-secondary transition-colors text-xs font-label" type="button">
+                    <span class="material-symbols-outlined text-base">reply</span>
+                    <span>Reply</span>
+                  </button>
+                </div>
+
+                <!-- Nested Reply -->
+                <div class="mt-5 ml-0 md:ml-8 flex gap-4 rounded-2xl bg-surface-container-highest/70 border border-outline-variant/10 p-4">
+                  <img
+                    alt="@sarah_cine Avatar"
+                    class="w-9 h-9 rounded-full object-cover border border-outline-variant/20 flex-shrink-0"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuAh7dAdtdCCqpyCF1KIEfZlFypi-pRRn5vW3ZEFHA4Je01va1zJPNk_iZnRIOdYUZsw0knVepjcXgsNrtqoS4eBFsgawanEf3THMNwQgUuPuS-oggqTiyvidIYU185VQ_J5c6oFSPFyGxy42IWjjv8S-W5kEsLtlyf1jwsrSXg7ULP4r0IIozs-qjM0j2nVCG_9G3Hs1lGS_cT8Qgq5V0fWqeJxtpWN2KCZLiaZcSeQrecqeNnY-5qtgwSCMrtVMJf0p-K3E6d_bCag"
+                  />
+
+                  <div class="flex-1">
+                    <div class="flex justify-between items-start gap-3 mb-1">
+                      <h4 class="font-label font-bold text-on-surface text-sm">@sarah_cine</h4>
+                      <span class="text-xs text-on-surface-variant/60 font-body">4 hours ago</span>
+                    </div>
+
+                    <p class="font-body text-on-surface-variant text-sm leading-relaxed">
+                      That's the point though! The artificiality was meant to reflect the protagonist's
+                      detachment from reality. It was an intentional choice.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- Comment 3 -->
+          <article class="group bg-surface-container-low rounded-3xl border border-outline-variant/10 p-6 shadow-[0_16px_34px_rgba(0,0,0,0.18)] hover:bg-surface-container-high/70 transition-colors">
+            <div class="flex gap-5">
+              <div class="w-12 h-12 rounded-full bg-surface-container-highest border border-outline-variant/20 flex-shrink-0 flex items-center justify-center text-primary font-headline font-bold">
+                N
+              </div>
+
+              <div class="flex-1 min-w-0">
+                <div class="flex justify-between items-start gap-4 mb-3">
+                  <div>
+                    <h4 class="font-label font-bold text-on-surface">@noirframes</h4>
+                    <span class="text-xs text-on-surface-variant/70 font-body">8 hours ago</span>
+                  </div>
+
+                  <button class="text-on-surface-variant/50 hover:text-on-surface transition-colors" type="button">
+                    <span class="material-symbols-outlined text-lg">more_horiz</span>
+                  </button>
+                </div>
+
+                <p class="font-body text-on-surface-variant leading-relaxed text-sm">
+                  The best part of this review is the sound design point. That is exactly what made
+                  the theatrical screening feel so different from watching another prestige sci-fi movie at home.
+                </p>
+
+                <div class="flex items-center gap-6 mt-5 pt-5 border-t border-outline-variant/10">
+                  <button class="flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors text-xs font-label" type="button">
+                    <span class="material-symbols-outlined text-base">favorite</span>
+                    <span>18</span>
+                  </button>
+
+                  <button class="flex items-center gap-2 text-on-surface-variant hover:text-secondary transition-colors text-xs font-label" type="button">
+                    <span class="material-symbols-outlined text-base">reply</span>
+                    <span>Reply</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <!-- Load More -->
+        <div class="flex justify-center pt-4">
+          <button
+            class="inline-flex items-center gap-2 px-8 py-3 rounded-full border border-secondary/35 text-secondary hover:bg-secondary/10 hover:border-secondary/70 transition-all font-label text-sm uppercase tracking-widest"
+            type="button"
+          >
+            <span class="material-symbols-outlined text-[18px]">expand_more</span>
+            Load more comments
+          </button>
+        </div>
+      </section>
+
+      <!-- Right column: review context -->
+      <aside class="hidden xl:block sticky top-24">
+        <div class="bg-surface-container-low rounded-3xl border border-outline-variant/15 shadow-[0_20px_40px_rgba(0,0,0,0.28)] p-5">
+          <div class="flex gap-4">
+            <div class="w-24 aspect-[2/3] rounded-xl overflow-hidden shadow-[0_16px_30px_rgba(0,0,0,0.35)] shrink-0">
+              <img
+                alt="Dune: Part Two poster"
+                class="w-full h-full object-cover"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBO3AtXbKrbawaUqPSxENJ8mRr7x75oazWxbMFbOJG8jzieXZ7W9lybbPiXC-ez_aDgSawoqmEgstngjlX4ldWdisw1ZeO78J4sXJJCNyBJggq_dbr6umtuTgTQvj-vNCyOF1cfsGYCMb8S69XlYTP_Lj93mu_hTmDFLVOHEJ0k8Oe5UHm-wz-kPnuvOjJBbwZKj6iWuQv6BYw0z3pq5dCc1NsftmmJToYY4nkIg5RHQ7BGYY5UU3i5ZHq-pM4_L1cAo7x2R3mfnl4f"
+              />
+            </div>
+
+            <div class="min-w-0">
+              <p class="font-label text-xs text-secondary uppercase tracking-[0.22em] mb-2">Review thread</p>
+              <h2 class="font-headline text-xl font-bold text-on-surface leading-tight">Dune: Part Two</h2>
+              <p class="text-on-surface-variant text-xs mt-1">Review by cinephile99</p>
+
+              <div class="flex items-center gap-1 mt-3 text-primary">
+                <span class="material-symbols-outlined text-[16px] reevio-inline-style-003">star</span>
+                <span class="material-symbols-outlined text-[16px] reevio-inline-style-003">star</span>
+                <span class="material-symbols-outlined text-[16px] reevio-inline-style-003">star</span>
+                <span class="material-symbols-outlined text-[16px] reevio-inline-style-003">star</span>
+                <span class="material-symbols-outlined text-[16px] reevio-inline-style-003">star_half</span>
+              </div>
+            </div>
+          </div>
+
+          <blockquote class="mt-5 rounded-2xl bg-surface-container-lowest border border-outline-variant/10 p-4">
+            <p class="font-body text-sm text-on-surface-variant leading-relaxed">
+              “A visual symphony that redefines the modern blockbuster.”
+            </p>
+          </blockquote>
+
+          <div class="grid grid-cols-2 gap-3 mt-5">
+            <div class="rounded-2xl bg-surface-container-lowest border border-outline-variant/10 p-4">
+              <p class="text-2xl font-headline font-bold text-primary">142</p>
+              <p class="text-xs font-label text-on-surface-variant mt-1">Comments</p>
+            </div>
+
+            <div class="rounded-2xl bg-surface-container-lowest border border-outline-variant/10 p-4">
+              <p class="text-2xl font-headline font-bold text-primary">2.4k</p>
+              <p class="text-xs font-label text-on-surface-variant mt-1">Likes</p>
+            </div>
+          </div>
+
+          <button
+            class="w-full mt-5 py-3 rounded-full bg-surface-container-high text-on-surface hover:text-primary hover:bg-surface-container-highest transition-colors font-label text-sm"
+            type="button"
+          >
+            Open full review
+          </button>
+        </div>
+      </aside>
+    </div>
+  </div>
+</main>
+    <script src="/public/assets/js/reevio.js"></script>
+</body></html>

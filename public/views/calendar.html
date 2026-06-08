@@ -1,0 +1,238 @@
+<!doctype html>
+<html class="dark" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Reevio - Select Date</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;600;700;800;900&family=Manrope:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+      rel="stylesheet"
+    />
+    <link href="/public/assets/css/reevio.css" rel="stylesheet" /></head>
+
+  <body class="bg-surface text-on-surface antialiased overflow-x-hidden reevio-page-calendar">
+    <div class="cinematic-glow"></div>
+<?php
+$activeNav = 'films';
+$showAdminLink = ($showAdminLink ?? false);
+include __DIR__ . '/partials/navigation.html';
+?>
+<!-- Main content with dimmed log screen behind modal -->
+    <main class="relative z-10 ml-64 min-h-screen w-[calc(100%-16rem)] overflow-hidden">
+      <!-- Dimmed background screen -->
+      <div class="absolute inset-0 bg-surface">
+        <div class="absolute inset-0 bg-[radial-gradient(circle_at_50%_18%,rgba(255,215,155,0.08),transparent_42%)]"></div>
+
+        <div class="mx-auto max-w-[920px] px-4 pb-24 pt-[8.7rem] opacity-25 blur-[1px] lg:px-5 xl:px-6">
+          <div class="mb-8">
+            <p class="mb-3 font-label text-xs font-bold uppercase tracking-[0.28em] text-secondary">
+              Log film
+            </p>
+
+            <h1 class="font-headline text-[28px] font-black tracking-tight text-on-surface">
+              Log your watch
+            </h1>
+          </div>
+
+          <div class="grid gap-6 lg:grid-cols-[280px_minmax(0,1fr)]">
+            <aside class="rounded-3xl border border-outline-variant/15 bg-surface-container-low p-5 ambient-shadow">
+              <div class="relative mb-5 aspect-[2/3] overflow-hidden rounded-2xl bg-surface-container-highest poster-shadow ghost-border">
+                <img
+                  alt="Dune: Part Two poster"
+                  class="h-full w-full object-cover"
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuDAkCwsmKRuL5MUGjoApr5kDC3B6dMwDa0WSgKmco1jNaDLFEg5lrwsMzhFHkLBTxuzbPQVlsAgW-POAS4R8dDD0fUwTE6TLUK0__cwwx28CFpGe50jZKQgLhnhZDapC44bnzyFw-gyp-p_qDOzSf3E8BRAVCGvT_Pj6XbTQ1Bmwtl_JkLQhNGYTFdYvr2DUlqU8mXBHCrLXf0UaRE_AYklucKh-SK2LyzOhiCYTrLux2Us5hRavcsAj-DTDTJH3Wg0Q58csU4FmoOE"
+                />
+              </div>
+
+              <h2 class="font-headline text-2xl font-black leading-tight text-primary">
+                Dune: Part Two
+              </h2>
+              <p class="mt-2 font-label text-sm text-on-surface-variant">
+                2024 • Denis Villeneuve
+              </p>
+            </aside>
+
+            <section class="rounded-3xl border border-outline-variant/15 bg-surface-container-low p-6 ambient-shadow">
+              <div class="grid gap-4 md:grid-cols-2">
+                <div class="rounded-2xl border border-outline-variant/15 bg-surface-container-lowest p-5">
+                  <p class="font-label text-xs font-bold uppercase tracking-wider text-on-surface-variant">
+                    Date watched
+                  </p>
+                  <p class="mt-2 flex items-center gap-2 font-body text-base text-on-surface">
+                    Today
+                    <span class="material-symbols-outlined text-[18px] text-secondary">edit_calendar</span>
+                  </p>
+                </div>
+
+                <div class="rounded-2xl border border-outline-variant/15 bg-surface-container-lowest p-5">
+                  <p class="font-label text-xs font-bold uppercase tracking-wider text-on-surface-variant">
+                    Status
+                  </p>
+                  <p class="mt-2 font-body text-base text-on-surface">
+                    Watched
+                  </p>
+                </div>
+              </div>
+
+              <div class="mt-6 h-48 rounded-2xl border border-outline-variant/15 bg-surface-container-lowest"></div>
+              <div class="mt-6 h-36 rounded-2xl border border-outline-variant/15 bg-surface-container-lowest"></div>
+            </section>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal dimmer -->
+      <div class="absolute inset-0 z-10 bg-surface/78 backdrop-blur-sm"></div>
+
+      <!-- Calendar overlay -->
+      <section class="relative z-20 flex min-h-screen items-center justify-center px-8 py-24">
+        <div
+          class="w-full max-w-[520px] rounded-3xl border border-outline-variant/15 bg-surface-container-highest/85 p-7 shadow-[0_28px_72px_rgba(0,0,0,0.55)] backdrop-blur-xl"
+        >
+          <!-- Modal header -->
+          <div class="mb-7 flex items-center justify-between">
+            <button
+              class="flex h-11 w-11 items-center justify-center rounded-full text-primary transition-colors hover:bg-surface-variant hover:text-secondary"
+              type="button"
+              aria-label="Close calendar"
+            >
+              <span class="material-symbols-outlined">close</span>
+            </button>
+
+            <div class="text-center">
+              <p class="font-label text-[10px] font-bold uppercase tracking-[0.28em] text-secondary">
+                Log film
+              </p>
+              <h1 class="mt-1 font-headline text-xl font-bold tracking-tight text-primary">
+                Select Date
+              </h1>
+            </div>
+
+            <button
+              class="flex h-11 w-11 items-center justify-center rounded-full text-primary transition-colors hover:bg-surface-variant hover:text-secondary"
+              type="button"
+              aria-label="Confirm selected date"
+            >
+              <span class="material-symbols-outlined">check</span>
+            </button>
+          </div>
+
+          <!-- Calendar header -->
+          <div class="mb-6 flex items-center justify-between">
+            <button
+              class="rounded-full p-2 text-on-surface-variant transition-colors hover:bg-surface-variant hover:text-on-surface"
+              type="button"
+              aria-label="Previous month"
+            >
+              <span class="material-symbols-outlined">chevron_left</span>
+            </button>
+
+            <h2 class="font-headline text-xl font-bold text-on-surface">
+              October 2024
+            </h2>
+
+            <button
+              class="rounded-full p-2 text-on-surface-variant transition-colors hover:bg-surface-variant hover:text-on-surface"
+              type="button"
+              aria-label="Next month"
+            >
+              <span class="material-symbols-outlined">chevron_right</span>
+            </button>
+          </div>
+
+          <!-- Weekdays -->
+          <div class="mb-4 grid grid-cols-7 gap-2 text-center">
+            <span class="font-label text-[11px] font-bold uppercase tracking-widest text-on-surface-variant">Su</span>
+            <span class="font-label text-[11px] font-bold uppercase tracking-widest text-on-surface-variant">Mo</span>
+            <span class="font-label text-[11px] font-bold uppercase tracking-widest text-on-surface-variant">Tu</span>
+            <span class="font-label text-[11px] font-bold uppercase tracking-widest text-on-surface-variant">We</span>
+            <span class="font-label text-[11px] font-bold uppercase tracking-widest text-on-surface-variant">Th</span>
+            <span class="font-label text-[11px] font-bold uppercase tracking-widest text-on-surface-variant">Fr</span>
+            <span class="font-label text-[11px] font-bold uppercase tracking-widest text-on-surface-variant">Sa</span>
+          </div>
+
+          <!-- Days grid -->
+          <div class="grid grid-cols-7 gap-x-2 gap-y-4 text-center font-body text-sm">
+            <button class="flex h-11 items-center justify-center rounded-full text-on-surface-variant/40" type="button">29</button>
+            <button class="flex h-11 items-center justify-center rounded-full text-on-surface-variant/40" type="button">30</button>
+
+            <button class="flex h-11 items-center justify-center rounded-full text-on-surface transition-colors hover:bg-surface-variant" type="button">1</button>
+            <button class="flex h-11 items-center justify-center rounded-full text-on-surface transition-colors hover:bg-surface-variant" type="button">2</button>
+            <button class="flex h-11 items-center justify-center rounded-full text-on-surface transition-colors hover:bg-surface-variant" type="button">3</button>
+            <button class="flex h-11 items-center justify-center rounded-full text-on-surface transition-colors hover:bg-surface-variant" type="button">4</button>
+            <button class="flex h-11 items-center justify-center rounded-full text-on-surface transition-colors hover:bg-surface-variant" type="button">5</button>
+            <button class="flex h-11 items-center justify-center rounded-full text-on-surface transition-colors hover:bg-surface-variant" type="button">6</button>
+            <button class="flex h-11 items-center justify-center rounded-full text-on-surface transition-colors hover:bg-surface-variant" type="button">7</button>
+            <button class="flex h-11 items-center justify-center rounded-full text-on-surface transition-colors hover:bg-surface-variant" type="button">8</button>
+            <button class="flex h-11 items-center justify-center rounded-full text-on-surface transition-colors hover:bg-surface-variant" type="button">9</button>
+            <button class="flex h-11 items-center justify-center rounded-full text-on-surface transition-colors hover:bg-surface-variant" type="button">10</button>
+            <button class="flex h-11 items-center justify-center rounded-full text-on-surface transition-colors hover:bg-surface-variant" type="button">11</button>
+            <button class="flex h-11 items-center justify-center rounded-full text-on-surface transition-colors hover:bg-surface-variant" type="button">12</button>
+            <button class="flex h-11 items-center justify-center rounded-full text-on-surface transition-colors hover:bg-surface-variant" type="button">13</button>
+
+            <button
+              class="flex h-11 items-center justify-center rounded-full bg-primary font-bold text-on-primary shadow-[0_0_14px_rgba(255,215,155,0.42)]"
+              type="button"
+              aria-label="Selected date 14 October 2024"
+            >
+              14
+            </button>
+
+            <button class="flex h-11 items-center justify-center rounded-full text-on-surface transition-colors hover:bg-surface-variant" type="button">15</button>
+            <button class="flex h-11 items-center justify-center rounded-full text-on-surface transition-colors hover:bg-surface-variant" type="button">16</button>
+            <button class="flex h-11 items-center justify-center rounded-full text-on-surface transition-colors hover:bg-surface-variant" type="button">17</button>
+            <button class="flex h-11 items-center justify-center rounded-full text-on-surface transition-colors hover:bg-surface-variant" type="button">18</button>
+            <button class="flex h-11 items-center justify-center rounded-full text-on-surface transition-colors hover:bg-surface-variant" type="button">19</button>
+            <button class="flex h-11 items-center justify-center rounded-full text-on-surface transition-colors hover:bg-surface-variant" type="button">20</button>
+            <button class="flex h-11 items-center justify-center rounded-full text-on-surface transition-colors hover:bg-surface-variant" type="button">21</button>
+            <button class="flex h-11 items-center justify-center rounded-full text-on-surface transition-colors hover:bg-surface-variant" type="button">22</button>
+            <button class="flex h-11 items-center justify-center rounded-full text-on-surface transition-colors hover:bg-surface-variant" type="button">23</button>
+
+            <button
+              class="flex h-11 items-center justify-center rounded-full border border-primary/30 font-bold text-primary text-glow"
+              type="button"
+              aria-label="Today 24 October 2024"
+            >
+              24
+            </button>
+
+            <button class="flex h-11 items-center justify-center rounded-full text-on-surface transition-colors hover:bg-surface-variant" type="button">25</button>
+            <button class="flex h-11 items-center justify-center rounded-full text-on-surface transition-colors hover:bg-surface-variant" type="button">26</button>
+            <button class="flex h-11 items-center justify-center rounded-full text-on-surface transition-colors hover:bg-surface-variant" type="button">27</button>
+            <button class="flex h-11 items-center justify-center rounded-full text-on-surface transition-colors hover:bg-surface-variant" type="button">28</button>
+            <button class="flex h-11 items-center justify-center rounded-full text-on-surface transition-colors hover:bg-surface-variant" type="button">29</button>
+            <button class="flex h-11 items-center justify-center rounded-full text-on-surface transition-colors hover:bg-surface-variant" type="button">30</button>
+            <button class="flex h-11 items-center justify-center rounded-full text-on-surface transition-colors hover:bg-surface-variant" type="button">31</button>
+
+            <button class="flex h-11 items-center justify-center rounded-full text-on-surface-variant/40" type="button">1</button>
+            <button class="flex h-11 items-center justify-center rounded-full text-on-surface-variant/40" type="button">2</button>
+          </div>
+
+          <!-- Actions -->
+          <div class="mt-8 flex justify-end gap-3 border-t border-outline-variant/15 pt-5">
+            <button
+              class="rounded-full border border-secondary/40 px-6 py-3 font-label text-sm font-bold text-secondary transition-colors hover:bg-secondary/10"
+              type="button"
+            >
+              Cancel
+            </button>
+
+            <button
+              class="rounded-full bg-gradient-to-r from-primary to-primary-container px-6 py-3 font-label text-sm font-bold text-on-primary shadow-[0_4px_14px_rgba(255,215,155,0.3)] transition-opacity hover:opacity-90"
+              type="button"
+            >
+              Done
+            </button>
+          </div>
+        </div>
+      </section>
+    </main>
+      <script src="/public/assets/js/reevio.js"></script>
+</body>
+</html>

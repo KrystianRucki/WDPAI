@@ -1,0 +1,165 @@
+<!DOCTYPE html><html class="dark" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Reevio - Reviews Feed</title>
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;500;700;900&amp;family=Manrope:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+    <link href="/public/assets/css/reevio.css" rel="stylesheet" /></head>
+<body class="font-body antialiased min-h-screen bg-surface selection:bg-primary/30 selection:text-primary reevio-page-feed_reviews">
+<!-- Side Nav Bar -->
+<?php
+$activeNav = 'reviews';
+$showAdminLink = ($showAdminLink ?? false);
+include __DIR__ . '/partials/navigation.html';
+?>
+<!-- Main Content Canvas -->
+<main class="relative z-10 ml-64 min-h-screen w-[calc(100%-16rem)] px-4 pb-24 pt-[8.7rem] lg:px-5 xl:px-6">
+<div class="max-w-[1120px]">
+<header class="mb-7">
+<h1 class="font-headline text-[28px] font-black tracking-tight text-on-surface">Reviews</h1>
+</header>
+<div class="grid grid-cols-1 gap-8">
+<!-- Review Card 1 -->
+<article data-href="review_details.html" class="bg-surface-container-low rounded-xl p-6 flex gap-6 hover:bg-surface-container-high/50 transition-colors duration-300 border border-transparent hover:border-surface-variant/30 group cursor-pointer">
+<div class="w-48 h-72 flex-shrink-0 rounded-lg overflow-hidden relative shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
+<img alt="Cinematic poster of Dune" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="A cinematic movie poster showcasing a vast desert landscape under a harsh, glowing sun. The lighting is dramatic and moody, utilizing deep blacks and intense amber and primary color highlights. The style is highly editorial and high-fashion noir, reminiscent of a private luxury screening room." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBsyagQo7hM1OGDj99Hbj9SCyAsmIu8RkcZ7ftEMAz_09GnxoeZneE4_RJ9I2NOeGElaSw8ogqJTOGk8EtWPFe0vUo6G5wXv9BRmrb_-uZuDahT7jtLliLphhJRwVmm-GTcQDpkgPL0f4ysCIIXXhRMKi2pqtyUyaMDti-z3VWQYS7GoHVpxhLMswgftAftalojFTY0iEDsjZy3ReRzp79-QcGBPukR4bBr0kWHTi26EHOQgE2NOLpZtvpHvnTrk4FkJZ9OYvgItr8o">
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest to-transparent opacity-80"></div>
+</div>
+<div class="flex flex-col flex-1 py-2">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h3 class="font-headline text-3xl font-bold text-on-surface mb-1">Dune: Part Two <span class="text-on-surface-variant text-xl font-normal ml-2">2024</span></h3>
+<div class="flex items-center gap-3 text-sm text-on-surface-variant font-label">
+<span class="flex items-center gap-1">Review by <span class="text-secondary font-medium">cinephile99</span></span>
+<span class="w-1 h-1 bg-outline rounded-full"></span>
+<div class="flex items-center text-primary drop-shadow-[0_0_8px_rgba(255,215,155,0.4)]">
+<span class="material-symbols-outlined text-sm reevio-inline-style-003">star</span>
+<span class="material-symbols-outlined text-sm reevio-inline-style-003">star</span>
+<span class="material-symbols-outlined text-sm reevio-inline-style-003">star</span>
+<span class="material-symbols-outlined text-sm reevio-inline-style-003">star</span>
+<span class="material-symbols-outlined text-sm reevio-inline-style-003">star_half</span>
+</div>
+</div>
+</div>
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">more_horiz</span>
+</button>
+</div>
+<p class="font-body text-on-surface/90 leading-relaxed flex-1 text-lg">
+                            "Villeneuve achieves the impossible, creating a sequel that not only expands the visual vernacular of its predecessor but deepens its philosophical terror. The sound design alone is a character, vibrating through the screen and into your marrow. A towering achievement in modern blockbuster cinema that refuses to compromise its bleak, beautiful heart."
+                        </p>
+<div class="flex items-center gap-6 mt-6 pt-6 border-t border-surface-container-highest/30">
+<button class="flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors font-label text-sm group/btn">
+<span class="material-symbols-outlined group-hover/btn:scale-110 transition-transform">favorite</span>
+                                1.2k
+                            </button>
+<button class="flex items-center gap-2 text-on-surface-variant hover:text-secondary transition-colors font-label text-sm group/btn">
+<span class="material-symbols-outlined group-hover/btn:scale-110 transition-transform">chat_bubble</span>
+                                84
+                            </button>
+<button class="flex items-center gap-2 text-on-surface-variant hover:text-on-surface transition-colors font-label text-sm ml-auto">
+<span class="material-symbols-outlined">share</span>
+</button>
+</div>
+</div>
+</article>
+<!-- Review Card 2 -->
+<article data-href="review_details.html" class="bg-surface-container-low rounded-xl p-6 flex gap-6 hover:bg-surface-container-high/50 transition-colors duration-300 border border-transparent hover:border-surface-variant/30 group cursor-pointer">
+<div class="w-48 h-72 flex-shrink-0 rounded-lg overflow-hidden relative shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
+<img alt="Cinematic moody scene" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="A vintage film projector reel bathed in moody, cinematic lighting. Deep charcoal shadows contrast with soft amber primary light leaks. The composition is highly editorial, sophisticated, and perfect for a high-end cinephile platform." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAZK3LkGDUor4gZ7yAdykN_AOuNU1WkQ9Yygf40BpAm43jzOBbNm29ccLXOaKWNZJl115EcT1ZQbCvTCVm5xTFYsg5uN0QDOSz5eeoQVB2929Aqh_3G0OysKvmbjIOlwKgqnMYBhnuSFTccGGjnYo0MC14E2nUCHrt9nSnFgHd6umbEf64dN437v5GCT60WCZ5rJ2mPMkXIBPhhJuNtk-uU_N5cIDHfomihuvZmgcQjCa6BTASc52zdjx9wnSlkmQ3LEHO8hOu3FisB">
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest to-transparent opacity-80"></div>
+</div>
+<div class="flex flex-col flex-1 py-2">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h3 class="font-headline text-3xl font-bold text-on-surface mb-1">Past Lives <span class="text-on-surface-variant text-xl font-normal ml-2">2023</span></h3>
+<div class="flex items-center gap-3 text-sm text-on-surface-variant font-label">
+<span class="flex items-center gap-1">Review by <span class="text-secondary font-medium">arthouse_anya</span></span>
+<span class="w-1 h-1 bg-outline rounded-full"></span>
+<div class="flex items-center text-primary drop-shadow-[0_0_8px_rgba(255,215,155,0.4)]">
+<span class="material-symbols-outlined text-sm reevio-inline-style-003">star</span>
+<span class="material-symbols-outlined text-sm reevio-inline-style-003">star</span>
+<span class="material-symbols-outlined text-sm reevio-inline-style-003">star</span>
+<span class="material-symbols-outlined text-sm reevio-inline-style-003">star</span>
+<span class="material-symbols-outlined text-sm text-surface-container-highest reevio-inline-style-003">star</span>
+</div>
+</div>
+</div>
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">more_horiz</span>
+</button>
+</div>
+<p class="font-body text-on-surface/90 leading-relaxed flex-1 text-lg">
+                            "A devastatingly quiet exploration of destiny, choices, and the ghosts of the lives we didn't lead. Song's direction is incredibly assured, letting the silences between Nora and Hae Sung carry the weight of decades. It’s rare to find a film that feels so specific yet entirely universal in its melancholy."
+                        </p>
+<div class="flex items-center gap-6 mt-6 pt-6 border-t border-surface-container-highest/30">
+<button class="flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors font-label text-sm group/btn">
+<span class="material-symbols-outlined group-hover/btn:scale-110 transition-transform">favorite</span>
+                                856
+                            </button>
+<button class="flex items-center gap-2 text-on-surface-variant hover:text-secondary transition-colors font-label text-sm group/btn">
+<span class="material-symbols-outlined group-hover/btn:scale-110 transition-transform">chat_bubble</span>
+                                42
+                            </button>
+<button class="flex items-center gap-2 text-on-surface-variant hover:text-on-surface transition-colors font-label text-sm ml-auto">
+<span class="material-symbols-outlined">share</span>
+</button>
+</div>
+</div>
+</article>
+<!-- Review Card 3 -->
+<article data-href="review_details.html" class="bg-surface-container-low rounded-xl p-6 flex gap-6 hover:bg-surface-container-high/50 transition-colors duration-300 border border-transparent hover:border-surface-variant/30 group cursor-pointer">
+<div class="w-48 h-72 flex-shrink-0 rounded-lg overflow-hidden relative shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
+<img alt="Cinematic abstract art" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="A highly stylized, surreal architectural space shot in a moody, dark cinematic style. The scene is dominated by deep blacks and bright teal secondary lighting accents, creating a weird, beautiful aesthetic suitable for an art-house film review platform." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBYOC7orurZ9kwqwNcFWRd7U0ymMzWhLszkybWe8nT1VdNJEoQWOY3QVx5pJmR8y8CmCvS6ypU7Yq0kmTVCdAE0G8zDLGRXugAoSGevfGZyN4GxfC2pbFPWSwCm3DrR0p_Coe4Uu33HNvn0QWe5HVawS8FShVSN3cIwdT1Wt83R3gu-TN2oHKMVv-bEfQy4cQ3kR6T9pv-i9krhdHKcWmcUjclqJw_6C85yYr7tl2VtbcP_adFywuB4rbIsxUePiugiZCQvfT6aquDU">
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest to-transparent opacity-80"></div>
+</div>
+<div class="flex flex-col flex-1 py-2">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h3 class="font-headline text-3xl font-bold text-on-surface mb-1">Poor Things <span class="text-on-surface-variant text-xl font-normal ml-2">2023</span></h3>
+<div class="flex items-center gap-3 text-sm text-on-surface-variant font-label">
+<span class="flex items-center gap-1">Review by <span class="text-secondary font-medium">filmbro88</span></span>
+<span class="w-1 h-1 bg-outline rounded-full"></span>
+<div class="flex items-center text-primary drop-shadow-[0_0_8px_rgba(255,215,155,0.4)]">
+<span class="material-symbols-outlined text-sm reevio-inline-style-003">star</span>
+<span class="material-symbols-outlined text-sm reevio-inline-style-003">star</span>
+<span class="material-symbols-outlined text-sm reevio-inline-style-003">star</span>
+<span class="material-symbols-outlined text-sm reevio-inline-style-003">star</span>
+<span class="material-symbols-outlined text-sm reevio-inline-style-003">star</span>
+</div>
+</div>
+</div>
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">more_horiz</span>
+</button>
+</div>
+<p class="font-body text-on-surface/90 leading-relaxed flex-1 text-lg">
+                            "Lanthimos unleashes his most visually audacious work to date. Stone delivers a fearless, physical performance that anchors the weird, wonderful world-building. It is hilarious, grotesque, and profoundly moving—a true frankenstein fable for the modern age."
+                        </p>
+<div class="flex items-center gap-6 mt-6 pt-6 border-t border-surface-container-highest/30">
+<button class="flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors font-label text-sm group/btn">
+<span class="material-symbols-outlined text-primary reevio-inline-style-003">favorite</span>
+<span class="text-primary">2.4k</span>
+</button>
+<button class="flex items-center gap-2 text-on-surface-variant hover:text-secondary transition-colors font-label text-sm group/btn">
+<span class="material-symbols-outlined group-hover/btn:scale-110 transition-transform">chat_bubble</span>
+                                115
+                            </button>
+<button class="flex items-center gap-2 text-on-surface-variant hover:text-on-surface transition-colors font-label text-sm ml-auto">
+<span class="material-symbols-outlined">share</span>
+</button>
+</div>
+</div>
+</article>
+</div>
+<div class="mt-12 flex justify-center">
+<button class="px-8 py-3 rounded-full border border-surface-variant text-on-surface hover:bg-surface-container-high transition-colors font-label tracking-wide">
+                    Load More Reviews
+                </button>
+</div>
+</div>
+</main>
+
+
+    <script src="/public/assets/js/reevio.js"></script>
+</body></html>
