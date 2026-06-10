@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 342 513" role="img" aria-label="Missing movie poster">
+  <rect width="342" height="513" fill="#1c1b1b"/>
+  <rect x="24" y="24" width="294" height="465" rx="28" fill="#2a2a2a" stroke="#514532" stroke-width="2"/>
+  <circle cx="171" cy="210" r="54" fill="#353534"/>
+  <path d="M136 190h70l-35 58z" fill="#ffd79b" opacity=".85"/>
+  <text x="171" y="325" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" font-weight="700" fill="#e5e2e1">No poster</text>
+  <text x="171" y="360" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" fill="#d6c4ac">TMDB image missing</text>
+</svg>
