@@ -5,6 +5,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/AppController.php';
 require_once __DIR__ . '/../repositories/FilmsRepository.php';
 require_once __DIR__ . '/../repositories/UsersRepository.php';
+require_once __DIR__ . '/../services/TmdbService.php';
 
 final class SearchController extends AppController
 {
@@ -22,7 +23,22 @@ final class SearchController extends AppController
             return;
         }
 
-        $this->json(['results' => (new FilmsRepository())->search($term)]);
+        try {
+            $tmdb = new TmdbService();
+
+            if ($type === 'actors' || $type === 'people') {
+                $this->json($tmdb->searchPeople($term));
+                return;
+            }
+
+            $this->json($tmdb->searchMovies($term));
+        } catch (Throwable $exception) {
+            $this->json([
+                'error' => true,
+                'message' => $exception->getMessage(),
+                'results' => (new FilmsRepository())->search($term),
+            ], 502);
+        }
     }
 
     public function users(): void

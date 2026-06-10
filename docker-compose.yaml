@@ -43,6 +43,10 @@ services:
       DB_NAME: db
       DB_USER: docker
       DB_PASSWORD: docker
+      TMDB_ACCESS_TOKEN: ${TMDB_ACCESS_TOKEN:-}
+      TMDB_API_BASE_URL: ${TMDB_API_BASE_URL:-https://api.themoviedb.org/3}
+      TMDB_IMAGE_BASE_URL: ${TMDB_IMAGE_BASE_URL:-https://image.tmdb.org/t/p}
+      TMDB_LANGUAGE: ${TMDB_LANGUAGE:-en-US}
     depends_on:
       db:
         condition: service_healthy
@@ -65,4 +69,3 @@ networks:
 
 volumes:
   pg-data:
-

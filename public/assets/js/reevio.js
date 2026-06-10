@@ -225,13 +225,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const input = searchPage.querySelector('input[type="text"], input[type="search"]');
     const buttons = [...searchPage.querySelectorAll("button")];
     const targetByLabel = {
-      films: "search_films.html",
-      actors: "search_actors.html",
+      films: "/search-films",
+      actors: "/search-actors",
       users: "search_users.html",
       lists: "search_lists.html"
     };
 
-    let selectedTarget = "search_films.html";
+    let selectedTarget = "/search-films";
 
     const goToSearch = (target) => {
       const query = input ? input.value.trim() : "";
@@ -272,8 +272,8 @@ document.addEventListener("DOMContentLoaded", () => {
           event.preventDefault();
           const query = input.value.trim();
           window.location.href = query
-            ? `log_search_results.html?q=${encodeURIComponent(query)}`
-            : "log_search_results.html";
+            ? `/log-search-results?q=${encodeURIComponent(query)}`
+            : "/log-search-results";
         }
       });
     }
@@ -284,7 +284,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (logSearchResults) {
     logSearchResults.querySelectorAll("[data-log-select]").forEach((button) => {
       button.addEventListener("click", () => {
-        window.location.href = button.getAttribute("data-log-select") || "log_selected.html";
+        window.location.href = button.getAttribute("data-log-select") || "/log-selected";
       });
     });
   }

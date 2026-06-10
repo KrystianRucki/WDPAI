@@ -68,10 +68,6 @@ final class Database
         exit;
     }
 
-    /**
-     * The project is usually run in Docker, where PostgreSQL is available as "db:5432".
-     * Some students also run PHP directly on the host machine; then PostgreSQL is exposed as "localhost:5433".
-     */
     private function connectionCandidates(string $host, string $port): array
     {
         $rawCandidates = [

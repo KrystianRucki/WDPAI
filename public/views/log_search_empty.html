@@ -4,17 +4,10 @@
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Search Film to Log - Reevio</title>
-
-    <link
-      href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;700;800;900&family=Manrope:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
-
-    <link
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
-      rel="stylesheet"
-    />
-    <link href="/public/assets/css/reevio.css" rel="stylesheet" /></head>
+    <link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;700;800;900&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <link href="/public/assets/css/reevio.css" rel="stylesheet" />
+  </head>
   <body class="bg-surface text-on-surface antialiased overflow-x-hidden reevio-page-log_search_empty">
     <div class="cinematic-glow"></div>
 <?php
@@ -22,78 +15,38 @@ $activeNav = 'films';
 $showAdminLink = ($showAdminLink ?? false);
 include __DIR__ . '/partials/navigation.html';
 ?>
-<!-- Main content -->
     <main class="relative z-10 ml-64 min-h-screen w-[calc(100%-16rem)] px-4 pb-24 pt-[8.7rem] lg:px-5 xl:px-6">
       <div class="mx-auto max-w-[820px]">
         <div class="mb-8 pr-0">
-          <div>
-            <a
-              href="feed_films.html"
-              class="mb-7 inline-flex items-center gap-2 rounded-full border border-outline-variant/20 bg-surface-container-low/70 px-4 py-2.5 font-label text-sm font-bold text-primary transition-colors hover:bg-surface-container-high hover:text-secondary"
-            >
-              <span class="material-symbols-outlined text-[20px]">arrow_back</span>
-              Back
-            </a>
-
-            <p class="mb-3 font-label text-xs font-bold uppercase tracking-[0.28em] text-secondary">
-              Log film
-            </p>
-
-            <h1 class="font-headline text-[28px] font-black tracking-tight text-on-surface">
-              Search film to log
-            </h1>
-          </div>
+          <a href="feed_films.html" class="mb-7 inline-flex items-center gap-2 rounded-full border border-outline-variant/20 bg-surface-container-low/70 px-4 py-2.5 font-label text-sm font-bold text-primary transition-colors hover:bg-surface-container-high hover:text-secondary">
+            <span class="material-symbols-outlined text-[20px]">arrow_back</span>
+            Back
+          </a>
+          <p class="mb-3 font-label text-xs font-bold uppercase tracking-[0.28em] text-secondary">Log film</p>
+          <h1 class="font-headline text-[28px] font-black tracking-tight text-on-surface">Search film to log</h1>
         </div>
 
-        <section class="mb-10 w-full">
-          <div
-            class="input-recessed relative flex items-center rounded-full px-5 py-4 shadow-[0_20px_40px_rgba(0,0,0,0.4)]"
-          >
+        <form action="/log-search-results" method="GET" class="mb-10 w-full">
+          <div class="input-recessed relative flex items-center rounded-full px-5 py-4 shadow-[0_20px_40px_rgba(0,0,0,0.4)]">
             <span class="material-symbols-outlined mr-3 text-on-surface-variant">search</span>
-            <input
-              class="w-full border-none bg-transparent font-body text-lg text-on-surface placeholder:text-on-surface-variant focus:ring-0"
-              placeholder="Search film to log..."
-              type="text"
-              value=""
-            />
+            <input name="q" class="w-full border-none bg-transparent font-body text-lg text-on-surface placeholder:text-on-surface-variant focus:ring-0" placeholder="Search film to log..." type="text" value="" />
+            <button class="ml-3 rounded-full bg-primary px-5 py-2 font-label text-sm font-bold text-on-primary" type="submit">Search</button>
           </div>
-        </section>
+        </form>
 
         <section class="w-full rounded-3xl border border-outline-variant/15 bg-surface-container-low p-10 text-center ambient-shadow">
-          <div
-            class="relative mx-auto mb-7 flex h-28 w-28 items-center justify-center rounded-full border border-outline-variant/20 bg-surface-container-lowest shadow-[0_0_34px_rgba(255,215,155,0.12)]"
-          >
-            <div
-              class="absolute inset-3 rounded-full bg-primary/5 blur-xl"
-            ></div>
-
-            <span
-              class="material-symbols-outlined relative text-6xl text-primary reevio-inline-style-014"
-             
-            >
-              movie
-            </span>
-
-            <div
-              class="absolute -bottom-1 -right-1 flex h-10 w-10 items-center justify-center rounded-full border border-secondary/30 bg-surface-container-high shadow-[0_0_18px_rgba(189,244,255,0.18)]"
-            >
-              <span class="material-symbols-outlined text-[22px] text-secondary">
-                search
-              </span>
+          <div class="relative mx-auto mb-7 flex h-28 w-28 items-center justify-center rounded-full border border-outline-variant/20 bg-surface-container-lowest shadow-[0_0_34px_rgba(255,215,155,0.12)]">
+            <div class="absolute inset-3 rounded-full bg-primary/5 blur-xl"></div>
+            <span class="material-symbols-outlined relative text-6xl text-primary">movie</span>
+            <div class="absolute -bottom-1 -right-1 flex h-10 w-10 items-center justify-center rounded-full border border-secondary/30 bg-surface-container-high shadow-[0_0_18px_rgba(189,244,255,0.18)]">
+              <span class="material-symbols-outlined text-[22px] text-secondary">search</span>
             </div>
           </div>
-
-          <h2 class="mb-3 font-headline text-3xl font-black tracking-tight text-on-surface">
-            Find a film
-          </h2>
-
-          <p class="mx-auto max-w-xl text-base leading-relaxed text-on-surface-variant">
-            Start typing a title, director, or keyword. Pick a result to continue
-            to the logging form.
-          </p>
+          <h2 class="mb-3 font-headline text-3xl font-black tracking-tight text-on-surface">Find a film</h2>
+          <p class="mx-auto max-w-xl text-base leading-relaxed text-on-surface-variant">Start typing a title. Results are loaded from TMDB and cached locally when you pick a film.</p>
         </section>
       </div>
     </main>
-      <script src="/public/assets/js/reevio.js"></script>
-</body>
+    <script src="/public/assets/js/reevio.js"></script>
+  </body>
 </html>

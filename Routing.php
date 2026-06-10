@@ -12,6 +12,7 @@ require_once __DIR__ . '/src/controllers/ListsController.php';
 require_once __DIR__ . '/src/controllers/ReviewsController.php';
 require_once __DIR__ . '/src/controllers/NotificationsController.php';
 require_once __DIR__ . '/src/controllers/SettingsController.php';
+require_once __DIR__ . '/src/controllers/TmdbController.php';
 
 final class Routing
 {
@@ -66,6 +67,15 @@ final class Routing
             'admin-panel' => [AdminController::class, 'index'],
             'api-admin-users' => [AdminController::class, 'users'],
             'api-admin-block-user' => [AdminController::class, 'blockUser'],
+
+            'api-tmdb-search-movies' => [TmdbController::class, 'searchMoviesApi'],
+            'api-tmdb-search-people' => [TmdbController::class, 'searchPeopleApi'],
+            'api-tmdb-cache-genres' => [TmdbController::class, 'cacheGenresApi'],
+            'log-search-results' => [TmdbController::class, 'logSearchResults'],
+            'log-selected' => [TmdbController::class, 'logSelected'],
+            'film-details' => [TmdbController::class, 'filmDetails'],
+            'search-films' => [TmdbController::class, 'searchFilmsPage'],
+            'search-actors' => [TmdbController::class, 'searchActorsPage'],
 
             'api-search' => [SearchController::class, 'search'],
             'api-search-users' => [SearchController::class, 'users'],

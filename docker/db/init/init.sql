@@ -58,19 +58,31 @@ CREATE TABLE user_notification_settings (
 
 CREATE TABLE films (
     id SERIAL PRIMARY KEY,
+    tmdb_id INTEGER UNIQUE,
     title VARCHAR(180) NOT NULL,
+    original_title VARCHAR(180),
     release_year SMALLINT CHECK (release_year BETWEEN 1888 AND 2100),
     director VARCHAR(120),
     description TEXT,
     poster_url TEXT,
+    poster_path TEXT,
+    backdrop_url TEXT,
+    backdrop_path TEXT,
     runtime_minutes SMALLINT CHECK (runtime_minutes > 0),
+    tmdb_vote_average NUMERIC(4,2),
+    tmdb_vote_count INTEGER,
+    tmdb_popularity NUMERIC(10,3),
+    tmdb_raw JSONB NOT NULL DEFAULT '{}'::jsonb,
+    tmdb_synced_at TIMESTAMPTZ,
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE genres (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(80) NOT NULL UNIQUE
+    tmdb_id INTEGER UNIQUE,
+    name VARCHAR(80) NOT NULL UNIQUE,
+    tmdb_synced_at TIMESTAMPTZ
 );
 
 -- Many-to-many relation: films can have many genres, genres can describe many films.
@@ -82,9 +94,13 @@ CREATE TABLE film_genres (
 
 CREATE TABLE people (
     id SERIAL PRIMARY KEY,
+    tmdb_id INTEGER UNIQUE,
     full_name VARCHAR(140) NOT NULL,
     biography TEXT,
-    photo_url TEXT
+    photo_url TEXT,
+    profile_path TEXT,
+    known_for_department VARCHAR(80),
+    tmdb_synced_at TIMESTAMPTZ
 );
 
 CREATE TABLE film_people (
@@ -92,6 +108,9 @@ CREATE TABLE film_people (
     person_id INTEGER NOT NULL REFERENCES people(id) ON DELETE CASCADE,
     credit_type VARCHAR(40) NOT NULL CHECK (credit_type IN ('director', 'actor', 'writer', 'composer')),
     character_name VARCHAR(140),
+    job VARCHAR(120),
+    department VARCHAR(120),
+    cast_order INTEGER,
     PRIMARY KEY (film_id, person_id, credit_type)
 );
 
@@ -197,6 +216,9 @@ CREATE INDEX idx_reviews_user_id ON reviews(user_id);
 CREATE INDEX idx_comments_review_id ON review_comments(review_id);
 CREATE INDEX idx_notifications_user_id ON notifications(user_id, is_read);
 CREATE INDEX idx_users_search ON users USING gin (to_tsvector('simple', username || ' ' || email));
+CREATE INDEX idx_films_tmdb_id ON films(tmdb_id);
+CREATE INDEX idx_people_tmdb_id ON people(tmdb_id);
+CREATE INDEX idx_genres_tmdb_id ON genres(tmdb_id);
 
 CREATE OR REPLACE FUNCTION set_updated_at()
 RETURNS TRIGGER AS $$
@@ -407,6 +429,21 @@ INSERT INTO films (id, title, release_year, director, description, runtime_minut
 
 SELECT setval('films_id_seq', (SELECT MAX(id) FROM films));
 
+UPDATE films SET tmdb_id = CASE id
+    WHEN 1 THEN 693134
+    WHEN 2 THEN 666277
+    WHEN 3 THEN 792307
+    WHEN 4 THEN 335984
+    WHEN 5 THEN 120467
+    WHEN 6 THEN 27205
+    WHEN 7 THEN 329865
+    WHEN 8 THEN 603
+    WHEN 9 THEN 152601
+    WHEN 10 THEN 4922
+    ELSE tmdb_id
+END;
+
+
 INSERT INTO genres (id, name) VALUES
 (1, 'Science Fiction'),
 (2, 'Drama'),
@@ -417,6 +454,19 @@ INSERT INTO genres (id, name) VALUES
 (7, 'Action'),
 (8, 'Mystery');
 SELECT setval('genres_id_seq', (SELECT MAX(id) FROM genres));
+
+UPDATE genres SET tmdb_id = CASE name
+    WHEN 'Science Fiction' THEN 878
+    WHEN 'Drama' THEN 18
+    WHEN 'Romance' THEN 10749
+    WHEN 'Adventure' THEN 12
+    WHEN 'Comedy' THEN 35
+    WHEN 'Fantasy' THEN 14
+    WHEN 'Action' THEN 28
+    WHEN 'Mystery' THEN 9648
+    ELSE tmdb_id
+END;
+
 
 INSERT INTO film_genres (film_id, genre_id) VALUES
 (1,1),(1,4),(1,2),
