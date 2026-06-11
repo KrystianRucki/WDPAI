@@ -548,4 +548,81 @@ final class FilmsRepository extends Repository
     }
 
 
+
+    public function countUserFilms(int $userId): int
+    {
+        $query = $this->connection()->prepare(
+            'SELECT COUNT(DISTINCT film_id)
+             FROM diary_entries
+             WHERE user_id = :user_id'
+        );
+        $query->execute(['user_id' => $userId]);
+
+        return (int) $query->fetchColumn();
+    }
+
+    public function getUserFilms(int $userId, int $limit = 10): array
+    {
+        $query = $this->connection()->prepare(
+            'SELECT
+                f.*,
+                latest.watched_on,
+                latest.rating AS user_rating,
+                latest.created_at AS logged_at,
+                stats.watch_count
+             FROM (
+                SELECT film_id, COUNT(*) AS watch_count
+                FROM diary_entries
+                WHERE user_id = :user_id
+                GROUP BY film_id
+             ) stats
+             JOIN LATERAL (
+                SELECT watched_on, rating, created_at
+                FROM diary_entries
+                WHERE user_id = :user_id
+                  AND film_id = stats.film_id
+                ORDER BY watched_on DESC, created_at DESC
+                LIMIT 1
+             ) latest ON TRUE
+             JOIN films f ON f.id = stats.film_id
+             ORDER BY latest.watched_on DESC, latest.created_at DESC, f.title ASC
+             LIMIT :limit'
+        );
+        $query->bindValue(':user_id', $userId, PDO::PARAM_INT);
+        $query->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $query->execute();
+
+        return array_map(fn (array $film): array => $this->hydrateFilm($film), $query->fetchAll());
+    }
+
+    public function countUserWatchlist(int $userId): int
+    {
+        $query = $this->connection()->prepare(
+            'SELECT COUNT(*)
+             FROM watchlist
+             WHERE user_id = :user_id'
+        );
+        $query->execute(['user_id' => $userId]);
+
+        return (int) $query->fetchColumn();
+    }
+
+    public function getUserWatchlist(int $userId, int $limit = 10): array
+    {
+        $query = $this->connection()->prepare(
+            'SELECT f.*, w.added_at
+             FROM watchlist w
+             JOIN films f ON f.id = w.film_id
+             WHERE w.user_id = :user_id
+             ORDER BY w.added_at DESC, f.title ASC
+             LIMIT :limit'
+        );
+        $query->bindValue(':user_id', $userId, PDO::PARAM_INT);
+        $query->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $query->execute();
+
+        return array_map(fn (array $film): array => $this->hydrateFilm($film), $query->fetchAll());
+    }
+
+
 }

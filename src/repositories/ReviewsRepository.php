@@ -51,4 +51,52 @@ final class ReviewsRepository extends Repository
             throw $exception;
         }
     }
+
+    public function countUserReviews(int $userId): int
+    {
+        $query = $this->connection()->prepare(
+            'SELECT COUNT(*)
+             FROM reviews
+             WHERE user_id = :user_id'
+        );
+        $query->execute(['user_id' => $userId]);
+
+        return (int) $query->fetchColumn();
+    }
+
+    public function getUserReviews(int $userId, int $limit = 10): array
+    {
+        $query = $this->connection()->prepare(
+            'SELECT
+                r.id AS review_id,
+                r.title AS review_title,
+                r.content,
+                r.rating,
+                r.created_at,
+                r.updated_at,
+                f.id AS film_id,
+                f.title AS film_title,
+                f.release_year,
+                f.director,
+                f.poster_url,
+                f.poster_path,
+                COALESCE(COUNT(DISTINCT rl.user_id), 0) AS likes_count,
+                COALESCE(COUNT(DISTINCT rc.id), 0) AS comments_count
+             FROM reviews r
+             JOIN films f ON f.id = r.film_id
+             LEFT JOIN review_likes rl ON rl.review_id = r.id
+             LEFT JOIN review_comments rc ON rc.review_id = r.id
+             WHERE r.user_id = :user_id
+             GROUP BY r.id, f.id
+             ORDER BY r.created_at DESC
+             LIMIT :limit'
+        );
+        $query->bindValue(':user_id', $userId, PDO::PARAM_INT);
+        $query->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $query->execute();
+
+        return $query->fetchAll();
+    }
+
+
 }

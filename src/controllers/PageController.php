@@ -5,10 +5,12 @@ declare(strict_types=1);
 require_once __DIR__ . '/AppController.php';
 require_once __DIR__ . '/../repositories/FilmsRepository.php';
 require_once __DIR__ . '/../repositories/UsersRepository.php';
+require_once __DIR__ . '/../repositories/ReviewsRepository.php';
 
 final class PageController extends AppController
 {
     private const RELATIONS_PER_PAGE = 10;
+    private const USER_COLLECTIONS_PER_PAGE = 10;
 
     public function show(string $template, bool $public = false): void
     {
@@ -36,6 +38,7 @@ final class PageController extends AppController
         $currentUserId = (int) $currentUser['id'];
         $filmsRepository = new FilmsRepository();
         $usersRepository = new UsersRepository();
+        $reviewsRepository = new ReviewsRepository();
 
         return match ($template) {
             'feed_films' => [
@@ -54,6 +57,9 @@ final class PageController extends AppController
             ],
             'followers' => $this->relationshipVariables('followers', $currentUser, $usersRepository),
             'following' => $this->relationshipVariables('following', $currentUser, $usersRepository),
+            'users_films' => $this->userFilmsVariables($currentUser, $filmsRepository),
+            'users_reviews' => $this->userReviewsVariables($currentUser, $reviewsRepository),
+            'users_watchlist' => $this->userWatchlistVariables($currentUser, $filmsRepository),
             default => [],
         };
     }
@@ -83,4 +89,68 @@ final class PageController extends AppController
             'relationTotalPages' => max(1, (int) ceil($total / $limit)),
         ];
     }
+
+    private function userCollectionLimit(): array
+    {
+        $page = max(1, (int) ($_GET['page'] ?? 1));
+        $limit = $page * self::USER_COLLECTIONS_PER_PAGE;
+
+        return [$page, $limit];
+    }
+
+    private function userFilmsVariables(array $currentUser, FilmsRepository $filmsRepository): array
+    {
+        $userId = (int) $currentUser['id'];
+        [$page, $limit] = $this->userCollectionLimit();
+        $total = $filmsRepository->countUserFilms($userId);
+
+        return [
+            'profileUser' => $currentUser,
+            'collectionType' => 'films',
+            'collectionItems' => $filmsRepository->getUserFilms($userId, $limit),
+            'collectionTotal' => $total,
+            'collectionPage' => $page,
+            'collectionLimit' => $limit,
+            'collectionHasMore' => $limit < $total,
+            'collectionNextPage' => $page + 1,
+        ];
+    }
+
+    private function userReviewsVariables(array $currentUser, ReviewsRepository $reviewsRepository): array
+    {
+        $userId = (int) $currentUser['id'];
+        [$page, $limit] = $this->userCollectionLimit();
+        $total = $reviewsRepository->countUserReviews($userId);
+
+        return [
+            'profileUser' => $currentUser,
+            'collectionType' => 'reviews',
+            'collectionItems' => $reviewsRepository->getUserReviews($userId, $limit),
+            'collectionTotal' => $total,
+            'collectionPage' => $page,
+            'collectionLimit' => $limit,
+            'collectionHasMore' => $limit < $total,
+            'collectionNextPage' => $page + 1,
+        ];
+    }
+
+    private function userWatchlistVariables(array $currentUser, FilmsRepository $filmsRepository): array
+    {
+        $userId = (int) $currentUser['id'];
+        [$page, $limit] = $this->userCollectionLimit();
+        $total = $filmsRepository->countUserWatchlist($userId);
+
+        return [
+            'profileUser' => $currentUser,
+            'collectionType' => 'watchlist',
+            'collectionItems' => $filmsRepository->getUserWatchlist($userId, $limit),
+            'collectionTotal' => $total,
+            'collectionPage' => $page,
+            'collectionLimit' => $limit,
+            'collectionHasMore' => $limit < $total,
+            'collectionNextPage' => $page + 1,
+        ];
+    }
+
+
 }
