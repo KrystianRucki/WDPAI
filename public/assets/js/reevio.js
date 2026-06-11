@@ -289,3 +289,61 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
+
+
+/* Follow / unfollow buttons */
+document.addEventListener("DOMContentLoaded", () => {
+  function setFollowButtonState(button, isFollowing) {
+    button.dataset.following = isFollowing ? "1" : "0";
+    button.textContent = isFollowing ? "Following" : "Follow";
+
+    const followingClass =
+      "shrink-0 rounded-full border border-secondary/40 px-6 py-2.5 font-label text-sm font-bold text-secondary transition-colors hover:bg-secondary/10";
+
+    const followClass =
+      "shrink-0 rounded-full bg-gradient-to-r from-primary to-primary-container px-6 py-2.5 font-label text-sm font-bold text-on-primary shadow-[0_5px_15px_rgba(255,215,155,0.2)] transition-opacity hover:opacity-90";
+
+    button.className = isFollowing ? followingClass : followClass;
+  }
+
+  document.querySelectorAll("[data-follow-button]").forEach((button) => {
+    button.addEventListener("click", async (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+
+      const userId = Number(button.dataset.userId);
+      const nextFollowState = button.dataset.following !== "1";
+
+      if (!userId || button.dataset.loading === "1") return;
+
+      button.dataset.loading = "1";
+      button.disabled = true;
+
+      try {
+        const response = await fetch("/api-users-follow", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            user_id: userId,
+            follow: nextFollowState
+          })
+        });
+
+        const payload = await response.json();
+
+        if (!response.ok || !payload.success) {
+          throw new Error(payload.message || "Follow action failed.");
+        }
+
+        setFollowButtonState(button, Boolean(payload.following));
+      } catch (error) {
+        console.error(error);
+      } finally {
+        button.disabled = false;
+        button.dataset.loading = "0";
+      }
+    });
+  });
+});

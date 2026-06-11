@@ -79,6 +79,7 @@ final class Routing
 
             'api-search' => [SearchController::class, 'search'],
             'api-search-users' => [SearchController::class, 'users'],
+            'api-users-follow' => [UsersController::class, 'toggleFollow'],
             'api-notifications' => [NotificationsController::class, 'list'],
             'api-notifications-read' => [NotificationsController::class, 'markRead'],
             'api-settings-profile' => [SettingsController::class, 'updateProfile'],

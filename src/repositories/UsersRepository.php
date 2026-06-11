@@ -123,4 +123,159 @@ final class UsersRepository extends Repository
     {
         return $this->setBlocked($id, true);
     }
+
+    public function getFollowStats(int $userId): array
+    {
+        $query = $this->connection()->prepare(
+            'SELECT
+                (SELECT COUNT(*) FROM followers WHERE followed_id = :user_id) AS followers_count,
+                (SELECT COUNT(*) FROM followers WHERE follower_id = :user_id) AS following_count'
+        );
+        $query->execute(['user_id' => $userId]);
+        $stats = $query->fetch() ?: [];
+
+        return [
+            'followers_count' => (int) ($stats['followers_count'] ?? 0),
+            'following_count' => (int) ($stats['following_count'] ?? 0),
+        ];
+    }
+
+    public function countFollowers(int $userId): int
+    {
+        $query = $this->connection()->prepare('SELECT COUNT(*) FROM followers WHERE followed_id = :user_id');
+        $query->execute(['user_id' => $userId]);
+
+        return (int) $query->fetchColumn();
+    }
+
+    public function countFollowing(int $userId): int
+    {
+        $query = $this->connection()->prepare('SELECT COUNT(*) FROM followers WHERE follower_id = :user_id');
+        $query->execute(['user_id' => $userId]);
+
+        return (int) $query->fetchColumn();
+    }
+
+    public function getFollowers(int $userId, int $currentUserId, int $limit = 10, int $offset = 0): array
+    {
+        $query = $this->connection()->prepare(
+            'SELECT
+                u.id,
+                u.username,
+                u.email,
+                u.avatar_url,
+                u.bio,
+                f.created_at AS followed_at,
+                EXISTS (
+                    SELECT 1
+                    FROM followers mine
+                    WHERE mine.follower_id = :current_user_id
+                      AND mine.followed_id = u.id
+                ) AS is_following
+             FROM followers f
+             JOIN users u ON u.id = f.follower_id
+             WHERE f.followed_id = :user_id
+               AND u.is_active = TRUE
+             ORDER BY f.created_at DESC, u.username ASC
+             LIMIT :limit OFFSET :offset'
+        );
+
+        $query->bindValue(':current_user_id', $currentUserId, PDO::PARAM_INT);
+        $query->bindValue(':user_id', $userId, PDO::PARAM_INT);
+        $query->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $query->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $query->execute();
+
+        return $query->fetchAll();
+    }
+
+    public function getFollowing(int $userId, int $currentUserId, int $limit = 10, int $offset = 0): array
+    {
+        $query = $this->connection()->prepare(
+            'SELECT
+                u.id,
+                u.username,
+                u.email,
+                u.avatar_url,
+                u.bio,
+                f.created_at AS followed_at,
+                EXISTS (
+                    SELECT 1
+                    FROM followers mine
+                    WHERE mine.follower_id = :current_user_id
+                      AND mine.followed_id = u.id
+                ) AS is_following
+             FROM followers f
+             JOIN users u ON u.id = f.followed_id
+             WHERE f.follower_id = :user_id
+               AND u.is_active = TRUE
+             ORDER BY f.created_at DESC, u.username ASC
+             LIMIT :limit OFFSET :offset'
+        );
+
+        $query->bindValue(':current_user_id', $currentUserId, PDO::PARAM_INT);
+        $query->bindValue(':user_id', $userId, PDO::PARAM_INT);
+        $query->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $query->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $query->execute();
+
+        return $query->fetchAll();
+    }
+
+    public function isFollowing(int $followerId, int $followedId): bool
+    {
+        $query = $this->connection()->prepare(
+            'SELECT EXISTS (
+                SELECT 1 FROM followers
+                WHERE follower_id = :follower_id AND followed_id = :followed_id
+            )'
+        );
+        $query->execute([
+            'follower_id' => $followerId,
+            'followed_id' => $followedId,
+        ]);
+
+        return (bool) $query->fetchColumn();
+    }
+
+    public function followUser(int $followerId, int $followedId): bool
+    {
+        if ($followerId === $followedId) {
+            return false;
+        }
+
+        $query = $this->connection()->prepare(
+            'INSERT INTO followers (follower_id, followed_id)
+             VALUES (:follower_id, :followed_id)
+             ON CONFLICT (follower_id, followed_id) DO NOTHING'
+        );
+
+        $query->execute([
+            'follower_id' => $followerId,
+            'followed_id' => $followedId,
+        ]);
+
+        return true;
+    }
+
+    public function unfollowUser(int $followerId, int $followedId): bool
+    {
+        if ($followerId === $followedId) {
+            return false;
+        }
+
+        $query = $this->connection()->prepare(
+            'DELETE FROM followers
+             WHERE follower_id = :follower_id AND followed_id = :followed_id'
+        );
+
+        $query->execute([
+            'follower_id' => $followerId,
+            'followed_id' => $followedId,
+        ]);
+
+        return true;
+    }
+
+
 }

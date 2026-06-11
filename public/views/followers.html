@@ -1,3 +1,56 @@
+<?php
+$profileUser = $profileUser ?? $currentUser ?? [];
+$relationUsers = $relationUsers ?? [];
+$relationTotal = (int) ($relationTotal ?? 0);
+$relationPage = (int) ($relationPage ?? 1);
+$relationPerPage = (int) ($relationPerPage ?? 10);
+$relationTotalPages = (int) ($relationTotalPages ?? 1);
+
+if (!function_exists('reevio_relation_e')) {
+    function reevio_relation_e($value): string
+    {
+        return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
+    }
+}
+
+if (!function_exists('reevio_relation_count')) {
+    function reevio_relation_count($value): string
+    {
+        return number_format((int) $value, 0, '.', ' ');
+    }
+}
+
+if (!function_exists('reevio_relation_avatar')) {
+    function reevio_relation_avatar(array $user): string
+    {
+        if (!empty($user['avatar_url'])) {
+            return '<img alt="' . reevio_relation_e($user['username'] ?? 'User') . ' avatar" class="h-full w-full object-cover" src="' . reevio_relation_e($user['avatar_url']) . '" />';
+        }
+
+        $initial = strtoupper(substr((string) ($user['username'] ?? 'U'), 0, 1));
+
+        return '<div class="h-full w-full bg-surface-container-high text-primary font-headline text-xl font-black flex items-center justify-center">' . reevio_relation_e($initial) . '</div>';
+    }
+}
+
+if (!function_exists('reevio_relation_button_class')) {
+    function reevio_relation_button_class(bool $isFollowing): string
+    {
+        if ($isFollowing) {
+            return 'shrink-0 rounded-full border border-secondary/40 px-6 py-2.5 font-label text-sm font-bold text-secondary transition-colors hover:bg-secondary/10';
+        }
+
+        return 'shrink-0 rounded-full bg-gradient-to-r from-primary to-primary-container px-6 py-2.5 font-label text-sm font-bold text-on-primary shadow-[0_5px_15px_rgba(255,215,155,0.2)] transition-opacity hover:opacity-90';
+    }
+}
+
+if (!function_exists('reevio_relation_page_url')) {
+    function reevio_relation_page_url(string $base, int $page): string
+    {
+        return $base . '?page=' . max(1, $page);
+    }
+}
+?>
 <!doctype html>
 <html class="dark" lang="en">
   <head>
@@ -27,7 +80,7 @@ include __DIR__ . '/partials/navigation.html';
     <main class="relative z-10 ml-64 min-h-screen w-[calc(100%-16rem)] px-4 pb-24 pt-[8.7rem] lg:px-5 xl:px-6">
       <div class="mx-auto max-w-[1120px]">
         <a
-          href="#"
+          href="/profile"
           class="mb-8 inline-flex items-center gap-2 rounded-full border border-outline-variant/20 bg-surface-container-low/70 px-4 py-2.5 font-label text-sm font-bold text-primary transition-colors hover:bg-surface-container-high hover:text-secondary"
         >
           <span class="material-symbols-outlined text-[20px]">arrow_back</span>
@@ -41,178 +94,80 @@ include __DIR__ . '/partials/navigation.html';
           </span>
 
           <span class="font-label text-xs font-bold uppercase tracking-[0.2em] text-secondary">
-            1.2k total
+            <?= reevio_relation_count($relationTotal); ?> total
           </span>
         </section>
 
         <!-- Followers list -->
         <section class="max-w-[860px]">
+          <?php if ($relationUsers): ?>
           <div class="grid gap-4">
-            <!-- Follower 1 -->
-            <article data-href="#"
+            <?php foreach ($relationUsers as $user): ?>
+            <?php $isFollowing = (bool) $user['is_following']; ?>
+            <article data-href="/profile-u-main?id=<?= (int) $user['id']; ?>"
               class="group flex items-center justify-between gap-5 rounded-3xl border border-outline-variant/15 bg-surface-container-low p-5 ambient-shadow transition-colors hover:bg-surface-container-high"
             >
               <div class="flex min-w-0 items-center gap-5">
                 <div class="h-16 w-16 shrink-0 overflow-hidden rounded-full border border-outline-variant/20 bg-surface-container-high avatar-shadow">
-                  <img
-                    alt="Elena Rostova avatar"
-                    class="h-full w-full object-cover"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuANRqlp3kYyAUfHv9VByOMtoIwgRCOXe05ZyC_tWzrQoW8sY9cJmP2Jsshlif4Gcp1X9TJ-WK0QI7-9C9W8RIA6wgRl_0yiA_qvmTzEjBlt-kh1mj8h4egXOUUSvoinJfZa6p6xJdYDKWH0gbmAaR2NjugBgZN_h7bGVn8KB2ADMV_6WQ-YAdWmBDCB70R5488pqcJM7TAa-puyXBq6q5x-cz9Gnn9Ph_gpMYC9O-ZcL-LowmdIhLRQfcGAK9De95O3VCcR4TxpbpSb"
-                  />
+                  <?= reevio_relation_avatar($user); ?>
                 </div>
 
                 <div class="min-w-0">
                   <h2 class="truncate font-headline text-xl font-black text-on-surface transition-colors group-hover:text-primary">
-                    Elena Rostova
+                    <?= reevio_relation_e($user['username'] ?? 'User'); ?>
                   </h2>
                   <p class="mt-1 truncate font-label text-sm text-secondary">
-                    @cinematrix_el
+                    @<?= reevio_relation_e($user['username'] ?? 'user'); ?>
                   </p>
+                  <?php if (!empty($user['bio'])): ?>
+                  <p class="mt-1 truncate font-label text-xs text-on-surface-variant">
+                    <?= reevio_relation_e($user['bio']); ?>
+                  </p>
+                  <?php endif; ?>
                 </div>
               </div>
 
+              <?php if ((int) $user['id'] !== (int) ($currentUser['id'] ?? 0)): ?>
               <button
-                class="shrink-0 rounded-full bg-gradient-to-r from-primary to-primary-container px-6 py-2.5 font-label text-sm font-bold text-on-primary shadow-[0_5px_15px_rgba(255,215,155,0.2)] transition-opacity hover:opacity-90"
+                class="<?= reevio_relation_button_class($isFollowing); ?>"
                 type="button"
+                data-follow-button
+                data-user-id="<?= (int) $user['id']; ?>"
+                data-following="<?= $isFollowing ? '1' : '0'; ?>"
               >
-                Follow
+                <?= $isFollowing ? 'Following' : 'Follow'; ?>
               </button>
+              <?php endif; ?>
             </article>
-
-            <!-- Follower 2 -->
-            <article data-href="#"
-              class="group flex items-center justify-between gap-5 rounded-3xl border border-outline-variant/15 bg-surface-container-low p-5 ambient-shadow transition-colors hover:bg-surface-container-high"
-            >
-              <div class="flex min-w-0 items-center gap-5">
-                <div class="h-16 w-16 shrink-0 overflow-hidden rounded-full border border-outline-variant/20 bg-surface-container-high avatar-shadow">
-                  <img
-                    alt="Marcus Thorne avatar"
-                    class="h-full w-full object-cover"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuAGXwxQZ2Czv5AnDMDttX8KDXpog0HqkipItFm7zdzRAZ4QMocXXsPHu3kOujjscth8FF-jhR67EKtFnynHRx3oWluGu0hSmu8SiSqYswm8BPz4yKTUsL8UVNt0e1R6_GdHO5kfr_UN4RgshHwnLDYAR5xOk1e6gDai-ZvE_BGzZYBAhFh9Nj_t0PCn1izs2Smql_eG2ikwNUiUWHRQ6eMpvsPIL8QbLyqfsj3TFwEk5vKhdT-kvq-InH0ZQpzj3HK2B1hcBrBJUiXM"
-                  />
-                </div>
-
-                <div class="min-w-0">
-                  <h2 class="truncate font-headline text-xl font-black text-on-surface transition-colors group-hover:text-primary">
-                    Marcus Thorne
-                  </h2>
-                  <p class="mt-1 truncate font-label text-sm text-secondary">
-                    @m_thorne_dir
-                  </p>
-                </div>
-              </div>
-
-              <button
-                class="shrink-0 rounded-full border border-secondary/40 px-6 py-2.5 font-label text-sm font-bold text-secondary transition-colors hover:bg-secondary/10"
-                type="button"
-              >
-                Following
-              </button>
-            </article>
-
-            <!-- Follower 3 -->
-            <article data-href="#"
-              class="group flex items-center justify-between gap-5 rounded-3xl border border-outline-variant/15 bg-surface-container-low p-5 ambient-shadow transition-colors hover:bg-surface-container-high"
-            >
-              <div class="flex min-w-0 items-center gap-5">
-                <div class="h-16 w-16 shrink-0 overflow-hidden rounded-full border border-outline-variant/20 bg-surface-container-high avatar-shadow">
-                  <img
-                    alt="Sarah Jenkins avatar"
-                    class="h-full w-full object-cover"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuCf0cZfYPlyqEL48x2RMJLcPjvxkrXNtlrWAFTeysrv54KomiOQ1KmAjk26ncRmPzHRk1vkGWBqaDhYVFnz69NX2oet0LFfOrKI73qECdfjmsj1wbuuxynkWqZZVs8nLTuYxRshTy630NufjTPp_GDmmKnbVuukm0fwN7OkE4sD0uB_EMCtr6BdBzJuIwdLMzj5Rr3j8ReGQMEn0KjzMbkavLQRpEcv3hDlpXPmiLqFsvxDz6hkruiOams4E-9apnH8d2KYeD3ApohU"
-                  />
-                </div>
-
-                <div class="min-w-0">
-                  <h2 class="truncate font-headline text-xl font-black text-on-surface transition-colors group-hover:text-primary">
-                    Sarah Jenkins
-                  </h2>
-                  <p class="mt-1 truncate font-label text-sm text-secondary">
-                    @s_jenkins_art
-                  </p>
-                </div>
-              </div>
-
-              <button
-                class="shrink-0 rounded-full bg-gradient-to-r from-primary to-primary-container px-6 py-2.5 font-label text-sm font-bold text-on-primary shadow-[0_5px_15px_rgba(255,215,155,0.2)] transition-opacity hover:opacity-90"
-                type="button"
-              >
-                Follow
-              </button>
-            </article>
-
-            <!-- Follower 4 -->
-            <article data-href="#"
-              class="group flex items-center justify-between gap-5 rounded-3xl border border-outline-variant/15 bg-surface-container-low p-5 ambient-shadow transition-colors hover:bg-surface-container-high"
-            >
-              <div class="flex min-w-0 items-center gap-5">
-                <div class="h-16 w-16 shrink-0 overflow-hidden rounded-full border border-outline-variant/20 bg-surface-container-high avatar-shadow">
-                  <img
-                    alt="David Kim avatar"
-                    class="h-full w-full object-cover"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuDYHSY2RIZZkol612oMdQ3BVkLQnF83bmva0Ry2driobUZfrAoovTzam5C8Vy1A7s5T_i8w0zQNnesblIxvRg5CG6eAj3w7cgpj8jf9oqZ71HhNshdFn0Dk-N4P5kxUJbwIgj8bS8c8B-LwhS4MtKon9-suIqGApp1NYZFTaGrUrfVWfgjhyb2k-Tr7lJ8WhbWyfkUcAeS6B829ezTYZnX2J9-E-5b7oLc3K8qdi1oLUjxIPg2LqB0hJIHFUYhmB3JWIiKg8W0Wrbgq"
-                  />
-                </div>
-
-                <div class="min-w-0">
-                  <h2 class="truncate font-headline text-xl font-black text-on-surface transition-colors group-hover:text-primary">
-                    David Kim
-                  </h2>
-                  <p class="mt-1 truncate font-label text-sm text-secondary">
-                    @dk_cinematics
-                  </p>
-                </div>
-              </div>
-
-              <button
-                class="shrink-0 rounded-full border border-secondary/40 px-6 py-2.5 font-label text-sm font-bold text-secondary transition-colors hover:bg-secondary/10"
-                type="button"
-              >
-                Following
-              </button>
-            </article>
-
-            <!-- Follower 5 -->
-            <article data-href="#"
-              class="group flex items-center justify-between gap-5 rounded-3xl border border-outline-variant/15 bg-surface-container-low p-5 ambient-shadow transition-colors hover:bg-surface-container-high"
-            >
-              <div class="flex min-w-0 items-center gap-5">
-                <div class="h-16 w-16 shrink-0 overflow-hidden rounded-full border border-outline-variant/20 bg-surface-container-high avatar-shadow">
-                  <img
-                    alt="Mia Wallace avatar"
-                    class="h-full w-full object-cover"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuBTnRnGQH9mMp7_EkoBJ6NZDgKbFrWv9M58oQuWmph_7AwDlt0C7yw3Goxt3anDxEa_jv72XxC4hn6uqlVq4lpb0t3DI8pyKQVWWNi3WYxKATDCfp7ZuHNGrHPQjqW46jBPCnSlwDH514AQMOkB-AmV-d36cuVM7LEtGWPL0uc98b4aw7QYYlAsTgQscaG4G0rkQM6zqwgk5zXK7SJvNQ8kghiW_4QZJMoyLfFgYLzCZEZEdtskKum2NQZgGplhGJ7JWAs8esDt4WlN"
-                  />
-                </div>
-
-                <div class="min-w-0">
-                  <h2 class="truncate font-headline text-xl font-black text-on-surface transition-colors group-hover:text-primary">
-                    Mia Wallace
-                  </h2>
-                  <p class="mt-1 truncate font-label text-sm text-secondary">
-                    @mia_w_edits
-                  </p>
-                </div>
-              </div>
-
-              <button
-                class="shrink-0 rounded-full bg-gradient-to-r from-primary to-primary-container px-6 py-2.5 font-label text-sm font-bold text-on-primary shadow-[0_5px_15px_rgba(255,215,155,0.2)] transition-opacity hover:opacity-90"
-                type="button"
-              >
-                Follow
-              </button>
-            </article>
+            <?php endforeach; ?>
           </div>
-
-          <div class="mt-8 flex justify-center">
-            <button
-              class="inline-flex items-center gap-2 rounded-full border border-secondary/35 px-8 py-3 font-label text-sm font-bold uppercase tracking-widest text-secondary transition-colors hover:border-secondary/70 hover:bg-secondary/10"
-              type="button"
-            >
-              <span class="material-symbols-outlined text-[18px]">expand_more</span>
-              Load more
-            </button>
+          <?php else: ?>
+          <div class="rounded-3xl border border-outline-variant/15 bg-surface-container-low p-8 ambient-shadow text-on-surface-variant">
+            This user does not have followers yet.
           </div>
+          <?php endif; ?>
+
+          <?php if ($relationTotalPages > 1): ?>
+          <nav class="mt-8 flex flex-wrap items-center justify-center gap-3" aria-label="Followers pagination">
+            <?php if ($relationPage > 1): ?>
+            <a class="inline-flex items-center gap-2 rounded-full border border-secondary/35 px-5 py-2.5 font-label text-sm font-bold uppercase tracking-widest text-secondary transition-colors hover:border-secondary/70 hover:bg-secondary/10" href="<?= reevio_relation_page_url('/followers', $relationPage - 1); ?>">
+              <span class="material-symbols-outlined text-[18px]">chevron_left</span>
+              Previous
+            </a>
+            <?php endif; ?>
+
+            <span class="rounded-full border border-outline-variant/20 bg-surface-container-low px-5 py-2.5 font-label text-sm font-bold text-on-surface-variant">
+              Page <?= $relationPage; ?> of <?= $relationTotalPages; ?>
+            </span>
+
+            <?php if ($relationPage < $relationTotalPages): ?>
+            <a class="inline-flex items-center gap-2 rounded-full border border-secondary/35 px-5 py-2.5 font-label text-sm font-bold uppercase tracking-widest text-secondary transition-colors hover:border-secondary/70 hover:bg-secondary/10" href="<?= reevio_relation_page_url('/followers', $relationPage + 1); ?>">
+              Next
+              <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+            </a>
+            <?php endif; ?>
+          </nav>
+          <?php endif; ?>
         </section>
       </div>
     </main>
