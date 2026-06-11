@@ -20,6 +20,17 @@ if (!function_exists('reevio_relation_count')) {
     }
 }
 
+if (!function_exists('reevio_relation_bool')) {
+    function reevio_relation_bool($value): bool
+    {
+        return $value === true
+            || $value === 1
+            || $value === '1'
+            || $value === 't'
+            || $value === 'true';
+    }
+}
+
 if (!function_exists('reevio_relation_avatar')) {
     function reevio_relation_avatar(array $user): string
     {
@@ -103,7 +114,7 @@ include __DIR__ . '/partials/navigation.html';
           <?php if ($relationUsers): ?>
           <div class="grid gap-4">
             <?php foreach ($relationUsers as $user): ?>
-            <?php $isFollowing = (bool) $user['is_following']; ?>
+            <?php $isFollowing = reevio_relation_bool($user['is_following'] ?? false); ?>
             <article data-href="/profile-u-main?id=<?= (int) $user['id']; ?>"
               class="group flex items-center justify-between gap-5 rounded-3xl border border-outline-variant/15 bg-surface-container-low p-5 ambient-shadow transition-colors hover:bg-surface-container-high"
             >

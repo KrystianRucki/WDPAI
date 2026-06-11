@@ -166,12 +166,12 @@ final class UsersRepository extends Repository
                 u.avatar_url,
                 u.bio,
                 f.created_at AS followed_at,
-                EXISTS (
+                CASE WHEN EXISTS (
                     SELECT 1
                     FROM followers mine
                     WHERE mine.follower_id = :current_user_id
                       AND mine.followed_id = u.id
-                ) AS is_following
+                ) THEN 1 ELSE 0 END AS is_following
              FROM followers f
              JOIN users u ON u.id = f.follower_id
              WHERE f.followed_id = :user_id
@@ -199,12 +199,12 @@ final class UsersRepository extends Repository
                 u.avatar_url,
                 u.bio,
                 f.created_at AS followed_at,
-                EXISTS (
+                CASE WHEN EXISTS (
                     SELECT 1
                     FROM followers mine
                     WHERE mine.follower_id = :current_user_id
                       AND mine.followed_id = u.id
-                ) AS is_following
+                ) THEN 1 ELSE 0 END AS is_following
              FROM followers f
              JOIN users u ON u.id = f.followed_id
              WHERE f.follower_id = :user_id
