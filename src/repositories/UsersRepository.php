@@ -128,7 +128,11 @@ final class UsersRepository extends Repository
         $query = $this->connection()->prepare(
             'SELECT
                 (SELECT COUNT(*) FROM followers WHERE followed_id = :user_id) AS followers_count,
-                (SELECT COUNT(*) FROM followers WHERE follower_id = :user_id) AS following_count'
+                (SELECT COUNT(*) FROM followers WHERE follower_id = :user_id) AS following_count,
+                (SELECT COUNT(DISTINCT film_id) FROM diary_entries WHERE user_id = :user_id) AS films_count,
+                (SELECT COUNT(*) FROM lists WHERE user_id = :user_id) AS lists_count,
+                (SELECT COUNT(*) FROM reviews WHERE user_id = :user_id) AS reviews_count,
+                (SELECT COUNT(*) FROM watchlist WHERE user_id = :user_id) AS watchlist_count'
         );
         $query->execute(['user_id' => $userId]);
         $stats = $query->fetch() ?: [];
@@ -136,8 +140,13 @@ final class UsersRepository extends Repository
         return [
             'followers_count' => (int) ($stats['followers_count'] ?? 0),
             'following_count' => (int) ($stats['following_count'] ?? 0),
+            'films_count' => (int) ($stats['films_count'] ?? 0),
+            'lists_count' => (int) ($stats['lists_count'] ?? 0),
+            'reviews_count' => (int) ($stats['reviews_count'] ?? 0),
+            'watchlist_count' => (int) ($stats['watchlist_count'] ?? 0),
         ];
     }
+
 
     public function countFollowers(int $userId): int
     {

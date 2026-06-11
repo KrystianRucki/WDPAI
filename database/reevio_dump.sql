@@ -4,6 +4,7 @@ DROP VIEW IF EXISTS v_user_statistics CASCADE;
 
 DROP TABLE IF EXISTS notifications CASCADE;
 DROP TABLE IF EXISTS followers CASCADE;
+DROP TABLE IF EXISTS user_favorite_films CASCADE;
 DROP TABLE IF EXISTS watchlist CASCADE;
 DROP TABLE IF EXISTS diary_entries CASCADE;
 DROP TABLE IF EXISTS list_items CASCADE;
@@ -179,6 +180,15 @@ CREATE TABLE watchlist (
     film_id INTEGER NOT NULL REFERENCES films(id) ON DELETE CASCADE,
     added_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (user_id, film_id)
+);
+
+CREATE TABLE user_favorite_films (
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    film_id INTEGER NOT NULL REFERENCES films(id) ON DELETE CASCADE,
+    position INTEGER NOT NULL CHECK (position BETWEEN 1 AND 4),
+    added_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (user_id, film_id),
+    UNIQUE (user_id, position)
 );
 
 CREATE TABLE followers (
@@ -537,6 +547,10 @@ INSERT INTO diary_entries (user_id, film_id, watched_on, rating, notes, is_rewat
 
 INSERT INTO watchlist (user_id, film_id) VALUES
 (2,2),(2,3),(2,4),(2,7),(3,1),(5,1),(8,10),(11,9);
+
+INSERT INTO user_favorite_films (user_id, film_id, position) VALUES
+(2,1,1),(2,10,2),(2,7,3),(2,4,4),
+(3,2,1),(3,1,2),(5,4,1),(8,3,1);
 
 INSERT INTO followers (follower_id, followed_id) VALUES
 (3,2),(5,2),(6,2),(8,2),(2,3),(2,5),(7,2),(11,2),(14,2),(15,2);

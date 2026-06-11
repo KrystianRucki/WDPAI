@@ -48,6 +48,9 @@ final class PageController extends AppController
             'profile_p_main' => [
                 'profileUser' => $currentUser,
                 'profileStats' => $usersRepository->getFollowStats($currentUserId),
+                'favoriteFilms' => $filmsRepository->getUserFavoriteFilms($currentUserId, 4),
+                'ratingDistribution' => $filmsRepository->getUserRatingDistribution($currentUserId),
+                'mostCommonRating' => $filmsRepository->getUserMostCommonRating($currentUserId),
             ],
             'followers' => $this->relationshipVariables('followers', $currentUser, $usersRepository),
             'following' => $this->relationshipVariables('following', $currentUser, $usersRepository),

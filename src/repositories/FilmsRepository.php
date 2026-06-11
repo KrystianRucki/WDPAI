@@ -424,4 +424,128 @@ final class FilmsRepository extends Repository
     }
 
 
+
+    public function getUserFavoriteFilms(int $userId, int $limit = 4): array
+    {
+        if ($this->tableExists('user_favorite_films')) {
+            $query = $this->connection()->prepare(
+                'SELECT f.*, uff.position
+                 FROM user_favorite_films uff
+                 JOIN films f ON f.id = uff.film_id
+                 WHERE uff.user_id = :user_id
+                 ORDER BY uff.position ASC
+                 LIMIT :limit'
+            );
+            $query->bindValue(':user_id', $userId, PDO::PARAM_INT);
+            $query->bindValue(':limit', $limit, PDO::PARAM_INT);
+            $query->execute();
+
+            $films = $query->fetchAll();
+
+            if ($films !== []) {
+                return array_map(fn (array $film): array => $this->hydrateFilm($film), $films);
+            }
+        }
+
+        return $this->getUserTopRatedFilms($userId, $limit);
+    }
+
+    private function getUserTopRatedFilms(int $userId, int $limit = 4): array
+    {
+        $query = $this->connection()->prepare(
+            'SELECT DISTINCT ON (f.id)
+                f.*,
+                de.rating AS user_rating,
+                de.watched_on
+             FROM diary_entries de
+             JOIN films f ON f.id = de.film_id
+             WHERE de.user_id = :user_id
+               AND de.rating IS NOT NULL
+             ORDER BY f.id, de.rating DESC, de.watched_on DESC
+             LIMIT :limit'
+        );
+        $query->bindValue(':user_id', $userId, PDO::PARAM_INT);
+        $query->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $query->execute();
+
+        return array_map(fn (array $film): array => $this->hydrateFilm($film), $query->fetchAll());
+    }
+
+    public function getUserRatingDistribution(int $userId): array
+    {
+        $buckets = [];
+        for ($rating = 0.5; $rating <= 5.0; $rating += 0.5) {
+            $key = number_format($rating, 1, '.', '');
+            $buckets[$key] = [
+                'rating' => $key,
+                'count' => 0,
+                'percentage' => 0,
+            ];
+        }
+
+        $query = $this->connection()->prepare(
+            'SELECT ROUND(rating * 2) / 2 AS rating_bucket, COUNT(*) AS rating_count
+             FROM diary_entries
+             WHERE user_id = :user_id
+               AND rating IS NOT NULL
+             GROUP BY rating_bucket
+             ORDER BY rating_bucket ASC'
+        );
+        $query->execute(['user_id' => $userId]);
+
+        $maxCount = 0;
+        foreach ($query->fetchAll() as $row) {
+            $bucket = number_format((float) $row['rating_bucket'], 1, '.', '');
+            if (!isset($buckets[$bucket])) {
+                continue;
+            }
+
+            $count = (int) $row['rating_count'];
+            $buckets[$bucket]['count'] = $count;
+            $maxCount = max($maxCount, $count);
+        }
+
+        foreach ($buckets as &$bucket) {
+            $bucket['percentage'] = $maxCount > 0
+                ? max(5, (int) round(($bucket['count'] / $maxCount) * 100))
+                : 5;
+        }
+        unset($bucket);
+
+        return array_values($buckets);
+    }
+
+    public function getUserMostCommonRating(int $userId): ?array
+    {
+        $query = $this->connection()->prepare(
+            'SELECT ROUND(rating * 2) / 2 AS rating_bucket, COUNT(*) AS rating_count
+             FROM diary_entries
+             WHERE user_id = :user_id
+               AND rating IS NOT NULL
+             GROUP BY rating_bucket
+             ORDER BY rating_count DESC, rating_bucket DESC
+             LIMIT 1'
+        );
+        $query->execute(['user_id' => $userId]);
+        $row = $query->fetch();
+
+        if (!$row) {
+            return null;
+        }
+
+        return [
+            'rating' => number_format((float) $row['rating_bucket'], 1, '.', ''),
+            'count' => (int) $row['rating_count'],
+        ];
+    }
+
+    private function tableExists(string $tableName): bool
+    {
+        $query = $this->connection()->prepare("SELECT to_regclass(:table_name) IS NOT NULL");
+        $query->execute(['table_name' => 'public.' . $tableName]);
+
+        return (bool) $query->fetchColumn();
+    }
+
+
 }
