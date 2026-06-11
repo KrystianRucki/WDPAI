@@ -6,6 +6,7 @@ require_once __DIR__ . '/AppController.php';
 require_once __DIR__ . '/../repositories/FilmsRepository.php';
 require_once __DIR__ . '/../repositories/UsersRepository.php';
 require_once __DIR__ . '/../repositories/ReviewsRepository.php';
+require_once __DIR__ . '/../repositories/ListsRepository.php';
 
 final class PageController extends AppController
 {
@@ -39,6 +40,7 @@ final class PageController extends AppController
         $filmsRepository = new FilmsRepository();
         $usersRepository = new UsersRepository();
         $reviewsRepository = new ReviewsRepository();
+        $listsRepository = new ListsRepository();
 
         return match ($template) {
             'feed_films' => [
@@ -59,6 +61,7 @@ final class PageController extends AppController
             'following' => $this->relationshipVariables('following', $currentUser, $usersRepository),
             'users_films' => $this->userFilmsVariables($currentUser, $filmsRepository),
             'users_reviews' => $this->userReviewsVariables($currentUser, $reviewsRepository),
+            'users_lists' => $this->userListsVariables($currentUser, $listsRepository),
             'users_watchlist' => $this->userWatchlistVariables($currentUser, $filmsRepository),
             default => [],
         };
@@ -126,6 +129,25 @@ final class PageController extends AppController
             'profileUser' => $currentUser,
             'collectionType' => 'reviews',
             'collectionItems' => $reviewsRepository->getUserReviews($userId, $limit),
+            'collectionTotal' => $total,
+            'collectionPage' => $page,
+            'collectionLimit' => $limit,
+            'collectionHasMore' => $limit < $total,
+            'collectionNextPage' => $page + 1,
+        ];
+    }
+
+
+    private function userListsVariables(array $currentUser, ListsRepository $listsRepository): array
+    {
+        $userId = (int) $currentUser['id'];
+        [$page, $limit] = $this->userCollectionLimit();
+        $total = $listsRepository->countUserLists($userId);
+
+        return [
+            'profileUser' => $currentUser,
+            'collectionType' => 'lists',
+            'collectionItems' => $listsRepository->getUserLists($userId, $limit),
             'collectionTotal' => $total,
             'collectionPage' => $page,
             'collectionLimit' => $limit,
