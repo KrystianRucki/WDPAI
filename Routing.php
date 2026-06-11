@@ -13,6 +13,7 @@ require_once __DIR__ . '/src/controllers/ReviewsController.php';
 require_once __DIR__ . '/src/controllers/NotificationsController.php';
 require_once __DIR__ . '/src/controllers/SettingsController.php';
 require_once __DIR__ . '/src/controllers/TmdbController.php';
+require_once __DIR__ . '/src/controllers/DiaryController.php';
 
 final class Routing
 {
@@ -51,6 +52,7 @@ final class Routing
         'log-search' => 'log_search_empty',
         'log-search-results' => 'log_search_results',
         'log-selected' => 'log_selected',
+        'log-details' => 'log_details',
         'calendar' => 'calendar',
         'admin-panel' => 'admin_panel',
     ];
@@ -88,6 +90,7 @@ final class Routing
             'api-lists-add-film' => [ListsController::class, 'addFilm'],
             'api-reviews-comment' => [ReviewsController::class, 'comment'],
             'api-reviews-like' => [ReviewsController::class, 'like'],
+            'api-diary-delete-log' => [DiaryController::class, 'deleteLog'],
 
             // Backwards-compatible routes from the original class baseline.
             'delete-user' => [UsersController::class, 'delete'],

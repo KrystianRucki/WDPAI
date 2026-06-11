@@ -1,142 +1,205 @@
+<?php
+$profileUser = $profileUser ?? $currentUser ?? [];
+$logEntry = $logEntry ?? null;
+
+if (!function_exists('reevio_log_e')) {
+    function reevio_log_e($value): string
+    {
+        return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
+    }
+}
+
+if (!function_exists('reevio_log_poster')) {
+    function reevio_log_poster(?array $entry): string
+    {
+        return !empty($entry['poster_url']) ? (string) $entry['poster_url'] : '/public/assets/img/movie_placeholder.svg';
+    }
+}
+
+if (!function_exists('reevio_log_date')) {
+    function reevio_log_date($date): string
+    {
+        if (!$date) {
+            return 'Recently';
+        }
+
+        try {
+            return (new DateTimeImmutable((string) $date))->format('M j, Y');
+        } catch (Throwable) {
+            return 'Recently';
+        }
+    }
+}
+
+if (!function_exists('reevio_log_rating')) {
+    function reevio_log_rating($rating): string
+    {
+        if ($rating === null || $rating === '') {
+            return 'Not rated';
+        }
+
+        return rtrim(rtrim(number_format((float) $rating, 1, '.', ''), '0'), '.') . '/5';
+    }
+}
+
+if (!function_exists('reevio_log_stars')) {
+    function reevio_log_stars($rating, string $size = '22px'): string
+    {
+        if ($rating === null || $rating === '') {
+            return '<span class="font-label text-sm text-on-surface-variant">Not rated</span>';
+        }
+
+        $rating = (float) $rating;
+        $html = '';
+
+        for ($i = 1; $i <= 5; $i++) {
+            $icon = 'star';
+            $class = 'text-surface-container-highest';
+
+            if ($rating >= $i) {
+                $class = 'text-primary';
+            } elseif ($rating >= ($i - 0.5)) {
+                $icon = 'star_half';
+                $class = 'text-primary';
+            }
+
+            $html .= '<span class="material-symbols-outlined filled text-[' . $size . '] ' . $class . '">' . $icon . '</span>';
+        }
+
+        return $html;
+    }
+}
+?>
 <!doctype html>
 <html class="dark" lang="en">
   <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Reevio - Log Details</title>
-
-    <link
-      href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;700;800;900&family=Manrope:wght@400;500;700&display=swap"
-      rel="stylesheet"
-    />
-
-    <link
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
-      rel="stylesheet"
-    />
-    <link href="/public/assets/css/reevio.css" rel="stylesheet" /></head>
+    <link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;700;900&family=Manrope:wght@400;500;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <link href="/public/assets/css/reevio.css" rel="stylesheet" />
+  </head>
 
   <body class="bg-surface text-on-surface antialiased overflow-x-hidden reevio-page-log_details">
     <div class="cinematic-glow"></div>
 <?php
-$activeNav = 'films';
+$activeNav = 'profile';
 $showAdminLink = ($showAdminLink ?? false);
 include __DIR__ . '/partials/navigation.html';
 ?>
-<!-- Main content -->
-    <main class="relative z-10 ml-64 min-h-screen w-[calc(100%-16rem)] px-4 pb-20 pt-28 lg:px-5 xl:px-6">
-<div class="mx-auto max-w-[960px]">
-        <a
-          href="profile_p_diary.html"
-          class="mb-8 inline-flex items-center gap-2 rounded-full border border-outline-variant/20 bg-surface-container-low/70 px-4 py-2.5 font-label text-sm font-bold text-primary transition-colors hover:bg-surface-container-high hover:text-secondary"
-        >
+    <main class="relative z-10 ml-64 min-h-screen w-[calc(100%-16rem)] px-4 pb-24 pt-[8.7rem] lg:px-5 xl:px-6">
+      <div class="mx-auto max-w-[1120px]">
+        <a href="/profile-diary" class="mb-8 inline-flex items-center gap-2 rounded-full border border-outline-variant/20 bg-surface-container-low/70 px-4 py-2.5 font-label text-sm font-bold text-primary transition-colors hover:bg-surface-container-high hover:text-secondary">
           <span class="material-symbols-outlined text-[20px]">arrow_back</span>
           Back to diary
         </a>
 
-        <section class="grid gap-7 lg:grid-cols-[220px_minmax(0,1fr)] lg:items-start">
-          <div class="log-details-poster overflow-hidden rounded-2xl border border-outline-variant/15 bg-surface-container-low poster-shadow">
-            <img
-              alt="Benjamin Button poster"
-              class="h-[330px] w-full object-cover"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuDAkCwsmKRuL5MUGjoApr5kDC3B6dMwDa0WSgKmco1jNaDLFEg5lrwsMzhFHkLBTxuzbPQVlsAgW-POAS4R8dDD0fUwTE6TLUK0__cwwx28CFpGe50jZKQgLhnhZDapC44bnzyFw-gyp-p_qDOzSf3E8BRAVCGvT_Pj6XbTQ1Bmwtl_JkLQhNGYTFdYvr2DUlqU8mXBHCrLXf0UaRE_AYklucKh-SK2LyzOhiCYTrLux2Us5hRavcsAj-DTDTJH3Wg0Q58csU4FmoOE"
-            />
-          </div>
-
-          <div class="rounded-3xl border border-outline-variant/15 bg-surface-container-low p-6 ambient-shadow">
-            <div class="mb-5 flex flex-wrap items-start justify-between gap-5">
-              <div>
-                <p class="mb-3 font-label text-xs font-bold uppercase tracking-[0.28em] text-secondary">
-                  Logged movie
-                </p>
-
-                <h1 class="font-headline text-4xl font-black tracking-tight text-on-surface">
-                  Benjamin Button
-                </h1>
-
-                <p class="mt-2 font-body text-base text-on-surface-variant">
-                  2008 • Drama • Fantasy • Romance
-                </p>
-              </div>
-
-              <span class="rounded-full border border-outline-variant/20 bg-surface-container-lowest px-4 py-2 font-label text-xs font-bold uppercase tracking-[0.18em] text-secondary">
-                April 6, 2026
-              </span>
+        <?php if (!$logEntry): ?>
+        <section class="rounded-3xl border border-outline-variant/15 bg-surface-container-low p-8 ambient-shadow">
+          <h1 class="font-headline text-3xl font-black text-on-surface">Log not found</h1>
+          <p class="mt-3 text-on-surface-variant">This log does not exist or does not belong to the current user.</p>
+        </section>
+        <?php else: ?>
+        <section class="grid gap-8 lg:grid-cols-[280px_minmax(0,1fr)]">
+          <aside class="rounded-3xl border border-outline-variant/15 bg-surface-container-low p-5 ambient-shadow">
+            <div class="overflow-hidden rounded-2xl poster-shadow">
+              <img src="<?= reevio_log_e(reevio_log_poster($logEntry)); ?>" alt="<?= reevio_log_e($logEntry['film_title'] ?? 'Film'); ?> poster" class="aspect-[2/3] h-full w-full object-cover" />
             </div>
 
-            <div class="mb-6 grid gap-4 md:grid-cols-3">
-              <div class="rounded-2xl border border-outline-variant/15 bg-surface-container-lowest p-4">
-                <p class="font-label text-xs font-bold uppercase tracking-wider text-on-surface-variant">
-                  Your rating
-                </p>
+            <a href="/film-details?id=<?= (int) $logEntry['film_id']; ?>" class="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full border border-secondary/35 px-5 py-3 font-label text-sm font-bold uppercase tracking-widest text-secondary transition-colors hover:border-secondary/70 hover:bg-secondary/10">
+              <span class="material-symbols-outlined text-[18px]">movie</span>
+              Open film
+            </a>
 
-                <div class="mt-3 flex items-center gap-1 text-primary">
-                  <span class="material-symbols-outlined filled text-[22px]">star</span>
-                  <span class="material-symbols-outlined filled text-[22px]">star</span>
-                  <span class="material-symbols-outlined filled text-[22px]">star</span>
-                  <span class="material-symbols-outlined filled text-[22px]">star</span>
-                  <span class="material-symbols-outlined filled text-[22px]">star</span>
+            <button
+              type="button"
+              data-delete-log
+              data-log-id="<?= (int) $logEntry['log_id']; ?>"
+              class="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-full border border-red-300/45 px-5 py-3 font-label text-sm font-bold uppercase tracking-widest text-red-300 transition-colors hover:border-red-300/80 hover:bg-red-300/10"
+            >
+              <span class="material-symbols-outlined text-[18px]">delete</span>
+              Delete log
+            </button>
+          </aside>
+
+          <article class="rounded-3xl border border-outline-variant/15 bg-surface-container-low p-7 ambient-shadow">
+            <p class="mb-3 font-label text-xs font-bold uppercase tracking-[0.28em] text-secondary">
+              Diary log
+            </p>
+
+            <div class="mb-5 flex flex-wrap items-baseline gap-3">
+              <h1 class="font-headline text-4xl font-black tracking-tight text-on-surface">
+                <?= reevio_log_e($logEntry['film_title'] ?? 'Untitled film'); ?>
+              </h1>
+              <?php if (!empty($logEntry['release_year'])): ?>
+              <span class="font-label text-lg text-on-surface-variant"><?= reevio_log_e($logEntry['release_year']); ?></span>
+              <?php endif; ?>
+            </div>
+
+            <?php if (!empty($logEntry['director']) || !empty($logEntry['genres_text'])): ?>
+            <p class="mb-7 text-sm leading-relaxed text-on-surface-variant">
+              <?php if (!empty($logEntry['director'])): ?>
+              Directed by <?= reevio_log_e($logEntry['director']); ?>.
+              <?php endif; ?>
+              <?php if (!empty($logEntry['genres_text'])): ?>
+              <?= reevio_log_e($logEntry['genres_text']); ?>
+              <?php endif; ?>
+            </p>
+            <?php endif; ?>
+
+            <div class="mb-7 grid gap-4 md:grid-cols-3">
+              <div class="rounded-2xl border border-outline-variant/15 bg-surface-container-lowest p-4">
+                <p class="font-label text-xs font-bold uppercase tracking-wider text-on-surface-variant">Watched on</p>
+                <p class="mt-4 font-headline text-xl font-black text-on-surface"><?= reevio_log_e(reevio_log_date($logEntry['watched_on'] ?? null)); ?></p>
+              </div>
+
+              <div class="rounded-2xl border border-outline-variant/15 bg-surface-container-lowest p-4">
+                <p class="font-label text-xs font-bold uppercase tracking-wider text-on-surface-variant">Rating</p>
+                <div class="mt-4 flex items-center gap-1">
+                  <?= reevio_log_stars($logEntry['log_rating'] ?? null); ?>
                 </div>
-
-                <p class="mt-2 font-headline text-2xl font-black text-primary">5.0</p>
+                <p class="mt-2 font-headline text-2xl font-black text-primary"><?= reevio_log_e(reevio_log_rating($logEntry['log_rating'] ?? null)); ?></p>
               </div>
 
               <div class="rounded-2xl border border-outline-variant/15 bg-surface-container-lowest p-4">
-                <p class="font-label text-xs font-bold uppercase tracking-wider text-on-surface-variant">
-                  Rewatch
-                </p>
-
+                <p class="font-label text-xs font-bold uppercase tracking-wider text-on-surface-variant">Rewatch</p>
                 <p class="mt-4 inline-flex items-center gap-2 font-label text-sm font-bold text-on-surface">
-                  <span class="material-symbols-outlined text-primary">check_circle</span>
-                  No
-                </p>
-              </div>
-
-              <div class="rounded-2xl border border-outline-variant/15 bg-surface-container-lowest p-4">
-                <p class="font-label text-xs font-bold uppercase tracking-wider text-on-surface-variant">
-                  Visibility
-                </p>
-
-                <p class="mt-4 inline-flex items-center gap-2 font-label text-sm font-bold text-on-surface">
-                  <span class="material-symbols-outlined text-secondary">public</span>
-                  Public
+                  <span class="material-symbols-outlined text-primary"><?= !empty($logEntry['is_rewatch']) ? 'check_circle' : 'cancel'; ?></span>
+                  <?= !empty($logEntry['is_rewatch']) ? 'Yes' : 'No'; ?>
                 </p>
               </div>
             </div>
 
             <div class="mb-6 rounded-2xl border border-outline-variant/15 bg-surface-container-lowest p-5">
-              <h2 class="mb-3 font-headline text-xl font-black tracking-tight text-on-surface">
-                Notes
-              </h2>
-
+              <h2 class="mb-3 font-headline text-xl font-black tracking-tight text-on-surface">Notes</h2>
+              <?php if (!empty($logEntry['notes'])): ?>
               <p class="text-base leading-relaxed text-on-surface-variant italic">
-                “A beautiful, melancholic film about time, memory, and everything we lose while trying to hold on.”
+                “<?= reevio_log_e($logEntry['notes']); ?>”
               </p>
+              <?php else: ?>
+              <p class="text-base leading-relaxed text-on-surface-variant">
+                No notes added to this log.
+              </p>
+              <?php endif; ?>
             </div>
 
-            <div class="flex flex-wrap items-center gap-4">
-              <a
-                href="film_details.html"
-                class="inline-flex items-center justify-center gap-2 rounded-full border border-secondary/35 px-6 py-3 font-label text-sm font-bold uppercase tracking-widest text-secondary transition-colors hover:border-secondary/70 hover:bg-secondary/10"
-              >
-                <span class="material-symbols-outlined text-[18px]">movie</span>
-                Open movie page
-              </a>
-
-              <button
-                class="remove-log-button inline-flex items-center justify-center gap-2 rounded-full border border-error/45 px-6 py-3 font-label text-sm font-bold uppercase tracking-widest text-error hover:bg-error/10"
-                type="button"
-                aria-label="Remove logged movie"
-              >
-                <span class="material-symbols-outlined text-[18px]">delete</span>
-                Remove logged movie
-              </button>
-            </div>
-          </div>
+            <?php if (!empty($logEntry['review_id'])): ?>
+            <a href="/review-details?id=<?= (int) $logEntry['review_id']; ?>" class="block rounded-2xl border border-primary/25 bg-surface-container-lowest p-5 transition-colors hover:border-primary/60 hover:bg-surface-container-high">
+              <p class="mb-2 inline-flex items-center gap-2 font-label text-xs font-bold uppercase tracking-wider text-primary">
+                <span class="material-symbols-outlined text-[17px]">rate_review</span>
+                Review attached
+                <span class="material-symbols-outlined text-[16px]">open_in_new</span>
+              </p>
+              <h2 class="font-headline text-2xl font-black text-on-surface"><?= reevio_log_e($logEntry['review_title']); ?></h2>
+              <p class="mt-3 line-clamp-3 text-sm leading-relaxed text-on-surface-variant"><?= reevio_log_e($logEntry['review_content']); ?></p>
+            </a>
+            <?php endif; ?>
+          </article>
         </section>
+        <?php endif; ?>
       </div>
     </main>
-
     <script src="/public/assets/js/reevio.js"></script>
   </body>
 </html>

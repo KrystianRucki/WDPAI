@@ -7,6 +7,7 @@ require_once __DIR__ . '/../repositories/FilmsRepository.php';
 require_once __DIR__ . '/../repositories/UsersRepository.php';
 require_once __DIR__ . '/../repositories/ReviewsRepository.php';
 require_once __DIR__ . '/../repositories/ListsRepository.php';
+require_once __DIR__ . '/../repositories/DiaryRepository.php';
 
 final class PageController extends AppController
 {
@@ -41,6 +42,7 @@ final class PageController extends AppController
         $usersRepository = new UsersRepository();
         $reviewsRepository = new ReviewsRepository();
         $listsRepository = new ListsRepository();
+        $diaryRepository = new DiaryRepository();
 
         return match ($template) {
             'feed_films' => [
@@ -57,6 +59,8 @@ final class PageController extends AppController
                 'ratingDistribution' => $filmsRepository->getUserRatingDistribution($currentUserId),
                 'mostCommonRating' => $filmsRepository->getUserMostCommonRating($currentUserId),
             ],
+            'profile_p_diary' => $this->diaryVariables($currentUser, $diaryRepository),
+            'log_details' => $this->logDetailsVariables($currentUser, $diaryRepository),
             'followers' => $this->relationshipVariables('followers', $currentUser, $usersRepository),
             'following' => $this->relationshipVariables('following', $currentUser, $usersRepository),
             'users_films' => $this->userFilmsVariables($currentUser, $filmsRepository),
@@ -65,6 +69,29 @@ final class PageController extends AppController
             'users_watchlist' => $this->userWatchlistVariables($currentUser, $filmsRepository),
             default => [],
         };
+    }
+
+
+    private function diaryVariables(array $currentUser, DiaryRepository $diaryRepository): array
+    {
+        $userId = (int) $currentUser['id'];
+
+        return [
+            'profileUser' => $currentUser,
+            'diaryEntries' => $diaryRepository->getUserEntries($userId, 50),
+            'diaryTotal' => $diaryRepository->countUserEntries($userId),
+        ];
+    }
+
+    private function logDetailsVariables(array $currentUser, DiaryRepository $diaryRepository): array
+    {
+        $logId = max(0, (int) ($_GET['id'] ?? 0));
+        $userId = (int) $currentUser['id'];
+
+        return [
+            'profileUser' => $currentUser,
+            'logEntry' => $logId > 0 ? $diaryRepository->getEntryForUser($logId, $userId) : null,
+        ];
     }
 
     private function relationshipVariables(string $type, array $currentUser, UsersRepository $usersRepository): array

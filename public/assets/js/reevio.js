@@ -455,3 +455,51 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
+
+
+
+/* Diary log delete */
+document.addEventListener("click", async (event) => {
+  const button = event.target.closest("[data-delete-log]");
+
+  if (!button) return;
+
+  event.preventDefault();
+
+  const logId = Number(button.dataset.logId);
+
+  if (!logId || button.dataset.loading === "1") return;
+
+  const confirmed = window.confirm("Delete this log? This will remove it from your diary.");
+  if (!confirmed) return;
+
+  button.dataset.loading = "1";
+  button.disabled = true;
+  const originalText = button.innerHTML;
+  button.innerHTML = '<span class="material-symbols-outlined text-[18px]">hourglass_top</span>Deleting...';
+
+  try {
+    const response = await fetch("/api-diary-delete-log", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      },
+      body: JSON.stringify({ log_id: logId })
+    });
+
+    const payload = await response.json().catch(() => ({}));
+
+    if (!response.ok || !payload.success) {
+      throw new Error(payload.message || "Could not delete log.");
+    }
+
+    window.location.href = payload.redirect || "/profile-diary";
+  } catch (error) {
+    alert(error.message || "Could not delete log.");
+    button.disabled = false;
+    button.dataset.loading = "0";
+    button.innerHTML = originalText;
+  }
+});
+
