@@ -503,3 +503,241 @@ document.addEventListener("click", async (event) => {
   }
 });
 
+
+
+
+/* Log selected film */
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.querySelector("#log-selected-form");
+  if (!form || form.dataset.reevioLogSelectedReady === "1") return;
+
+  form.dataset.reevioLogSelectedReady = "1";
+
+  const filmId = Number(form.dataset.filmId);
+  const dateButton = document.querySelector("#log-date-button");
+  const dateLabel = document.querySelector("#log-date-label");
+  const ratingControl = document.querySelector("#log-rating-control");
+  const ratingLabel = document.querySelector("#log-rating-label");
+  const reviewInput = document.querySelector("#log-review");
+  const saveButton = document.querySelector("#log-save-button");
+  const saveStatus = document.querySelector("#log-save-status");
+
+  const overlay = document.querySelector("#log-calendar-overlay");
+  const calendarMonth = document.querySelector("#log-calendar-month");
+  const calendarDays = document.querySelector("#log-calendar-days");
+  const calendarPrev = document.querySelector("#log-calendar-prev");
+  const calendarNext = document.querySelector("#log-calendar-next");
+  const calendarClose = document.querySelector("#log-calendar-close");
+  const calendarCancel = document.querySelector("#log-calendar-cancel");
+  const calendarDone = document.querySelector("#log-calendar-done");
+  const calendarConfirm = document.querySelector("#log-calendar-confirm");
+
+  const today = new Date();
+  let selectedDate = parseIsoDate(form.dataset.initialDate) || today;
+  let calendarView = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1);
+  let rating = Number(form.dataset.initialRating || 3.5);
+
+  function parseIsoDate(value) {
+    if (!value) return null;
+    const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+    if (!match) return null;
+    return new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
+  }
+
+  function toIsoDate(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  }
+
+  function formatDate(date) {
+    return date.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric"
+    });
+  }
+
+  function setStatus(message, isError = false) {
+    if (!saveStatus) return;
+    saveStatus.textContent = message;
+    saveStatus.classList.toggle("text-red-300", isError);
+    saveStatus.classList.toggle("text-primary", !isError && message.length > 0);
+    saveStatus.classList.toggle("text-on-surface-variant", message.length === 0);
+  }
+
+  function renderDate() {
+    if (!dateLabel) return;
+
+    const isToday = toIsoDate(selectedDate) === toIsoDate(today);
+    dateLabel.textContent = isToday ? "Today" : formatDate(selectedDate);
+  }
+
+  function renderRating() {
+    rating = Math.max(0.5, Math.min(5, Math.round(rating * 2) / 2));
+    if (ratingLabel) ratingLabel.textContent = `${rating.toFixed(1)} / 5.0`;
+
+    ratingControl?.querySelectorAll("[data-rating-star]").forEach((button) => {
+      const starNumber = Number(button.dataset.ratingStar);
+      const icon = button.querySelector(".material-symbols-outlined");
+      if (!icon) return;
+
+      icon.className = "material-symbols-outlined text-5xl";
+      if (rating >= starNumber) {
+        icon.textContent = "star";
+        icon.classList.add("star-glow", "text-primary", "filled");
+      } else if (rating >= starNumber - 0.5) {
+        icon.textContent = "star_half";
+        icon.classList.add("star-glow", "text-primary", "filled");
+      } else {
+        icon.textContent = "star";
+        icon.classList.add("text-surface-container-highest");
+      }
+    });
+  }
+
+  function openCalendar() {
+    if (!overlay) return;
+    calendarView = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1);
+    overlay.classList.remove("hidden");
+    overlay.classList.add("flex");
+    document.body.style.overflow = "hidden";
+    renderCalendar();
+  }
+
+  function closeCalendar() {
+    if (!overlay) return;
+    overlay.classList.add("hidden");
+    overlay.classList.remove("flex");
+    document.body.style.overflow = "";
+  }
+
+  function renderCalendar() {
+    if (!calendarDays || !calendarMonth) return;
+
+    calendarMonth.textContent = calendarView.toLocaleDateString("en-US", {
+      month: "long",
+      year: "numeric"
+    });
+
+    calendarDays.innerHTML = "";
+
+    const year = calendarView.getFullYear();
+    const month = calendarView.getMonth();
+    const firstDay = new Date(year, month, 1);
+    const startDate = new Date(year, month, 1 - firstDay.getDay());
+
+    for (let index = 0; index < 42; index += 1) {
+      const date = new Date(startDate);
+      date.setDate(startDate.getDate() + index);
+
+      const isCurrentMonth = date.getMonth() === month;
+      const isSelected = toIsoDate(date) === toIsoDate(selectedDate);
+      const isToday = toIsoDate(date) === toIsoDate(today);
+
+      const button = document.createElement("button");
+      button.type = "button";
+      button.dataset.calendarDate = toIsoDate(date);
+      button.textContent = String(date.getDate());
+
+      let className = "flex h-11 items-center justify-center rounded-full transition-colors ";
+      if (!isCurrentMonth) {
+        className += "text-on-surface-variant/40 ";
+      } else {
+        className += "text-on-surface hover:bg-surface-variant ";
+      }
+
+      if (isToday && !isSelected) {
+        className += "border border-primary/30 font-bold text-primary text-glow ";
+      }
+
+      if (isSelected) {
+        className += "bg-primary font-bold text-on-primary shadow-[0_0_14px_rgba(255,215,155,0.42)] ";
+      }
+
+      button.className = className;
+
+      button.addEventListener("click", () => {
+        selectedDate = parseIsoDate(button.dataset.calendarDate) || selectedDate;
+        renderCalendar();
+      });
+
+      calendarDays.appendChild(button);
+    }
+  }
+
+  dateButton?.addEventListener("click", openCalendar);
+  calendarClose?.addEventListener("click", closeCalendar);
+  calendarCancel?.addEventListener("click", closeCalendar);
+  calendarDone?.addEventListener("click", () => {
+    renderDate();
+    closeCalendar();
+  });
+  calendarConfirm?.addEventListener("click", () => {
+    renderDate();
+    closeCalendar();
+  });
+  calendarPrev?.addEventListener("click", () => {
+    calendarView = new Date(calendarView.getFullYear(), calendarView.getMonth() - 1, 1);
+    renderCalendar();
+  });
+  calendarNext?.addEventListener("click", () => {
+    calendarView = new Date(calendarView.getFullYear(), calendarView.getMonth() + 1, 1);
+    renderCalendar();
+  });
+
+  ratingControl?.querySelectorAll("[data-rating-star]").forEach((button) => {
+    button.addEventListener("click", (event) => {
+      const starNumber = Number(button.dataset.ratingStar);
+      const rect = button.getBoundingClientRect();
+      const half = event.clientX - rect.left <= rect.width / 2;
+      rating = half ? starNumber - 0.5 : starNumber;
+      renderRating();
+    });
+  });
+
+  saveButton?.addEventListener("click", async () => {
+    if (!filmId) {
+      setStatus("Film could not be resolved.", true);
+      return;
+    }
+
+    saveButton.disabled = true;
+    saveButton.classList.add("opacity-70");
+    setStatus("Saving log...");
+
+    try {
+      const response = await fetch("/api-log-save", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify({
+          film_id: filmId,
+          watched_on: toIsoDate(selectedDate),
+          rating,
+          review: reviewInput ? reviewInput.value.trim() : ""
+        })
+      });
+
+      const payload = await response.json().catch(() => ({}));
+
+      if (!response.ok || !payload.success) {
+        throw new Error(payload.message || "Could not save log.");
+      }
+
+      setStatus("Saved.");
+      window.location.href = payload.redirect || "/profile-diary";
+    } catch (error) {
+      setStatus(error.message || "Could not save log.", true);
+      saveButton.disabled = false;
+      saveButton.classList.remove("opacity-70");
+    }
+  });
+
+  renderDate();
+  renderRating();
+});
+

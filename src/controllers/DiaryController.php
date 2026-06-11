@@ -41,4 +41,74 @@ final class DiaryController extends AppController
             'redirect' => '/profile-diary',
         ]);
     }
+
+    public function saveLog(): void
+    {
+        if (!$this->requireLogin()) {
+            return;
+        }
+
+        $currentUser = $this->currentUser();
+        $data = $this->getJsonInput();
+
+        $filmId = (int) ($data['film_id'] ?? 0);
+        $watchedOn = trim((string) ($data['watched_on'] ?? ''));
+        $rating = $data['rating'] ?? null;
+        $review = trim((string) ($data['review'] ?? ''));
+
+        if (!$currentUser || $filmId <= 0) {
+            $this->json([
+                'success' => false,
+                'message' => 'Invalid film id.',
+            ], 422);
+            return;
+        }
+
+        if ($watchedOn === '') {
+            $watchedOn = date('Y-m-d');
+        }
+
+        $date = DateTimeImmutable::createFromFormat('Y-m-d', $watchedOn);
+        if (!$date || $date->format('Y-m-d') !== $watchedOn) {
+            $this->json([
+                'success' => false,
+                'message' => 'Invalid watched date.',
+            ], 422);
+            return;
+        }
+
+        $ratingValue = null;
+        if ($rating !== null && $rating !== '') {
+            $ratingValue = round((float) $rating * 2) / 2;
+
+            if ($ratingValue < 0.5 || $ratingValue > 5.0) {
+                $this->json([
+                    'success' => false,
+                    'message' => 'Rating must be between 0.5 and 5.0.',
+                ], 422);
+                return;
+            }
+        }
+
+        try {
+            $result = (new DiaryRepository())->saveFilmLog(
+                (int) $currentUser['id'],
+                $filmId,
+                $watchedOn,
+                $ratingValue,
+                $review
+            );
+
+            $this->json([
+                'success' => true,
+                ...$result,
+            ]);
+        } catch (Throwable $exception) {
+            $this->json([
+                'success' => false,
+                'message' => 'Could not save log.',
+            ], 500);
+        }
+    }
+
 }

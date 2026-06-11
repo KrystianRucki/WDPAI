@@ -136,4 +136,93 @@ final class DiaryRepository extends Repository
     }
 
 
+
+    public function saveFilmLog(
+        int $userId,
+        int $filmId,
+        string $watchedOn,
+        ?float $rating,
+        string $reviewContent
+    ): array {
+        $connection = $this->connection();
+        $connection->beginTransaction();
+
+        try {
+            $logQuery = $connection->prepare(
+                'INSERT INTO diary_entries (user_id, film_id, watched_on, rating, notes, is_rewatch, is_public)
+                 VALUES (:user_id, :film_id, :watched_on, :rating, NULL, FALSE, TRUE)
+                 ON CONFLICT (user_id, film_id, watched_on)
+                 DO UPDATE SET
+                    rating = EXCLUDED.rating,
+                    is_public = TRUE
+                 RETURNING id'
+            );
+            $logQuery->bindValue(':user_id', $userId, PDO::PARAM_INT);
+            $logQuery->bindValue(':film_id', $filmId, PDO::PARAM_INT);
+            $logQuery->bindValue(':watched_on', $watchedOn);
+            if ($rating === null) {
+                $logQuery->bindValue(':rating', null, PDO::PARAM_NULL);
+            } else {
+                $logQuery->bindValue(':rating', $rating);
+            }
+            $logQuery->execute();
+            $logId = (int) $logQuery->fetchColumn();
+
+            $connection->prepare(
+                'DELETE FROM watchlist WHERE user_id = :user_id AND film_id = :film_id'
+            )->execute([
+                'user_id' => $userId,
+                'film_id' => $filmId,
+            ]);
+
+            $reviewId = null;
+            $reviewContent = trim($reviewContent);
+
+            if ($reviewContent !== '') {
+                $filmTitleQuery = $connection->prepare('SELECT title FROM films WHERE id = :film_id');
+                $filmTitleQuery->bindValue(':film_id', $filmId, PDO::PARAM_INT);
+                $filmTitleQuery->execute();
+                $filmTitle = (string) ($filmTitleQuery->fetchColumn() ?: 'Film');
+
+                $reviewRating = $rating ?? 0.0;
+                $reviewTitle = 'Review: ' . $filmTitle;
+
+                $reviewQuery = $connection->prepare(
+                    'INSERT INTO reviews (user_id, film_id, rating, title, content, is_public)
+                     VALUES (:user_id, :film_id, :rating, :title, :content, TRUE)
+                     ON CONFLICT (user_id, film_id)
+                     DO UPDATE SET
+                        rating = EXCLUDED.rating,
+                        title = EXCLUDED.title,
+                        content = EXCLUDED.content,
+                        is_public = TRUE,
+                        updated_at = CURRENT_TIMESTAMP
+                     RETURNING id'
+                );
+                $reviewQuery->bindValue(':user_id', $userId, PDO::PARAM_INT);
+                $reviewQuery->bindValue(':film_id', $filmId, PDO::PARAM_INT);
+                $reviewQuery->bindValue(':rating', $reviewRating);
+                $reviewQuery->bindValue(':title', $reviewTitle);
+                $reviewQuery->bindValue(':content', $reviewContent);
+                $reviewQuery->execute();
+                $reviewId = (int) $reviewQuery->fetchColumn();
+            }
+
+            $connection->commit();
+
+            return [
+                'status' => 'logged',
+                'log_id' => $logId,
+                'review_id' => $reviewId,
+                'redirect' => '/log-details?id=' . $logId,
+            ];
+        } catch (Throwable $exception) {
+            if ($connection->inTransaction()) {
+                $connection->rollBack();
+            }
+
+            throw $exception;
+        }
+    }
+
 }

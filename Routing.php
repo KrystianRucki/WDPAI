@@ -91,6 +91,7 @@ final class Routing
             'api-reviews-comment' => [ReviewsController::class, 'comment'],
             'api-reviews-like' => [ReviewsController::class, 'like'],
             'api-diary-delete-log' => [DiaryController::class, 'deleteLog'],
+            'api-log-save' => [DiaryController::class, 'saveLog'],
 
             // Backwards-compatible routes from the original class baseline.
             'delete-user' => [UsersController::class, 'delete'],
