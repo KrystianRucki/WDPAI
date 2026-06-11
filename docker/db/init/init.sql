@@ -30,7 +30,7 @@ CREATE TABLE users (
     email VARCHAR(255) NOT NULL UNIQUE,
     password TEXT NOT NULL,
     avatar_url TEXT,
-    bio TEXT,
+    bio VARCHAR(64),
     role VARCHAR(20) NOT NULL DEFAULT 'user' CHECK (role IN ('user', 'admin')),
     is_active BOOLEAN NOT NULL DEFAULT TRUE,
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,

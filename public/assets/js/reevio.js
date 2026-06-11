@@ -359,3 +359,99 @@ document.addEventListener("click", async (event) => {
   }
 });
 
+
+
+
+/* Settings profile save */
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.querySelector("#settings-profile-form");
+
+  if (!form || form.dataset.reevioSettingsReady === "1") return;
+
+  form.dataset.reevioSettingsReady = "1";
+
+  const usernameInput = form.querySelector("#settings-username");
+  const bioInput = form.querySelector("#settings-bio");
+  const submitButton = form.querySelector("#settings-save-button");
+  const status = form.querySelector("#settings-save-status");
+  const bioCounter = form.querySelector("#settings-bio-counter");
+  const bioMaxLength = 64;
+
+  function updateBioCounter() {
+    if (!bioInput || !bioCounter) return;
+
+    if (bioInput.value.length > bioMaxLength) {
+      bioInput.value = bioInput.value.slice(0, bioMaxLength);
+    }
+
+    bioCounter.textContent = `${bioInput.value.length}/${bioMaxLength} characters`;
+  }
+
+  bioInput?.addEventListener("input", updateBioCounter);
+  updateBioCounter();
+
+  function setStatus(message, isError = false) {
+    if (!status) return;
+
+    status.textContent = message;
+    status.classList.toggle("text-primary", !isError && message.length > 0);
+    status.classList.toggle("text-red-300", isError);
+    status.classList.toggle("text-on-surface-variant", message.length === 0);
+  }
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const username = usernameInput?.value.trim() || "";
+    const bio = bioInput?.value.trim() || "";
+
+    if (!username) {
+      setStatus("Username is required.", true);
+      usernameInput?.focus();
+      return;
+    }
+
+    if (bio.length > bioMaxLength) {
+      setStatus("Bio cannot be longer than 64 characters.", true);
+      bioInput?.focus();
+      return;
+    }
+
+    submitButton.disabled = true;
+    submitButton.classList.add("opacity-70");
+    setStatus("Saving...");
+
+    try {
+      const response = await fetch("/api-settings-profile", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify({ username, bio })
+      });
+
+      const payload = await response.json().catch(() => ({}));
+
+      if (!response.ok || !payload.success) {
+        throw new Error(payload.message || payload.error || "Could not save changes.");
+      }
+
+      if (payload.user?.username && usernameInput) {
+        usernameInput.value = payload.user.username;
+      }
+
+      if (typeof payload.user?.bio === "string" && bioInput) {
+        bioInput.value = payload.user.bio;
+      }
+
+      setStatus("Changes saved.");
+    } catch (error) {
+      setStatus(error.message || "Could not save changes.", true);
+    } finally {
+      submitButton.disabled = false;
+      submitButton.classList.remove("opacity-70");
+    }
+  });
+});
+

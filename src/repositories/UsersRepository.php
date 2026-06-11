@@ -108,15 +108,14 @@ final class UsersRepository extends Repository
     public function updateProfile(int $id, string $username, string $bio): bool
     {
         $query = $this->connection()->prepare(
-            'UPDATE users SET username = :username, bio = :bio WHERE id = :id'
+            'UPDATE users SET username = :username, bio = :bio, updated_at = CURRENT_TIMESTAMP WHERE id = :id'
         );
-        $query->execute([
+
+        return $query->execute([
             'id' => $id,
             'username' => $username,
             'bio' => $bio,
         ]);
-
-        return $query->rowCount() > 0;
     }
 
     public function deleteUser(int $id): bool

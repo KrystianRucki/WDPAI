@@ -14,16 +14,47 @@ final class SettingsController extends AppController
         }
 
         $data = $this->getJsonInput();
-        $username = trim($data['username'] ?? '');
-        $bio = trim($data['bio'] ?? '');
+        $username = trim((string) ($data['username'] ?? ''));
+        $bio = trim((string) ($data['bio'] ?? ''));
 
         if ($username === '') {
-            $this->json(['error' => 'Username is required'], 422);
+            $this->json(['success' => false, 'message' => 'Username is required.'], 422);
             return;
         }
 
-        $updated = (new UsersRepository())->updateProfile((int) $_SESSION['user_id'], $username, $bio);
-        $this->json(['updated' => $updated]);
+        if (mb_strlen($username) > 50) {
+            $this->json(['success' => false, 'message' => 'Username is too long.'], 422);
+            return;
+        }
+
+        if (mb_strlen($bio) > 64) {
+            $this->json(['success' => false, 'message' => 'Bio cannot be longer than 64 characters.'], 422);
+            return;
+        }
+
+        try {
+            $repository = new UsersRepository();
+            $repository->updateProfile((int) $_SESSION['user_id'], $username, $bio);
+            $user = $repository->getUserById((int) $_SESSION['user_id']);
+
+            $this->json([
+                'success' => true,
+                'updated' => true,
+                'user' => [
+                    'id' => (int) ($user['id'] ?? $_SESSION['user_id']),
+                    'username' => $user['username'] ?? $username,
+                    'bio' => $user['bio'] ?? $bio,
+                    'avatar_url' => $user['avatar_url'] ?? null,
+                ],
+            ]);
+        } catch (PDOException $exception) {
+            if ($exception->getCode() === '23505') {
+                $this->json(['success' => false, 'message' => 'This username is already taken.'], 409);
+                return;
+            }
+
+            $this->json(['success' => false, 'message' => 'Could not save profile changes.'], 500);
+        }
     }
 
     public function updateNotifications(): void
@@ -32,7 +63,6 @@ final class SettingsController extends AppController
             return;
         }
 
-        // Stored as a JSON preference in real projects; this endpoint is ready for frontend FETCH integration.
-        $this->json(['updated' => true]);
+        $this->json(['success' => true, 'updated' => true]);
     }
 }
