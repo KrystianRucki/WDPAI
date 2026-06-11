@@ -318,4 +318,110 @@ final class FilmsRepository extends Repository
 
         return null;
     }
+
+    public function getPopularThisWeek(int $limit = 4): array
+    {
+        $films = $this->getPopularFilmsByWatchedRange($limit, true);
+
+        if ($films !== []) {
+            return $films;
+        }
+
+        $films = $this->getPopularFilmsByWatchedRange($limit, false);
+
+        if ($films !== []) {
+            return $films;
+        }
+
+        return $this->getFeed($limit);
+    }
+
+    private function getPopularFilmsByWatchedRange(int $limit, bool $onlyCurrentWeek): array
+    {
+        $dateCondition = $onlyCurrentWeek ? "AND de.watched_on >= CURRENT_DATE - INTERVAL '7 days'" : '';
+
+        $query = $this->connection()->prepare(
+            "SELECT
+                f.*,
+                pop.watch_count,
+                COALESCE(ROUND(pop.average_rating, 1), 0) AS average_rating,
+                COALESCE(string_agg(DISTINCT g.name, ' • ' ORDER BY g.name), '') AS genres_text
+             FROM films f
+             JOIN (
+                SELECT
+                    de.film_id,
+                    COUNT(*) AS watch_count,
+                    AVG(de.rating) AS average_rating,
+                    MAX(de.created_at) AS latest_logged_at
+                FROM diary_entries de
+                JOIN users u ON u.id = de.user_id
+                WHERE de.is_public = TRUE
+                  AND u.is_active = TRUE
+                  {$dateCondition}
+                GROUP BY de.film_id
+             ) pop ON pop.film_id = f.id
+             LEFT JOIN film_genres fg ON fg.film_id = f.id
+             LEFT JOIN genres g ON g.id = fg.genre_id
+             GROUP BY f.id, pop.watch_count, pop.average_rating, pop.latest_logged_at
+             ORDER BY pop.watch_count DESC, pop.latest_logged_at DESC, f.tmdb_popularity DESC NULLS LAST, f.created_at DESC
+             LIMIT :limit"
+        );
+        $query->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $query->execute();
+
+        return array_map(fn (array $film): array => $this->hydrateFilm($film), $query->fetchAll());
+    }
+
+    public function getFriendsRecentLogs(int $userId, int $limit = 3): array
+    {
+        $query = $this->connection()->prepare(
+            "SELECT
+                de.id AS log_id,
+                de.user_id,
+                de.film_id,
+                de.watched_on,
+                de.rating AS log_rating,
+                de.notes,
+                de.is_rewatch,
+                de.created_at AS logged_at,
+                u.username,
+                u.avatar_url,
+                f.title AS film_title,
+                f.release_year,
+                f.director,
+                f.poster_url,
+                f.poster_path,
+                f.tmdb_id,
+                COALESCE(string_agg(DISTINCT g.name, ' • ' ORDER BY g.name), '') AS genres_text,
+                r.id AS review_id,
+                r.title AS review_title,
+                r.content AS review_content,
+                r.rating AS review_rating,
+                CASE
+                    WHEN r.id IS NOT NULL THEN '/review-details?id=' || r.id
+                    ELSE '/film-details?id=' || f.id
+                END AS target_url
+             FROM diary_entries de
+             JOIN followers fr ON fr.followed_id = de.user_id AND fr.follower_id = :user_id
+             JOIN users u ON u.id = de.user_id
+             JOIN films f ON f.id = de.film_id
+             LEFT JOIN reviews r ON r.user_id = de.user_id
+                 AND r.film_id = de.film_id
+                 AND r.is_public = TRUE
+             LEFT JOIN film_genres fg ON fg.film_id = f.id
+             LEFT JOIN genres g ON g.id = fg.genre_id
+             WHERE de.is_public = TRUE
+               AND u.is_active = TRUE
+             GROUP BY de.id, u.id, f.id, r.id
+             ORDER BY de.watched_on DESC, de.created_at DESC
+             LIMIT :limit"
+        );
+        $query->bindValue(':user_id', $userId, PDO::PARAM_INT);
+        $query->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $query->execute();
+
+        return $query->fetchAll();
+    }
+
+
 }

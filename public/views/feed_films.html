@@ -1,3 +1,103 @@
+<?php
+$popularFilms = $popularFilms ?? [];
+$friendLogs = $friendLogs ?? [];
+
+if (!function_exists('reevio_feed_e')) {
+    function reevio_feed_e($value): string
+    {
+        return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
+    }
+}
+
+if (!function_exists('reevio_feed_poster')) {
+    function reevio_feed_poster(array $item): string
+    {
+        return $item['poster_url'] ?: '/public/assets/img/movie_placeholder.svg';
+    }
+}
+
+if (!function_exists('reevio_feed_meta')) {
+    function reevio_feed_meta(array $film): string
+    {
+        $parts = [];
+
+        if (!empty($film['release_year'])) {
+            $parts[] = (string) $film['release_year'];
+        }
+
+        if (!empty($film['genres_text'])) {
+            $parts[] = (string) $film['genres_text'];
+        } elseif (!empty($film['director'])) {
+            $parts[] = (string) $film['director'];
+        } else {
+            $parts[] = 'Film';
+        }
+
+        return implode(' • ', $parts);
+    }
+}
+
+if (!function_exists('reevio_feed_stars')) {
+    function reevio_feed_stars($rating, string $size = '14'): string
+    {
+        $rating = is_numeric($rating) ? (float) $rating : 0.0;
+        $html = '';
+
+        for ($i = 1; $i <= 5; $i++) {
+            $icon = 'star';
+            $class = 'text-surface-container-highest';
+
+            if ($rating >= $i) {
+                $class = 'text-primary';
+            } elseif ($rating >= ($i - 0.5)) {
+                $icon = 'star_half';
+                $class = 'text-primary';
+            }
+
+            $html .= '<span class="material-symbols-outlined text-[' . $size . 'px] ' . $class . ' filled">' . $icon . '</span>';
+        }
+
+        return $html;
+    }
+}
+
+if (!function_exists('reevio_feed_time_ago')) {
+    function reevio_feed_time_ago($date): string
+    {
+        if (!$date) {
+            return 'Recently';
+        }
+
+        try {
+            $eventDate = new DateTimeImmutable((string) $date);
+            $today = new DateTimeImmutable('today');
+            $days = abs((int) $today->diff($eventDate->setTime(0, 0))->format('%r%a'));
+
+            return match (true) {
+                $days === 0 => 'Logged today',
+                $days === 1 => 'Logged yesterday',
+                $days < 7 => 'Logged ' . $days . ' days ago',
+                default => 'Logged on ' . $eventDate->format('M j, Y'),
+            };
+        } catch (Throwable) {
+            return 'Recently';
+        }
+    }
+}
+
+if (!function_exists('reevio_feed_avatar')) {
+    function reevio_feed_avatar(array $log, string $class): string
+    {
+        if (!empty($log['avatar_url'])) {
+            return '<img alt="' . reevio_feed_e($log['username']) . ' avatar" class="' . $class . '" src="' . reevio_feed_e($log['avatar_url']) . '" />';
+        }
+
+        $initial = strtoupper(substr((string) ($log['username'] ?? 'U'), 0, 1));
+
+        return '<div class="' . $class . ' flex items-center justify-center bg-surface-container-high text-primary font-headline text-xs font-black">' . reevio_feed_e($initial) . '</div>';
+    }
+}
+?>
 <!doctype html>
 <html class="dark" lang="en">
   <head>
@@ -32,119 +132,45 @@ include __DIR__ . '/partials/navigation.html';
             Popular This Week
           </h1>
 
+          <?php if ($popularFilms): ?>
           <div class="grid grid-cols-2 gap-5 md:grid-cols-4 md:gap-6">
+            <?php foreach ($popularFilms as $film): ?>
             <a
               class="group relative block aspect-[2/3] overflow-hidden rounded-xl bg-surface-container-high poster-shadow transition-transform duration-200 hover:scale-[1.02]"
-              href="/film-details"
+              href="/film-details?id=<?= (int) $film['id']; ?>"
             >
               <img
-                alt="Neon Drift movie poster"
+                alt="<?= reevio_feed_e($film['title'] ?? 'Movie'); ?> movie poster"
                 class="h-full w-full object-cover"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCgKzTeD2V80Vi-RBw8M-ICxZyT-ILU2C4Zv0BBCoZ1yOoWtLcnNxyKO6pJunPDT0mdbrNVuxk3pz5xZ52XlZ1bzlMa0V4bYq6RUc_TObtFe-bJfIXFN-jQaViQE9vbuKrpjAKkUaB2HUiuCRb8PCrltyuJzuT_FiPq3Z_FZLgHrBBx75mXNrSUv9xZs3eFJFdwIbviIlpzYudbhprSZzPGcwpWwOQqi3-nAdQZUOYgL8jmzOapWqKD-uOZEbihT5TLyx_PBChGlGID"
+                src="<?= reevio_feed_e(reevio_feed_poster($film)); ?>"
               />
 
               <div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-surface-container-lowest/45 to-transparent"></div>
 
               <div class="absolute inset-x-0 bottom-0 p-4">
                 <h3 class="mb-1 font-headline text-lg font-bold leading-tight text-on-surface transition-colors group-hover:text-primary">
-                  Neon Drift
+                  <?= reevio_feed_e($film['title'] ?? 'Untitled film'); ?>
                 </h3>
-                <p class="mb-2 font-label text-xs text-secondary">2024 • Sci-Fi</p>
+                <p class="mb-2 font-label text-xs text-secondary"><?= reevio_feed_e(reevio_feed_meta($film)); ?></p>
 
                 <div class="flex items-center gap-[2px]">
-                  <span class="material-symbols-outlined text-[14px] text-primary filled">star</span>
-                  <span class="material-symbols-outlined text-[14px] text-primary filled">star</span>
-                  <span class="material-symbols-outlined text-[14px] text-primary filled">star</span>
-                  <span class="material-symbols-outlined text-[14px] text-primary filled">star</span>
-                  <span class="material-symbols-outlined text-[14px] text-primary filled">star_half</span>
+                  <?= reevio_feed_stars($film['average_rating'] ?? $film['tmdb_vote_average'] ?? 0, '14'); ?>
                 </div>
+
+                <?php if (!empty($film['watch_count'])): ?>
+                <p class="mt-2 font-label text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">
+                  <?= (int) $film['watch_count']; ?> watches this week
+                </p>
+                <?php endif; ?>
               </div>
             </a>
-
-            <a
-              class="group relative block aspect-[2/3] overflow-hidden rounded-xl bg-surface-container-high poster-shadow transition-transform duration-200 hover:scale-[1.02]"
-              href="/film-details"
-            >
-              <img
-                alt="The Pines movie poster"
-                class="h-full w-full object-cover"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuC9pAPpYvFf0tqHycfT3hEHz2GJNyIOxQ-7FcNw9Ko8CNjQtAyzVRV1fjiy_k51AXkDVOEwfRcBS-I2fxIkcJNzXCVls9IKJ-oFhNY3x1h3b4J0IglQIi7Y6d0Y-jr0EqpHj9kFqz3YXGJAWEsjV98sPEcIDiwfdOpOTLmBeKR9LZP6kCAbqN3phVbGQveuHDKNZGzdTIMFIk1aDLdrGJBIv_3Q6xYaTt_dWzCtqyPxk-EpqTdqxHE-HV3LFnvdgNO6Fs4hyXoNB3qn"
-              />
-
-              <div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-surface-container-lowest/45 to-transparent"></div>
-
-              <div class="absolute inset-x-0 bottom-0 p-4">
-                <h3 class="mb-1 font-headline text-lg font-bold leading-tight text-on-surface transition-colors group-hover:text-primary">
-                  The Pines
-                </h3>
-                <p class="mb-2 font-label text-xs text-secondary">2023 • Thriller</p>
-
-                <div class="flex items-center gap-[2px]">
-                  <span class="material-symbols-outlined text-[14px] text-primary filled">star</span>
-                  <span class="material-symbols-outlined text-[14px] text-primary filled">star</span>
-                  <span class="material-symbols-outlined text-[14px] text-primary filled">star</span>
-                  <span class="material-symbols-outlined text-[14px] text-primary filled">star</span>
-                  <span class="material-symbols-outlined text-[14px] text-surface-container-highest filled">star</span>
-                </div>
-              </div>
-            </a>
-
-            <a
-              class="group relative block aspect-[2/3] overflow-hidden rounded-xl bg-surface-container-high poster-shadow transition-transform duration-200 hover:scale-[1.02]"
-              href="/film-details"
-            >
-              <img
-                alt="Dust & Echoes movie poster"
-                class="h-full w-full object-cover"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCoBxueiGUdGbjLx1t-iFOdD7UOJWOlPy79rfcu1aRFE5n27qWUjp_3l45eOtjDJg4hutiKCAcjitf8yelTKS74Q9t_DuXlG6607r8n3qaMiVJ14vaAOPGWwrB_y3f_YOjAWWNITe6aNVxDdpu2doCzFh0vkkXpvvLrtUC9aFecL7E41suz3WTABVC_2MIFX8nc_BRXKdPLwCzrcoi_VYPYON5avEoVfvdTeYccxIbMI-pEruPsIoycNiRr4kPlem2Uc21EUkxGDE4T"
-              />
-
-              <div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-surface-container-lowest/45 to-transparent"></div>
-
-              <div class="absolute inset-x-0 bottom-0 p-4">
-                <h3 class="mb-1 font-headline text-lg font-bold leading-tight text-on-surface transition-colors group-hover:text-primary">
-                  Dust &amp; Echoes
-                </h3>
-                <p class="mb-2 font-label text-xs text-secondary">2024 • Drama</p>
-
-                <div class="flex items-center gap-[2px]">
-                  <span class="material-symbols-outlined text-[14px] text-primary filled">star</span>
-                  <span class="material-symbols-outlined text-[14px] text-primary filled">star</span>
-                  <span class="material-symbols-outlined text-[14px] text-primary filled">star</span>
-                  <span class="material-symbols-outlined text-[14px] text-surface-container-highest filled">star</span>
-                  <span class="material-symbols-outlined text-[14px] text-surface-container-highest filled">star</span>
-                </div>
-              </div>
-            </a>
-
-            <a
-              class="group relative block aspect-[2/3] overflow-hidden rounded-xl bg-surface-container-high poster-shadow transition-transform duration-200 hover:scale-[1.02]"
-              href="/film-details"
-            >
-              <img
-                alt="Director's Cut movie poster"
-                class="h-full w-full object-cover"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBQVgCWlH2qesIWlJYekmKlQc2m1K0RUfi5xkbP7LQUORNSV3ECjp8cLjYhFuZSkU_reN8TvbU0yMmU50M9AIJ-gheJEhgejtB28g3ATAG_2ik0hXOvVva4ITtuJFRMqZBmXOJJ6OrhJDvWMt2PCbrStBONPTwQEms8GhrcBnjZjeQjpatRCh7imSVpVqMUgmEbI-cSxxI-KThW-hjUtvOZxM0kvXAbLs-CVBcTM2R5_h3vHAYVKd6QxCKGQxsk5h6Ox-SBkNiISswU"
-              />
-
-              <div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-surface-container-lowest/45 to-transparent"></div>
-
-              <div class="absolute inset-x-0 bottom-0 p-4">
-                <h3 class="mb-1 font-headline text-lg font-bold leading-tight text-on-surface transition-colors group-hover:text-primary">
-                  Director&apos;s Cut
-                </h3>
-                <p class="mb-2 font-label text-xs text-secondary">2024 • Doc</p>
-
-                <div class="flex items-center gap-[2px]">
-                  <span class="material-symbols-outlined text-[14px] text-primary filled">star</span>
-                  <span class="material-symbols-outlined text-[14px] text-primary filled">star</span>
-                  <span class="material-symbols-outlined text-[14px] text-primary filled">star</span>
-                  <span class="material-symbols-outlined text-[14px] text-primary filled">star</span>
-                  <span class="material-symbols-outlined text-[14px] text-primary filled">star</span>
-                </div>
-              </div>
-            </a>
+            <?php endforeach; ?>
           </div>
+          <?php else: ?>
+          <div class="rounded-2xl border border-outline-variant/15 bg-surface-container-low p-6 text-on-surface-variant">
+            No watched films yet. Log a movie to build the weekly ranking.
+          </div>
+          <?php endif; ?>
         </section>
 
         <!-- New From Friends -->
@@ -154,95 +180,44 @@ include __DIR__ . '/partials/navigation.html';
               New From Friends
             </h2>
 
-            <a class="font-label text-xs font-bold text-secondary transition-colors hover:text-primary" href="new_from_friends.html">
+            <a class="font-label text-xs font-bold text-secondary transition-colors hover:text-primary" href="/new-from-friends">
               See all
             </a>
           </div>
 
+          <?php if ($friendLogs): ?>
           <div class="grid grid-cols-[repeat(3,165px)] gap-10">
-            <article data-href="#" class="group relative aspect-[2/3] overflow-hidden rounded-xl bg-surface-container-high poster-shadow transition-transform duration-200 hover:scale-[1.02]">
+            <?php foreach ($friendLogs as $log): ?>
+            <article data-href="<?= reevio_feed_e($log['target_url'] ?? ('/film-details?id=' . (int) $log['film_id'])); ?>" class="group relative aspect-[2/3] overflow-hidden rounded-xl bg-surface-container-high poster-shadow transition-transform duration-200 hover:scale-[1.02]">
               <img
-                alt="Movie poster"
+                alt="<?= reevio_feed_e($log['film_title'] ?? 'Movie'); ?> poster"
                 class="h-full w-full object-cover"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBKaTRPe9kfC51q5Q14QaUx5Zorq7uFOpDlhjOEu3FrNdLnOMOf1wqsAWKj67pgOViBDeNympK0fvAXeXr8P1jYQumDg8NdbZNmiJ87bQPPCEmnIYz-1xdw9Xjs33TNqiNBd0EN9LpIP6kz7wJHDydc1k_RRRgD1VnPijxcUFJb3vVHpcd9paP1VJUnUFcaMYANNJ76QE2jHIlrLuSzd02scywCwiNzStRjbM63g6F-UEk4M_zXMHQd3NnEW0OJTvnDswBEiMPRkClG"
+                src="<?= reevio_feed_e(reevio_feed_poster($log)); ?>"
               />
 
-              <img
-                alt="User avatar"
-                class="absolute left-2 top-2 h-7 w-7 rounded-full border border-surface-container-lowest object-cover shadow-lg"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCjzmBI0C1kWVB7rPbeDncrY5sIeRbWsKuP9XmE7v_XltRTy7esOXiwTaaAocUZd4H6mwDwu4rbdAax81p2Osz0o2B2NViSdZGv01wS51b4tSKpsH5MRAEwNOswBklS10JYxLNBO9cpzr7-nTehWpeVpX1lNjWObYRtVXm9S9ieoCfQp7r9j3lrux1IzIMH8vacfHdIzcG-d4VA0RS3Xbl5QwfVnoZSaB_YwLRAIa5ubwMk1zwFNMk8tz2GEuxB4NZ7TmHyJRB8GBQz"
-              />
+              <?= reevio_feed_avatar($log, 'absolute left-2 top-2 h-7 w-7 rounded-full border border-surface-container-lowest object-cover shadow-lg'); ?>
 
+              <?php if (!empty($log['review_id'])): ?>
               <div class="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full border border-white/5 bg-zinc-900/70 backdrop-blur-md">
                 <span class="material-symbols-outlined text-[15px] text-primary">rate_review</span>
               </div>
+              <?php endif; ?>
 
               <div class="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-surface-container-lowest via-surface-container-lowest/55 to-transparent p-3">
                 <div class="mb-1 flex items-center gap-[2px]">
-                  <span class="material-symbols-outlined text-[12px] text-primary filled">star</span>
-                  <span class="material-symbols-outlined text-[12px] text-primary filled">star</span>
-                  <span class="material-symbols-outlined text-[12px] text-primary filled">star</span>
-                  <span class="material-symbols-outlined text-[12px] text-primary filled">star</span>
-                  <span class="material-symbols-outlined text-[12px] text-surface-container-highest filled">star</span>
+                  <?= reevio_feed_stars($log['review_rating'] ?? $log['log_rating'] ?? 0, '12'); ?>
                 </div>
-                <p class="font-label text-[11px] font-bold text-on-surface">@lenaframes</p>
+                <p class="font-label text-[11px] font-bold text-on-surface">@<?= reevio_feed_e($log['username'] ?? 'user'); ?></p>
+                <p class="font-label text-[10px] text-on-surface-variant"><?= reevio_feed_e(reevio_feed_time_ago($log['watched_on'] ?? $log['logged_at'] ?? null)); ?></p>
               </div>
             </article>
-
-            <article data-href="#" class="group relative aspect-[2/3] overflow-hidden rounded-xl bg-surface-container-high poster-shadow transition-transform duration-200 hover:scale-[1.02]">
-              <img
-                alt="Movie poster"
-                class="h-full w-full object-cover"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCAztmfm7GxPk66fExcOB1LEYZhFu3qbEaKRF8ED3lRcycp_NH_0jJa1rZhk5iLrdaj0PfC_v7eRj7XkW0Rtn5OJ_Kws-3Q42ooDl1QydJxRRQ2cK_3vYQqg0u7qHLeDTOK21iW9ngVaLj30jVlWkuiHplhkUn_XLMGg6z-MlVZoDl4_YwdUaZNsY1BbmMPI1Avtme1Ljh8G_TI75G1TKscetl-z4Z_p01g8vFI8VB_HeNz5xaokK5mTSRYsjRegtrEyMM3cnCcfVFu"
-              />
-
-              <img
-                alt="User avatar"
-                class="absolute left-2 top-2 h-7 w-7 rounded-full border border-surface-container-lowest object-cover shadow-lg"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDnqGGwkGbeWYTeAm35iaGEQzq0C8onNju0IKAMElLDHP32rqB1UFHp6iKZ_30TJszKmDMumzvjbIxJ1z0L1yb5hi3Uw0MuajZTnKWa3bYHQ7sTxu7Xcbm2Tlj_xGqmO_5juGNqgtYkr9KQoOKU-JjWOz35N6ebXd05DIxeknjsik8BEjISaCXakHjWxIfXiS3NHEJo6oQIrT0j4lSmAYS4sJs6HTAeaWJV04tTAC5GvWN-DAgVZB52KFxp1gVcNojv7400cclL1gJ9"
-              />
-
-              <div class="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-surface-container-lowest via-surface-container-lowest/55 to-transparent p-3">
-                <div class="mb-1 flex items-center gap-[2px]">
-                  <span class="material-symbols-outlined text-[12px] text-primary filled">star</span>
-                  <span class="material-symbols-outlined text-[12px] text-primary filled">star</span>
-                  <span class="material-symbols-outlined text-[12px] text-primary filled">star</span>
-                  <span class="material-symbols-outlined text-[12px] text-primary filled">star_half</span>
-                  <span class="material-symbols-outlined text-[12px] text-surface-container-highest filled">star</span>
-                </div>
-                <p class="font-label text-[11px] font-bold text-on-surface">@arthousemax</p>
-              </div>
-            </article>
-
-            <article data-href="#" class="group relative aspect-[2/3] overflow-hidden rounded-xl bg-surface-container-high poster-shadow transition-transform duration-200 hover:scale-[1.02]">
-              <img
-                alt="Movie poster"
-                class="h-full w-full object-cover"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDaNS2dlZn5D8faPrjHrsgOOF-2m_YkC3QORnTjRahUzWg16Cv2uJy3htW0iDKmMKYAO0LsSoELcZ2TS0Yi2LI3rmScVmXpu1Pd85giA8j79kCXudMnPnzaYtM-yj9ZUlLGtKFkLSv4JFPb1z1VSTRgH6feYhUytCwB1jKLRsj1D9nerzQm8GVIDP20kZbpITg1OuEL8-JDnddl7e7wQRMgzcX7cI0E7eFSDr-nGFqLqCdT2llDfnI7KE00D2y7iGg4HqlAl24Lzgee"
-              />
-
-              <img
-                alt="User avatar"
-                class="absolute left-2 top-2 h-7 w-7 rounded-full border border-surface-container-lowest object-cover shadow-lg"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuAJUzYpGLZEROJXStHpU1HcIrUPtrwtrja_FmgUI1MuoaK6cPgPidlaHar-F0sf-VhRgT9sWmpdimKAG9pm-FCNM82ESwxwddfyKDQv8xePz5uUFPi8HN09zUraUFk2F35py5oFmym651T1IFT6Pue5nsl6O3nRi3F_U8KeXtcG824KWwaamJp1FOSv_SPYVn0PpaSjhikWIfu-dCg9bN-pA9YjKPt1b9lOIDpoA74zgxSfaY7hzb7OLCygA6kHJN9ycD1py8zl2PAQ"
-              />
-
-              <div class="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full border border-white/5 bg-zinc-900/70 backdrop-blur-md">
-                <span class="material-symbols-outlined text-[15px] text-primary">rate_review</span>
-              </div>
-
-              <div class="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-surface-container-lowest via-surface-container-lowest/55 to-transparent p-3">
-                <div class="mb-1 flex items-center gap-[2px]">
-                  <span class="material-symbols-outlined text-[12px] text-primary filled">star</span>
-                  <span class="material-symbols-outlined text-[12px] text-primary filled">star</span>
-                  <span class="material-symbols-outlined text-[12px] text-surface-container-highest filled">star</span>
-                  <span class="material-symbols-outlined text-[12px] text-surface-container-highest filled">star</span>
-                  <span class="material-symbols-outlined text-[12px] text-surface-container-highest filled">star</span>
-                </div>
-                <p class="font-label text-[11px] font-bold text-on-surface">@noirnina</p>
-              </div>
-            </article>
+            <?php endforeach; ?>
           </div>
+          <?php else: ?>
+          <div class="rounded-2xl border border-outline-variant/15 bg-surface-container-low p-6 text-on-surface-variant">
+            Follow other users to see their latest film logs here.
+          </div>
+          <?php endif; ?>
         </section>
       </div>
     </main>

@@ -532,11 +532,11 @@ INSERT INTO list_items (list_id, film_id, position, note) VALUES
 (4,1,1,'The big one.');
 
 INSERT INTO diary_entries (user_id, film_id, watched_on, rating, notes, is_rewatch, is_public) VALUES
-(2,1,'2026-04-01',5.0,'Huge cinema experience.',FALSE,TRUE),
-(2,10,'2026-04-06',5.0,'A beautiful, melancholic film about time.',FALSE,TRUE),
-(3,2,'2026-04-02',4.5,'Quiet and devastating.',FALSE,TRUE),
-(5,4,'2026-04-03',4.8,'Neon rain and loneliness.',TRUE,TRUE),
-(8,3,'2026-04-04',4.7,'Unhinged in the best way.',FALSE,TRUE);
+(2,1,CURRENT_DATE,5.0,'Huge cinema experience.',FALSE,TRUE),
+(2,10,CURRENT_DATE - 1,5.0,'A beautiful, melancholic film about time.',FALSE,TRUE),
+(3,2,CURRENT_DATE - 1,4.5,'Quiet and devastating.',FALSE,TRUE),
+(5,4,CURRENT_DATE - 2,4.8,'Neon rain and loneliness.',TRUE,TRUE),
+(8,3,CURRENT_DATE - 3,4.7,'Unhinged in the best way.',FALSE,TRUE);
 
 INSERT INTO watchlist (user_id, film_id) VALUES
 (2,2),(2,3),(2,4),(2,7),(3,1),(5,1),(8,10),(11,9);
