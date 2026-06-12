@@ -8,6 +8,7 @@ require_once __DIR__ . '/../repositories/UsersRepository.php';
 require_once __DIR__ . '/../repositories/ReviewsRepository.php';
 require_once __DIR__ . '/../repositories/ListsRepository.php';
 require_once __DIR__ . '/../repositories/DiaryRepository.php';
+require_once __DIR__ . '/../services/TmdbService.php';
 
 final class PageController extends AppController
 {
@@ -83,11 +84,91 @@ final class PageController extends AppController
     private function crewProfileVariables(array $currentUser, FilmsRepository $filmsRepository): array
     {
         $personId = max(0, (int) ($_GET['id'] ?? 0));
+        $person = $personId > 0 ? $filmsRepository->getPersonById($personId) : null;
+        $tmdbPersonFilms = [];
+        $tmdbError = null;
+
+        if ($person && !empty($person['tmdb_id'])) {
+            try {
+                $tmdb = new TmdbService();
+                $details = $tmdb->getPersonDetails((int) $person['tmdb_id']);
+                $person = $filmsRepository->updatePersonFromTmdbDetails($personId, $details, $tmdb) ?: $person;
+                $tmdbPersonFilms = $this->tmdbPersonMovieCredits($details, $tmdb);
+            } catch (Throwable $exception) {
+                $tmdbError = $exception->getMessage();
+            }
+        }
+
+        $localFilms = $personId > 0 ? $filmsRepository->getPersonFilmography($personId, 40) : [];
 
         return [
             'profileUser' => $currentUser,
-            'person' => $personId > 0 ? $filmsRepository->getPersonById($personId) : null,
-            'personFilms' => $personId > 0 ? $filmsRepository->getPersonFilmography($personId, 40) : [],
+            'person' => $person,
+            'personFilms' => $tmdbPersonFilms ?: $localFilms,
+            'personFilmsSource' => $tmdbPersonFilms ? 'tmdb' : 'local',
+            'tmdbError' => $tmdbError,
+        ];
+    }
+
+    private function tmdbPersonMovieCredits(array $details, TmdbService $tmdb): array
+    {
+        $credits = $details['movie_credits'] ?? [];
+        $items = [];
+
+        foreach (($credits['cast'] ?? []) as $movie) {
+            $items[(int) ($movie['id'] ?? 0)] = $this->normalizeTmdbPersonMovie($movie, $tmdb, 'actor');
+        }
+
+        foreach (($credits['crew'] ?? []) as $movie) {
+            $id = (int) ($movie['id'] ?? 0);
+
+            if ($id <= 0) {
+                continue;
+            }
+
+            if (isset($items[$id])) {
+                $items[$id]['job'] = $movie['job'] ?? $items[$id]['job'] ?? null;
+                $items[$id]['department'] = $movie['department'] ?? $items[$id]['department'] ?? null;
+                $items[$id]['credit_type'] = trim(($items[$id]['credit_type'] ?? 'actor') . ', ' . strtolower((string) ($movie['job'] ?? 'crew')), ', ');
+                continue;
+            }
+
+            $items[$id] = $this->normalizeTmdbPersonMovie($movie, $tmdb, strtolower((string) ($movie['job'] ?? 'crew')));
+        }
+
+        $items = array_values(array_filter($items, fn (array $movie): bool => (int) ($movie['tmdb_id'] ?? 0) > 0));
+
+        usort($items, static function (array $a, array $b): int {
+            $aYear = (int) ($a['release_year'] ?? 0);
+            $bYear = (int) ($b['release_year'] ?? 0);
+
+            if ($aYear !== $bYear) {
+                return $bYear <=> $aYear;
+            }
+
+            return strcmp((string) ($a['title'] ?? ''), (string) ($b['title'] ?? ''));
+        });
+
+        return $items;
+    }
+
+    private function normalizeTmdbPersonMovie(array $movie, TmdbService $tmdb, string $creditType): array
+    {
+        $releaseDate = (string) ($movie['release_date'] ?? '');
+        $releaseYear = $releaseDate !== '' ? (int) substr($releaseDate, 0, 4) : null;
+
+        return [
+            'id' => null,
+            'tmdb_id' => (int) ($movie['id'] ?? 0),
+            'title' => $movie['title'] ?? $movie['original_title'] ?? 'Untitled',
+            'release_year' => $releaseYear,
+            'poster_url' => $tmdb->imageUrl($movie['poster_path'] ?? null, 'w342') ?? '/public/assets/img/movie_placeholder.svg',
+            'tmdb_vote_average' => $movie['vote_average'] ?? null,
+            'average_rating' => $movie['vote_average'] ?? null,
+            'credit_type' => $creditType,
+            'character_name' => $movie['character'] ?? null,
+            'job' => $movie['job'] ?? null,
+            'department' => $movie['department'] ?? null,
         ];
     }
 

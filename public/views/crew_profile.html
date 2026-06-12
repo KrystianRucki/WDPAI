@@ -1,6 +1,8 @@
 <?php
 $person = $person ?? null;
 $personFilms = $personFilms ?? [];
+$personFilmsSource = $personFilmsSource ?? 'local';
+$tmdbError = $tmdbError ?? null;
 
 if (!function_exists('reevio_crew_e')) {
     function reevio_crew_e($value): string
@@ -34,6 +36,21 @@ if (!function_exists('reevio_crew_count')) {
     function reevio_crew_count($value): string
     {
         return number_format((int) $value, 0, '.', ' ');
+    }
+}
+
+if (!function_exists('reevio_crew_film_href')) {
+    function reevio_crew_film_href(array $film): string
+    {
+        if (!empty($film['id'])) {
+            return '/film-details?id=' . (int) $film['id'];
+        }
+
+        if (!empty($film['tmdb_id'])) {
+            return '/film-details?tmdb_id=' . (int) $film['tmdb_id'];
+        }
+
+        return '/search-films';
     }
 }
 ?>
@@ -92,22 +109,17 @@ include __DIR__ . '/partials/navigation.html';
 
               <div class="mt-5 flex flex-wrap gap-3">
                 <span class="rounded-full bg-surface-container-lowest px-4 py-2 font-label text-xs font-bold uppercase tracking-wider text-on-surface-variant">
-                  <?= reevio_crew_count($person['film_count'] ?? count($personFilms)); ?> linked films
+                  <?= reevio_crew_count(count($personFilms)); ?> films
                 </span>
-                <?php if (!empty($person['tmdb_synced_at'])): ?>
-                <span class="rounded-full bg-surface-container-lowest px-4 py-2 font-label text-xs font-bold uppercase tracking-wider text-on-surface-variant">
-                  Profile synced
-                </span>
-                <?php endif; ?>
               </div>
 
               <?php if (!empty($person['biography'])): ?>
               <p class="mt-6 max-w-3xl text-sm leading-relaxed text-on-surface-variant">
                 <?= nl2br(reevio_crew_e($person['biography'])); ?>
               </p>
-              <?php else: ?>
+              <?php elseif ($tmdbError): ?>
               <p class="mt-6 max-w-3xl text-sm leading-relaxed text-on-surface-variant">
-                No biography has been added yet. Film credits linked in Reevio will appear below.
+                Biography is temporarily unavailable.
               </p>
               <?php endif; ?>
             </div>
@@ -117,21 +129,21 @@ include __DIR__ . '/partials/navigation.html';
         <section>
           <div class="mb-5 flex items-end justify-between">
             <div>
-              <h2 class="font-headline text-[28px] font-black tracking-tight text-on-surface">Known for in Reevio</h2>
-              <p class="mt-1 text-sm text-on-surface-variant">Films connected to this person in the local database.</p>
+              <h2 class="font-headline text-[28px] font-black tracking-tight text-on-surface">Known for</h2>
+              <p class="mt-1 text-sm text-on-surface-variant">Films connected to this person.</p>
             </div>
           </div>
 
           <?php if ($personFilms): ?>
           <div class="grid grid-cols-2 gap-5 md:grid-cols-3 xl:grid-cols-5">
             <?php foreach ($personFilms as $film): ?>
-            <a href="/film-details?id=<?= (int) $film['id']; ?>" class="group block rounded-2xl border border-outline-variant/15 bg-surface-container-low p-3 ambient-shadow transition-transform duration-200 hover:scale-[1.02] hover:bg-surface-container-high">
+            <a href="<?= reevio_crew_e(reevio_crew_film_href($film)); ?>" class="group block rounded-2xl border border-outline-variant/15 bg-surface-container-low p-3 ambient-shadow transition-transform duration-200 hover:scale-[1.02] hover:bg-surface-container-high">
               <div class="relative aspect-[2/3] overflow-hidden rounded-xl poster-shadow">
                 <img src="<?= reevio_crew_e(reevio_crew_poster($film)); ?>" alt="<?= reevio_crew_e($film['title'] ?? 'Film'); ?> poster" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
                 <div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest/75 to-transparent"></div>
-                <?php if (!empty($film['average_rating'])): ?>
+                <?php if (!empty($film['average_rating']) || !empty($film['tmdb_vote_average'])): ?>
                 <div class="absolute bottom-2 left-2 rounded-full bg-surface-container-lowest/85 px-2 py-1 font-label text-xs font-bold text-primary">
-                  <?= reevio_crew_e(number_format((float) $film['average_rating'], 1)); ?>
+                  <?= reevio_crew_e(number_format((float) ($film['average_rating'] ?? $film['tmdb_vote_average']), 1)); ?>
                 </div>
                 <?php endif; ?>
               </div>
@@ -140,7 +152,11 @@ include __DIR__ . '/partials/navigation.html';
               </h3>
               <p class="mt-1 font-label text-xs text-on-surface-variant">
                 <?= reevio_crew_e($film['release_year'] ?? ''); ?>
-                <?php if (!empty($film['credit_type'])): ?>
+                <?php if (!empty($film['character_name'])): ?>
+                • <?= reevio_crew_e($film['character_name']); ?>
+                <?php elseif (!empty($film['job'])): ?>
+                • <?= reevio_crew_e($film['job']); ?>
+                <?php elseif (!empty($film['credit_type'])): ?>
                 • <?= reevio_crew_e($film['credit_type']); ?>
                 <?php endif; ?>
               </p>
@@ -149,7 +165,7 @@ include __DIR__ . '/partials/navigation.html';
           </div>
           <?php else: ?>
           <div class="rounded-3xl border border-outline-variant/15 bg-surface-container-low p-8 ambient-shadow text-on-surface-variant">
-            No linked films yet.
+            No films found for this person.
           </div>
           <?php endif; ?>
         </section>

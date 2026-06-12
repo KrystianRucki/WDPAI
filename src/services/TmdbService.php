@@ -70,6 +70,16 @@ final class TmdbService
         ]);
     }
 
+
+    public function getPersonDetails(int $tmdbId): array
+    {
+        return $this->request('/person/' . $tmdbId, [
+            'language' => $this->language,
+            'append_to_response' => 'movie_credits,images',
+            'include_image_language' => 'en,null',
+        ]);
+    }
+
     public function getMovieGenres(): array
     {
         $response = $this->request('/genre/movie/list', [

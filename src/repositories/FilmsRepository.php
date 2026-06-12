@@ -931,4 +931,42 @@ final class FilmsRepository extends Repository
     }
 
 
+
+    public function updatePersonFromTmdbDetails(int $personId, array $details, TmdbService $tmdb): ?array
+    {
+        $tmdbId = (int) ($details['id'] ?? 0);
+        $name = trim((string) ($details['name'] ?? ''));
+
+        if ($personId <= 0 || $tmdbId <= 0 || $name === '') {
+            return $this->getPersonById($personId);
+        }
+
+        $query = $this->connection()->prepare(
+            'UPDATE people
+             SET tmdb_id = :tmdb_id,
+                 full_name = :full_name,
+                 biography = :biography,
+                 photo_url = :photo_url,
+                 profile_path = :profile_path,
+                 known_for_department = :known_for_department,
+                 tmdb_synced_at = CURRENT_TIMESTAMP
+             WHERE id = :person_id
+             RETURNING *'
+        );
+
+        $query->bindValue(':person_id', $personId, PDO::PARAM_INT);
+        $query->bindValue(':tmdb_id', $tmdbId, PDO::PARAM_INT);
+        $query->bindValue(':full_name', $name);
+        $query->bindValue(':biography', $details['biography'] ?? null);
+        $query->bindValue(':photo_url', $tmdb->imageUrl($details['profile_path'] ?? null, 'w342'));
+        $query->bindValue(':profile_path', $details['profile_path'] ?? null);
+        $query->bindValue(':known_for_department', $details['known_for_department'] ?? null);
+        $query->execute();
+
+        $person = $query->fetch();
+
+        return $person ?: $this->getPersonById($personId);
+    }
+
+
 }
