@@ -125,11 +125,20 @@ final class UsersRepository extends Repository
 
     public function getFollowStats(int $userId): array
     {
+        $this->ensureUserFilmsTable();
+
         $query = $this->connection()->prepare(
             'SELECT
                 (SELECT COUNT(*) FROM followers WHERE followed_id = :user_id) AS followers_count,
                 (SELECT COUNT(*) FROM followers WHERE follower_id = :user_id) AS following_count,
-                (SELECT COUNT(DISTINCT film_id) FROM diary_entries WHERE user_id = :user_id) AS films_count,
+                (
+                    SELECT COUNT(*)
+                    FROM (
+                        SELECT film_id FROM user_films WHERE user_id = :user_id
+                        UNION
+                        SELECT film_id FROM diary_entries WHERE user_id = :user_id
+                    ) watched_films
+                ) AS films_count,
                 (SELECT COUNT(*) FROM lists WHERE user_id = :user_id) AS lists_count,
                 (SELECT COUNT(*) FROM reviews WHERE user_id = :user_id) AS reviews_count,
                 (SELECT COUNT(*) FROM watchlist WHERE user_id = :user_id) AS watchlist_count'
@@ -146,7 +155,6 @@ final class UsersRepository extends Repository
             'watchlist_count' => (int) ($stats['watchlist_count'] ?? 0),
         ];
     }
-
 
     public function countFollowers(int $userId): int
     {
@@ -289,6 +297,8 @@ final class UsersRepository extends Repository
 
     public function searchPublicUsers(string $term, int $currentUserId, int $limit = 20): array
     {
+        $this->ensureUserFilmsTable();
+
         $term = trim($term);
         $like = '%' . $term . '%';
 
@@ -304,7 +314,14 @@ final class UsersRepository extends Repository
                 u.created_at,
                 (SELECT COUNT(*) FROM followers WHERE followed_id = u.id) AS followers_count,
                 (SELECT COUNT(*) FROM followers WHERE follower_id = u.id) AS following_count,
-                (SELECT COUNT(DISTINCT film_id) FROM diary_entries WHERE user_id = u.id) AS films_count,
+                (
+                    SELECT COUNT(*)
+                    FROM (
+                        SELECT film_id FROM user_films WHERE user_id = u.id
+                        UNION
+                        SELECT film_id FROM diary_entries WHERE user_id = u.id
+                    ) watched_films
+                ) AS films_count,
                 CASE WHEN EXISTS (
                     SELECT 1
                     FROM followers mine
@@ -331,6 +348,19 @@ final class UsersRepository extends Repository
         $query->execute();
 
         return $query->fetchAll();
+    }
+
+
+    private function ensureUserFilmsTable(): void
+    {
+        $this->connection()->exec(
+            'CREATE TABLE IF NOT EXISTS user_films (
+                user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+                film_id INTEGER NOT NULL REFERENCES films(id) ON DELETE CASCADE,
+                added_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY (user_id, film_id)
+            )'
+        );
     }
 
 
