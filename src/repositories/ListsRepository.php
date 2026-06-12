@@ -39,11 +39,15 @@ final class ListsRepository extends Repository
                 'INSERT INTO list_items (list_id, film_id, position) VALUES (:list_id, :film_id, :position)
                  ON CONFLICT (list_id, film_id) DO UPDATE SET position = EXCLUDED.position'
             );
-            $query->execute([
-                'list_id' => $listId,
-                'film_id' => $filmId,
-                'position' => $position,
-            ]);
+            $query->bindValue(':list_id', $listId, PDO::PARAM_INT);
+            $query->bindValue(':film_id', $filmId, PDO::PARAM_INT);
+            $query->bindValue(':position', $position, PDO::PARAM_INT);
+            $query->execute();
+
+            $update = $pdo->prepare('UPDATE lists SET updated_at = CURRENT_TIMESTAMP WHERE id = :list_id');
+            $update->bindValue(':list_id', $listId, PDO::PARAM_INT);
+            $update->execute();
+
             $pdo->commit();
         } catch (Throwable $exception) {
             $pdo->rollBack();
@@ -185,6 +189,127 @@ final class ListsRepository extends Repository
         $query->execute();
 
         return $query->fetchAll();
+    }
+
+
+
+    public function getUserListsForFilm(int $userId, int $filmId): array
+    {
+        $query = $this->connection()->prepare(
+            'SELECT
+                l.id,
+                l.user_id,
+                l.title,
+                l.description,
+                l.is_public,
+                l.is_ranked,
+                l.created_at,
+                l.updated_at,
+                COUNT(li.film_id) AS films_count,
+                EXISTS (
+                    SELECT 1
+                    FROM list_items selected_li
+                    WHERE selected_li.list_id = l.id
+                      AND selected_li.film_id = :film_id
+                ) AS contains_film,
+                p1.poster_url AS poster_1,
+                p2.poster_url AS poster_2,
+                p3.poster_url AS poster_3
+             FROM lists l
+             LEFT JOIN list_items li ON li.list_id = l.id
+             LEFT JOIN LATERAL (
+                SELECT f.poster_url
+                FROM list_items li1
+                JOIN films f ON f.id = li1.film_id
+                WHERE li1.list_id = l.id
+                ORDER BY li1.position ASC, li1.added_at ASC
+                LIMIT 1 OFFSET 0
+             ) p1 ON TRUE
+             LEFT JOIN LATERAL (
+                SELECT f.poster_url
+                FROM list_items li2
+                JOIN films f ON f.id = li2.film_id
+                WHERE li2.list_id = l.id
+                ORDER BY li2.position ASC, li2.added_at ASC
+                LIMIT 1 OFFSET 1
+             ) p2 ON TRUE
+             LEFT JOIN LATERAL (
+                SELECT f.poster_url
+                FROM list_items li3
+                JOIN films f ON f.id = li3.film_id
+                WHERE li3.list_id = l.id
+                ORDER BY li3.position ASC, li3.added_at ASC
+                LIMIT 1 OFFSET 2
+             ) p3 ON TRUE
+             WHERE l.user_id = :user_id
+             GROUP BY l.id, p1.poster_url, p2.poster_url, p3.poster_url
+             ORDER BY contains_film DESC, l.updated_at DESC, l.created_at DESC'
+        );
+        $query->bindValue(':user_id', $userId, PDO::PARAM_INT);
+        $query->bindValue(':film_id', $filmId, PDO::PARAM_INT);
+        $query->execute();
+
+        return $query->fetchAll();
+    }
+
+    public function addFilmToUserLists(int $userId, int $filmId, array $listIds): int
+    {
+        $listIds = array_values(array_unique(array_filter(array_map('intval', $listIds), fn (int $id): bool => $id > 0)));
+
+        if (!$listIds) {
+            return 0;
+        }
+
+        $pdo = $this->connection();
+        $pdo->beginTransaction();
+
+        try {
+            $added = 0;
+
+            foreach ($listIds as $listId) {
+                $ownerQuery = $pdo->prepare('SELECT id FROM lists WHERE id = :list_id AND user_id = :user_id');
+                $ownerQuery->bindValue(':list_id', $listId, PDO::PARAM_INT);
+                $ownerQuery->bindValue(':user_id', $userId, PDO::PARAM_INT);
+                $ownerQuery->execute();
+
+                if (!$ownerQuery->fetchColumn()) {
+                    continue;
+                }
+
+                $positionQuery = $pdo->prepare('SELECT COALESCE(MAX(position), 0) + 1 FROM list_items WHERE list_id = :list_id');
+                $positionQuery->bindValue(':list_id', $listId, PDO::PARAM_INT);
+                $positionQuery->execute();
+                $position = (int) $positionQuery->fetchColumn();
+
+                $insert = $pdo->prepare(
+                    'INSERT INTO list_items (list_id, film_id, position)
+                     VALUES (:list_id, :film_id, :position)
+                     ON CONFLICT (list_id, film_id) DO NOTHING'
+                );
+                $insert->bindValue(':list_id', $listId, PDO::PARAM_INT);
+                $insert->bindValue(':film_id', $filmId, PDO::PARAM_INT);
+                $insert->bindValue(':position', $position, PDO::PARAM_INT);
+                $insert->execute();
+
+                if ($insert->rowCount() > 0) {
+                    $added++;
+                }
+
+                $update = $pdo->prepare('UPDATE lists SET updated_at = CURRENT_TIMESTAMP WHERE id = :list_id');
+                $update->bindValue(':list_id', $listId, PDO::PARAM_INT);
+                $update->execute();
+            }
+
+            $pdo->commit();
+
+            return $added;
+        } catch (Throwable $exception) {
+            if ($pdo->inTransaction()) {
+                $pdo->rollBack();
+            }
+
+            throw $exception;
+        }
     }
 
 

@@ -107,7 +107,7 @@ include __DIR__ . '/partials/navigation.html';
               <h3 class="font-headline font-bold text-xl text-on-surface mb-5">Actions</h3>
               <div class="flex flex-col gap-3">
                 <a href="/log-selected?tmdb_id=<?= (int) ($film['tmdb_id'] ?? 0); ?>" class="rounded-full bg-primary px-5 py-3 text-center font-label text-sm font-bold text-on-primary">Log this film</a>
-                <a href="add_to_list.html" class="rounded-full border border-secondary/35 px-5 py-3 text-center font-label text-sm font-bold text-secondary hover:bg-secondary/10">Add to list</a>
+                <a href="/add_to_list.html?film_id=<?= (int) ($film['id'] ?? 0); ?>" class="rounded-full border border-secondary/35 px-5 py-3 text-center font-label text-sm font-bold text-secondary hover:bg-secondary/10">Add to list</a>
               </div>
             </section>
           </aside>

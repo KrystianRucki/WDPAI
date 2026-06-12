@@ -785,6 +785,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const rankedInput = form.querySelector("#ranked-toggle");
   const submitButton = form.querySelector("#create-list-submit");
   const status = form.querySelector("#create-list-status");
+  const sourceFilmId = Number(form.dataset.sourceFilmId || 0);
 
   function setStatus(message, isError = false) {
     if (!status) return;
@@ -822,7 +823,8 @@ document.addEventListener("DOMContentLoaded", () => {
           title,
           description,
           is_public: publicInput ? publicInput.checked : true,
-          is_ranked: rankedInput ? rankedInput.checked : false
+          is_ranked: rankedInput ? rankedInput.checked : false,
+          film_id: sourceFilmId || null
         })
       });
 
@@ -838,6 +840,124 @@ document.addEventListener("DOMContentLoaded", () => {
       setStatus(error.message || "Could not create list.", true);
       submitButton.disabled = false;
       submitButton.classList.remove("opacity-70");
+    }
+  });
+});
+
+
+
+
+/* Add film to multiple lists */
+document.addEventListener("DOMContentLoaded", () => {
+  const page = document.querySelector("#add-to-list-page");
+
+  if (!page || page.dataset.reevioAddToListReady === "1") return;
+
+  page.dataset.reevioAddToListReady = "1";
+
+  const filmId = Number(page.dataset.filmId);
+  const filterInput = page.querySelector("#add-to-list-filter");
+  const options = [...page.querySelectorAll("[data-list-option]")];
+  const applyButton = page.querySelector("#add-to-list-apply");
+  const status = page.querySelector("#add-to-list-status");
+
+  function setStatus(message, isError = false) {
+    if (!status) return;
+    status.textContent = message;
+    status.classList.toggle("text-red-300", isError);
+    status.classList.toggle("text-primary", !isError && message.length > 0);
+    status.classList.toggle("text-on-surface-variant", message.length === 0);
+  }
+
+  function setOptionState(option, selected) {
+    option.dataset.selected = selected ? "1" : "0";
+
+    option.classList.toggle("bg-surface-container-high", selected);
+    option.classList.toggle("border-primary/30", selected);
+    option.classList.toggle("ambient-shadow", selected);
+    option.classList.toggle("transform", selected);
+    option.classList.toggle("hover:-translate-y-1", selected);
+
+    option.classList.toggle("bg-surface-container-low", !selected);
+    option.classList.toggle("border-outline-variant/15", !selected);
+    option.classList.toggle("hover:border-outline-variant/40", !selected);
+
+    const wrapper = option.querySelector("[data-list-icon-wrapper]");
+    const icon = option.querySelector("[data-list-icon]");
+
+    if (wrapper) {
+      wrapper.className = selected
+        ? "text-primary mr-2 drop-shadow-[0_0_8px_rgba(255,215,155,0.6)] transition-colors"
+        : "text-surface-variant mr-2 group-hover:text-outline-variant transition-colors";
+    }
+
+    if (icon) {
+      icon.textContent = selected ? "check_circle" : "radio_button_unchecked";
+    }
+  }
+
+  options.forEach((option) => {
+    setOptionState(option, option.dataset.selected === "1");
+
+    option.addEventListener("click", () => {
+      setOptionState(option, option.dataset.selected !== "1");
+    });
+  });
+
+  filterInput?.addEventListener("input", () => {
+    const query = filterInput.value.trim().toLowerCase();
+
+    options.forEach((option) => {
+      const title = option.dataset.listTitle || "";
+      option.classList.toggle("hidden", query.length > 0 && !title.includes(query));
+    });
+  });
+
+  applyButton?.addEventListener("click", async () => {
+    const listIds = options
+      .filter((option) => option.dataset.selected === "1")
+      .map((option) => Number(option.dataset.listId))
+      .filter(Boolean);
+
+    if (!filmId) {
+      setStatus("Film could not be resolved.", true);
+      return;
+    }
+
+    if (!listIds.length) {
+      setStatus("Select at least one list.", true);
+      return;
+    }
+
+    applyButton.disabled = true;
+    applyButton.classList.add("opacity-70");
+    setStatus("Saving changes...");
+
+    try {
+      const response = await fetch("/api-lists-add-film", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify({
+          film_id: filmId,
+          list_ids: listIds
+        })
+      });
+
+      const payload = await response.json().catch(() => ({}));
+
+      if (!response.ok || !payload.success) {
+        throw new Error(payload.error || payload.message || "Could not add film to lists.");
+      }
+
+      setStatus("Changes saved.");
+      window.location.href = payload.redirect || `/film-details?id=${filmId}`;
+    } catch (error) {
+      setStatus(error.message || "Could not add film to lists.", true);
+      applyButton.disabled = false;
+      applyButton.classList.remove("opacity-70");
     }
   });
 });

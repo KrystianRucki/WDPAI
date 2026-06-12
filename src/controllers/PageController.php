@@ -63,6 +63,7 @@ final class PageController extends AppController
             'profile_p_lists' => $this->userListsVariables($currentUser, $listsRepository),
             'log_details' => $this->logDetailsVariables($currentUser, $diaryRepository),
             'list_details' => $this->listDetailsVariables($currentUser, $listsRepository),
+            'add_to_list' => $this->addToListVariables($currentUser, $filmsRepository, $listsRepository),
             'followers' => $this->relationshipVariables('followers', $currentUser, $usersRepository),
             'following' => $this->relationshipVariables('following', $currentUser, $usersRepository),
             'users_films' => $this->userFilmsVariables($currentUser, $filmsRepository),
@@ -73,6 +74,21 @@ final class PageController extends AppController
         };
     }
 
+
+
+    private function addToListVariables(array $currentUser, FilmsRepository $filmsRepository, ListsRepository $listsRepository): array
+    {
+        $filmId = max(0, (int) ($_GET['film_id'] ?? $_GET['id'] ?? 0));
+        $userId = (int) $currentUser['id'];
+        $film = $filmId > 0 ? $filmsRepository->getById($filmId) : null;
+
+        return [
+            'profileUser' => $currentUser,
+            'film' => $film,
+            'filmId' => $filmId,
+            'userLists' => $filmId > 0 ? $listsRepository->getUserListsForFilm($userId, $filmId) : [],
+        ];
+    }
 
     private function diaryVariables(array $currentUser, DiaryRepository $diaryRepository): array
     {

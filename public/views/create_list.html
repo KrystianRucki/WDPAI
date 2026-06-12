@@ -1,3 +1,6 @@
+<?php
+$sourceFilmId = max(0, (int) ($_GET['film_id'] ?? 0));
+?>
 <!doctype html>
 <html class="dark" lang="en">
   <head>
@@ -56,7 +59,8 @@ include __DIR__ . '/partials/navigation.html';
           <div
             class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/30 to-transparent"
           ></div>
-          <form id="create-list-form" action="/api-lists-create" method="post" class="flex flex-col gap-8">
+          <form id="create-list-form" data-source-film-id="<?= (int) $sourceFilmId; ?>" action="/api-lists-create" method="post" class="flex flex-col gap-8">
+            <input type="hidden" name="film_id" value="<?= (int) $sourceFilmId; ?>" />
             <!-- List Name -->
             <div class="flex flex-col gap-2">
               <label
