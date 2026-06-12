@@ -80,14 +80,28 @@ final class ReviewsRepository extends Repository
                 f.director,
                 f.poster_url,
                 f.poster_path,
+                latest_log.log_id,
+                latest_log.watched_on,
+                COALESCE(latest_log.is_rewatch, FALSE) AS is_rewatch,
                 COALESCE(COUNT(DISTINCT rl.user_id), 0) AS likes_count,
                 COALESCE(COUNT(DISTINCT rc.id), 0) AS comments_count
              FROM reviews r
              JOIN films f ON f.id = r.film_id
+             LEFT JOIN LATERAL (
+                SELECT
+                    de.id AS log_id,
+                    de.watched_on,
+                    de.is_rewatch
+                FROM diary_entries de
+                WHERE de.user_id = r.user_id
+                  AND de.film_id = r.film_id
+                ORDER BY de.watched_on DESC, de.created_at DESC
+                LIMIT 1
+             ) latest_log ON TRUE
              LEFT JOIN review_likes rl ON rl.review_id = r.id
              LEFT JOIN review_comments rc ON rc.review_id = r.id
              WHERE r.user_id = :user_id
-             GROUP BY r.id, f.id
+             GROUP BY r.id, f.id, latest_log.log_id, latest_log.watched_on, latest_log.is_rewatch
              ORDER BY r.created_at DESC
              LIMIT :limit'
         );
