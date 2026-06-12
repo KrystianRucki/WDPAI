@@ -804,4 +804,131 @@ final class FilmsRepository extends Repository
     }
 
 
+
+    public function savePeopleFromTmdbSearchResults(array $people): array
+    {
+        if ($people === []) {
+            return [];
+        }
+
+        $saved = [];
+        $query = $this->connection()->prepare(
+            'INSERT INTO people (
+                tmdb_id,
+                full_name,
+                photo_url,
+                profile_path,
+                known_for_department,
+                tmdb_synced_at
+             ) VALUES (
+                :tmdb_id,
+                :full_name,
+                :photo_url,
+                :profile_path,
+                :known_for_department,
+                CURRENT_TIMESTAMP
+             )
+             ON CONFLICT (tmdb_id) DO UPDATE SET
+                full_name = EXCLUDED.full_name,
+                photo_url = COALESCE(EXCLUDED.photo_url, people.photo_url),
+                profile_path = COALESCE(EXCLUDED.profile_path, people.profile_path),
+                known_for_department = COALESCE(EXCLUDED.known_for_department, people.known_for_department),
+                tmdb_synced_at = CURRENT_TIMESTAMP
+             RETURNING *'
+        );
+
+        foreach ($people as $person) {
+            $tmdbId = (int) ($person['tmdb_id'] ?? 0);
+            $name = trim((string) ($person['name'] ?? $person['full_name'] ?? ''));
+
+            if ($tmdbId <= 0 || $name === '') {
+                continue;
+            }
+
+            $query->bindValue(':tmdb_id', $tmdbId, PDO::PARAM_INT);
+            $query->bindValue(':full_name', $name);
+            $query->bindValue(':photo_url', $person['profile_url'] ?? $person['photo_url'] ?? null);
+            $query->bindValue(':profile_path', $person['profile_path'] ?? null);
+            $query->bindValue(':known_for_department', $person['known_for_department'] ?? null);
+            $query->execute();
+
+            $row = $query->fetch();
+            if ($row) {
+                $row['film_count'] = 0;
+                $row['known_for_title'] = $this->knownForTitleFromTmdbPerson($person);
+                $saved[] = $row;
+            }
+        }
+
+        return $saved;
+    }
+
+    public function getPersonById(int $personId): ?array
+    {
+        $query = $this->connection()->prepare(
+            'SELECT
+                p.*,
+                COUNT(DISTINCT fp.film_id) AS film_count
+             FROM people p
+             LEFT JOIN film_people fp ON fp.person_id = p.id
+             WHERE p.id = :person_id
+             GROUP BY p.id'
+        );
+        $query->bindValue(':person_id', $personId, PDO::PARAM_INT);
+        $query->execute();
+
+        $person = $query->fetch();
+
+        return $person ?: null;
+    }
+
+    public function getPersonFilmography(int $personId, int $limit = 40): array
+    {
+        $query = $this->connection()->prepare(
+            "SELECT
+                f.*,
+                fp.credit_type,
+                fp.character_name,
+                fp.job,
+                fp.department,
+                fp.cast_order,
+                COALESCE(ROUND(AVG(r.rating), 2), 0) AS average_rating
+             FROM film_people fp
+             JOIN films f ON f.id = fp.film_id
+             LEFT JOIN reviews r ON r.film_id = f.id
+             WHERE fp.person_id = :person_id
+             GROUP BY f.id, fp.credit_type, fp.character_name, fp.job, fp.department, fp.cast_order
+             ORDER BY
+                f.release_year DESC NULLS LAST,
+                fp.cast_order NULLS LAST,
+                f.title ASC
+             LIMIT :limit"
+        );
+        $query->bindValue(':person_id', $personId, PDO::PARAM_INT);
+        $query->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $query->execute();
+
+        return array_map(fn (array $film): array => $this->hydrateFilm($film), $query->fetchAll());
+    }
+
+    private function knownForTitleFromTmdbPerson(array $person): string
+    {
+        $knownFor = $person['known_for'] ?? [];
+
+        if (!is_array($knownFor) || !$knownFor) {
+            return '';
+        }
+
+        foreach ($knownFor as $item) {
+            $title = $item['title'] ?? $item['name'] ?? $item['original_title'] ?? null;
+
+            if ($title) {
+                return (string) $title;
+            }
+        }
+
+        return '';
+    }
+
+
 }

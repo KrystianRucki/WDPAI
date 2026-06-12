@@ -49,6 +49,7 @@ final class Routing
         'search-users' => 'search_users',
         'search-lists' => 'search_lists',
         'search-actors' => 'search_actors',
+        'crew-profile' => 'crew_profile',
         'log-search' => 'log_search_empty',
         'log-search-results' => 'log_search_results',
         'log-selected' => 'log_selected',

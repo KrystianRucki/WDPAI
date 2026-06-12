@@ -232,10 +232,7 @@ final class SearchController extends AppController
         $response = $tmdb->searchPeople($query);
         $results = array_slice($response['results'] ?? [], 0, $limit);
 
-        return array_map(static function (array $person): array {
-            $person['source'] = 'tmdb';
-            return $person;
-        }, $results);
+        return (new FilmsRepository())->savePeopleFromTmdbSearchResults($results);
     }
 
     private function query(): string

@@ -148,10 +148,9 @@ if (!function_exists('reevio_search_film_card')) {
 if (!function_exists('reevio_search_actor_card')) {
     function reevio_search_actor_card(array $actor): void
     {
-        $isTmdb = ($actor['source'] ?? '') === 'tmdb' || !empty($actor['tmdb_id']) && empty($actor['id']);
         $name = $actor['full_name'] ?? $actor['name'] ?? 'Unknown';
         $photo = $actor['photo_url'] ?? $actor['profile_url'] ?? '';
-        $href = $isTmdb ? '/search-actors?q=' . urlencode($name) : '/crew-profile?id=' . (int) ($actor['id'] ?? 0);
+        $href = !empty($actor['id']) ? '/crew-profile?id=' . (int) $actor['id'] : '/search-actors?q=' . urlencode($name);
         ?>
         <a href="<?= reevio_search_e($href); ?>" class="group block rounded-2xl border border-outline-variant/15 bg-surface-container-low p-3 ambient-shadow transition-transform duration-200 hover:scale-[1.02] hover:bg-surface-container-high">
           <div class="relative aspect-[2/3] overflow-hidden rounded-xl poster-shadow bg-surface-container-lowest">
@@ -161,9 +160,7 @@ if (!function_exists('reevio_search_actor_card')) {
             <div class="flex h-full w-full items-center justify-center bg-surface-container-high font-headline text-6xl font-black text-primary"><?= reevio_search_e(reevio_search_initial($name)); ?></div>
             <?php endif; ?>
             <div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest/85 to-transparent"></div>
-            <?php if ($isTmdb): ?>
-            <div class="absolute top-2 left-2 rounded-full bg-secondary/90 px-2 py-1 font-label text-[10px] font-black uppercase tracking-wider text-on-primary">TMDB</div>
-            <?php else: ?>
+            <?php if (!empty($actor['film_count'])): ?>
             <div class="absolute bottom-2 left-2 rounded-full bg-surface-container-lowest/85 px-2 py-1 font-label text-xs font-bold text-secondary">
               <?= reevio_search_count($actor['film_count'] ?? 0); ?> films
             </div>

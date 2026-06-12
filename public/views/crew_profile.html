@@ -1,85 +1,161 @@
+<?php
+$person = $person ?? null;
+$personFilms = $personFilms ?? [];
+
+if (!function_exists('reevio_crew_e')) {
+    function reevio_crew_e($value): string
+    {
+        return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
+    }
+}
+
+if (!function_exists('reevio_crew_photo')) {
+    function reevio_crew_photo(?array $person): string
+    {
+        return $person['photo_url'] ?? '/public/assets/img/movie_placeholder.svg';
+    }
+}
+
+if (!function_exists('reevio_crew_initial')) {
+    function reevio_crew_initial($value): string
+    {
+        return strtoupper(substr((string) $value, 0, 1) ?: 'P');
+    }
+}
+
+if (!function_exists('reevio_crew_poster')) {
+    function reevio_crew_poster(array $film): string
+    {
+        return !empty($film['poster_url']) ? (string) $film['poster_url'] : '/public/assets/img/movie_placeholder.svg';
+    }
+}
+
+if (!function_exists('reevio_crew_count')) {
+    function reevio_crew_count($value): string
+    {
+        return number_format((int) $value, 0, '.', ' ');
+    }
+}
+?>
 <!doctype html>
 <html class="dark" lang="en">
   <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Ryan Gosling - Actor Profile</title>
+    <title><?= $person ? reevio_crew_e($person['full_name'] ?? 'Person') . ' - Reevio' : 'Person - Reevio'; ?></title>
+    <link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;600;700;800;900&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <link href="/public/assets/css/reevio.css" rel="stylesheet" />
+  </head>
 
-    <link href="https://fonts.googleapis.com" rel="preconnect" />
-    <link crossorigin href="https://fonts.gstatic.com" rel="preconnect" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;700;900&family=Manrope:wght@400;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
-      rel="stylesheet"
-    />
-    <link href="/public/assets/css/reevio.css" rel="stylesheet" /></head>
-
-  <body class="bg-surface text-on-surface antialiased overflow-x-hidden reevio-page-crew_profile">
+  <body class="bg-surface text-on-surface font-body min-h-screen antialiased reevio-page-crew_profile">
     <div class="cinematic-glow"></div>
 <?php
-$activeNav = 'films';
+$activeNav = 'search';
 $showAdminLink = ($showAdminLink ?? false);
 include __DIR__ . '/partials/navigation.html';
 ?>
-<!-- Main content -->
     <main class="relative z-10 ml-64 min-h-screen w-[calc(100%-16rem)] px-4 pb-24 pt-[8.7rem] lg:px-5 xl:px-6">
-      <div class="max-w-[1120px]">
-        <a
-          href="#"
-          class="mb-8 inline-flex items-center gap-2 rounded-full border border-outline-variant/20 bg-surface-container-low/70 px-4 py-2.5 font-label text-sm font-bold text-primary transition-colors hover:bg-surface-container-high hover:text-secondary"
-        >
+      <div class="mx-auto max-w-[1120px]">
+        <a href="/search-actors" class="mb-8 inline-flex items-center gap-2 rounded-full border border-outline-variant/20 bg-surface-container-low/70 px-4 py-2.5 font-label text-sm font-bold text-primary transition-colors hover:bg-surface-container-high hover:text-secondary">
           <span class="material-symbols-outlined text-[20px]">arrow_back</span>
           Back to search
         </a>
 
-        <section class="grid grid-cols-1 gap-10 lg:grid-cols-[400px_minmax(0,1fr)] xl:grid-cols-[430px_minmax(0,1fr)]">
-          <!-- Portrait -->
-          <div class="relative">
-            <div class="sticky top-28">
-              <div class="relative aspect-[4/5] overflow-hidden rounded-3xl bg-surface-container-high poster-shadow ghost-border">
-                <img
-                  alt="Ryan Gosling Portrait"
-                  class="h-full w-full object-cover"
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuA1LoBbTas_MJYCNHRHAstNX8p0gAck6sprq43Iw9OOcZStp4s_b4lHqry0Q_1EdZ5l2Rrinuppzs1rftECLnYnPHMo-8f6qp2atD8Xf430SW92Q2doFzsJXH_WchpFAKzmLVWtPc8GnS3G46dsNQIBoTGHKrtcglfDwZftdgiKhFHRKI9mEqidMBW-2gSxYailOEJtUvB8alNa5DqoeI3eTP0BIh12NlRUW15oYnOHvNvmRobQQzcBfqHRiOjqAYjXzF0rsOx_UOKI"
-                />
-                <div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest/70 via-transparent to-transparent"></div>
+        <?php if (!$person): ?>
+        <section class="rounded-3xl border border-outline-variant/15 bg-surface-container-low p-8 ambient-shadow">
+          <p class="font-headline text-2xl font-black text-on-surface">Person not found</p>
+          <p class="mt-3 text-sm leading-relaxed text-on-surface-variant">
+            Go back to search and choose one of the available people.
+          </p>
+        </section>
+        <?php else: ?>
+        <section class="mb-8 rounded-3xl border border-outline-variant/15 bg-surface-container-low p-7 ambient-shadow">
+          <div class="grid gap-8 md:grid-cols-[220px_minmax(0,1fr)]">
+            <div class="overflow-hidden rounded-3xl border border-outline-variant/15 bg-surface-container-lowest poster-shadow">
+              <?php if (!empty($person['photo_url'])): ?>
+              <img src="<?= reevio_crew_e(reevio_crew_photo($person)); ?>" alt="<?= reevio_crew_e($person['full_name'] ?? 'Person'); ?>" class="aspect-[2/3] h-full w-full object-cover" />
+              <?php else: ?>
+              <div class="flex aspect-[2/3] h-full w-full items-center justify-center bg-surface-container-high font-headline text-8xl font-black text-primary">
+                <?= reevio_crew_e(reevio_crew_initial($person['full_name'] ?? 'P')); ?>
               </div>
-            </div>
-          </div>
-
-          <!-- Profile information -->
-          <div class="flex flex-col justify-center pr-44">
-            <p class="mb-5 font-label text-xs font-bold uppercase tracking-[0.28em] text-secondary">
-              Actor profile
-            </p>
-
-            <h1 class="font-display text-6xl font-black leading-[0.95] tracking-tight text-primary xl:text-7xl">
-              Ryan<br />Gosling
-            </h1>
-
-            <div class="mt-6 flex items-center gap-3 font-label text-sm font-bold uppercase tracking-[0.22em] text-secondary">
-              <span>Born 1980</span>
+              <?php endif; ?>
             </div>
 
-            <section class="mt-10 rounded-3xl border border-outline-variant/15 bg-surface-container-low p-8 ambient-shadow">
-              <h2 class="mb-4 font-headline text-2xl font-black tracking-tight text-on-surface">
-                Biography
-              </h2>
-
-              <p class="max-w-3xl font-body text-base leading-relaxed text-on-surface-variant">
-                Known for his quiet intensity and versatility, Ryan Gosling has transitioned
-                seamlessly from acclaimed indie dramas to major blockbuster successes.
-                His career is marked by carefully chosen roles that showcase a deeply cinematic
-                and often brooding presence.
+            <div class="min-w-0">
+              <p class="mb-3 font-label text-xs font-bold uppercase tracking-[0.28em] text-secondary">
+                <?= reevio_crew_e($person['known_for_department'] ?? 'Person'); ?>
               </p>
-            </section>
+              <h1 class="font-headline text-5xl font-black tracking-tight text-on-surface">
+                <?= reevio_crew_e($person['full_name'] ?? 'Unknown person'); ?>
+              </h1>
+
+              <div class="mt-5 flex flex-wrap gap-3">
+                <span class="rounded-full bg-surface-container-lowest px-4 py-2 font-label text-xs font-bold uppercase tracking-wider text-on-surface-variant">
+                  <?= reevio_crew_count($person['film_count'] ?? count($personFilms)); ?> linked films
+                </span>
+                <?php if (!empty($person['tmdb_synced_at'])): ?>
+                <span class="rounded-full bg-surface-container-lowest px-4 py-2 font-label text-xs font-bold uppercase tracking-wider text-on-surface-variant">
+                  Profile synced
+                </span>
+                <?php endif; ?>
+              </div>
+
+              <?php if (!empty($person['biography'])): ?>
+              <p class="mt-6 max-w-3xl text-sm leading-relaxed text-on-surface-variant">
+                <?= nl2br(reevio_crew_e($person['biography'])); ?>
+              </p>
+              <?php else: ?>
+              <p class="mt-6 max-w-3xl text-sm leading-relaxed text-on-surface-variant">
+                No biography has been added yet. Film credits linked in Reevio will appear below.
+              </p>
+              <?php endif; ?>
+            </div>
           </div>
         </section>
+
+        <section>
+          <div class="mb-5 flex items-end justify-between">
+            <div>
+              <h2 class="font-headline text-[28px] font-black tracking-tight text-on-surface">Known for in Reevio</h2>
+              <p class="mt-1 text-sm text-on-surface-variant">Films connected to this person in the local database.</p>
+            </div>
+          </div>
+
+          <?php if ($personFilms): ?>
+          <div class="grid grid-cols-2 gap-5 md:grid-cols-3 xl:grid-cols-5">
+            <?php foreach ($personFilms as $film): ?>
+            <a href="/film-details?id=<?= (int) $film['id']; ?>" class="group block rounded-2xl border border-outline-variant/15 bg-surface-container-low p-3 ambient-shadow transition-transform duration-200 hover:scale-[1.02] hover:bg-surface-container-high">
+              <div class="relative aspect-[2/3] overflow-hidden rounded-xl poster-shadow">
+                <img src="<?= reevio_crew_e(reevio_crew_poster($film)); ?>" alt="<?= reevio_crew_e($film['title'] ?? 'Film'); ?> poster" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                <div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest/75 to-transparent"></div>
+                <?php if (!empty($film['average_rating'])): ?>
+                <div class="absolute bottom-2 left-2 rounded-full bg-surface-container-lowest/85 px-2 py-1 font-label text-xs font-bold text-primary">
+                  <?= reevio_crew_e(number_format((float) $film['average_rating'], 1)); ?>
+                </div>
+                <?php endif; ?>
+              </div>
+              <h3 class="mt-3 line-clamp-2 font-headline text-base font-bold text-on-surface group-hover:text-primary">
+                <?= reevio_crew_e($film['title'] ?? 'Untitled film'); ?>
+              </h3>
+              <p class="mt-1 font-label text-xs text-on-surface-variant">
+                <?= reevio_crew_e($film['release_year'] ?? ''); ?>
+                <?php if (!empty($film['credit_type'])): ?>
+                • <?= reevio_crew_e($film['credit_type']); ?>
+                <?php endif; ?>
+              </p>
+            </a>
+            <?php endforeach; ?>
+          </div>
+          <?php else: ?>
+          <div class="rounded-3xl border border-outline-variant/15 bg-surface-container-low p-8 ambient-shadow text-on-surface-variant">
+            No linked films yet.
+          </div>
+          <?php endif; ?>
+        </section>
+        <?php endif; ?>
       </div>
     </main>
-      <script src="/public/assets/js/reevio.js"></script>
-</body>
+    <script src="/public/assets/js/reevio.js"></script>
+  </body>
 </html>

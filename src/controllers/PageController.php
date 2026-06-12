@@ -66,6 +66,7 @@ final class PageController extends AppController
             'log_details' => $this->logDetailsVariables($currentUser, $diaryRepository),
             'list_details' => $this->listDetailsVariables($currentUser, $listsRepository),
             'add_to_list' => $this->addToListVariables($currentUser, $filmsRepository, $listsRepository),
+            'crew_profile' => $this->crewProfileVariables($currentUser, $filmsRepository),
             'followers' => $this->relationshipVariables('followers', $currentUser, $usersRepository),
             'following' => $this->relationshipVariables('following', $currentUser, $usersRepository),
             'users_films' => $this->userFilmsVariables($currentUser, $filmsRepository),
@@ -77,6 +78,18 @@ final class PageController extends AppController
     }
 
 
+
+
+    private function crewProfileVariables(array $currentUser, FilmsRepository $filmsRepository): array
+    {
+        $personId = max(0, (int) ($_GET['id'] ?? 0));
+
+        return [
+            'profileUser' => $currentUser,
+            'person' => $personId > 0 ? $filmsRepository->getPersonById($personId) : null,
+            'personFilms' => $personId > 0 ? $filmsRepository->getPersonFilmography($personId, 40) : [],
+        ];
+    }
 
     private function addToListVariables(array $currentUser, FilmsRepository $filmsRepository, ListsRepository $listsRepository): array
     {
