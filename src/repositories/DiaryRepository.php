@@ -121,19 +121,61 @@ final class DiaryRepository extends Repository
 
     public function deleteLogForUser(int $logId, int $userId): bool
     {
-        $query = $this->connection()->prepare(
-            'DELETE FROM diary_entries
-             WHERE id = :log_id
-               AND user_id = :user_id'
-        );
-        $query->bindValue(':log_id', $logId, PDO::PARAM_INT);
-        $query->bindValue(':user_id', $userId, PDO::PARAM_INT);
-        $query->execute();
+        $connection = $this->connection();
+        $connection->beginTransaction();
 
-        return $query->rowCount() > 0;
+        try {
+            $filmQuery = $connection->prepare(
+                'SELECT film_id
+                 FROM diary_entries
+                 WHERE id = :log_id
+                   AND user_id = :user_id
+                 LIMIT 1'
+            );
+            $filmQuery->bindValue(':log_id', $logId, PDO::PARAM_INT);
+            $filmQuery->bindValue(':user_id', $userId, PDO::PARAM_INT);
+            $filmQuery->execute();
+
+            $filmId = (int) ($filmQuery->fetchColumn() ?: 0);
+
+            if ($filmId <= 0) {
+                $connection->rollBack();
+                return false;
+            }
+
+            $deleteLog = $connection->prepare(
+                'DELETE FROM diary_entries
+                 WHERE id = :log_id
+                   AND user_id = :user_id'
+            );
+            $deleteLog->bindValue(':log_id', $logId, PDO::PARAM_INT);
+            $deleteLog->bindValue(':user_id', $userId, PDO::PARAM_INT);
+            $deleteLog->execute();
+
+            if ($deleteLog->rowCount() === 0) {
+                $connection->rollBack();
+                return false;
+            }
+
+            $deleteReview = $connection->prepare(
+                'DELETE FROM reviews
+                 WHERE user_id = :user_id
+                   AND film_id = :film_id'
+            );
+            $deleteReview->bindValue(':user_id', $userId, PDO::PARAM_INT);
+            $deleteReview->bindValue(':film_id', $filmId, PDO::PARAM_INT);
+            $deleteReview->execute();
+
+            $connection->commit();
+            return true;
+        } catch (Throwable $exception) {
+            if ($connection->inTransaction()) {
+                $connection->rollBack();
+            }
+
+            throw $exception;
+        }
     }
-
-
 
     public function saveFilmLog(
         int $userId,

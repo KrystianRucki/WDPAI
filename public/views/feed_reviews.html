@@ -113,7 +113,7 @@ include __DIR__ . '/partials/navigation.html';
                   </div>
                 </div>
 
-                <button class="share-current-url flex h-10 w-10 items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-lowest hover:text-secondary" type="button" aria-label="Share">
+                <button class="share-current-url flex h-10 w-10 items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-lowest hover:text-secondary" type="button" aria-label="Share" data-share-url="/review-details?id=<?= (int) $review['review_id']; ?>">
                   <span class="material-symbols-outlined">share</span>
                 </button>
               </div>

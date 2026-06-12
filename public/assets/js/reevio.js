@@ -1463,14 +1463,18 @@ document.addEventListener("DOMContentLoaded", () => {
       event.stopPropagation();
 
       try {
-        await navigator.clipboard.writeText(window.location.href);
+        const shareUrl = button.dataset.shareUrl
+          ? new URL(button.dataset.shareUrl, window.location.origin).href
+          : window.location.href;
+
+        await navigator.clipboard.writeText(shareUrl);
         const previous = button.innerHTML;
         button.innerHTML = '<span class="material-symbols-outlined">check</span>';
         setTimeout(() => {
           button.innerHTML = previous;
         }, 1200);
       } catch {
-        window.prompt("Copy this URL", window.location.href);
+        window.prompt("Copy this URL", button.dataset.shareUrl ? new URL(button.dataset.shareUrl, window.location.origin).href : window.location.href);
       }
     });
   });
