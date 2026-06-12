@@ -162,7 +162,7 @@ final class TmdbController extends AppController
             'watchlisted' => $filmId > 0 && $currentUserId > 0 ? $this->films->userHasFilmInWatchlist($currentUserId, $filmId) : false,
         ];
 
-        $filmReviews = $filmId > 0 ? (new ReviewsRepository())->getFilmReviews($filmId, 6) : [];
+        $filmReviews = $filmId > 0 ? (new ReviewsRepository())->getFilmReviews($filmId, 2) : [];
 
         $this->render('film_details', compact('film', 'tmdbError', 'filmState', 'filmReviews'));
     }

@@ -15,15 +15,22 @@ final class ReviewsController extends AppController
 
         $data = $this->getJsonInput();
         $reviewId = (int) ($data['review_id'] ?? 0);
-        $content = trim($data['content'] ?? '');
+        $parentId = isset($data['parent_id']) && (int) $data['parent_id'] > 0 ? (int) $data['parent_id'] : null;
+        $content = trim((string) ($data['content'] ?? ''));
 
         if ($reviewId <= 0 || $content === '') {
-            $this->json(['error' => 'Review and comment content are required'], 422);
+            $this->json(['success' => false, 'message' => 'Review and comment content are required.'], 422);
             return;
         }
 
-        $commentId = (new ReviewsRepository())->comment($reviewId, (int) $_SESSION['user_id'], $content);
-        $this->json(['created' => true, 'comment_id' => $commentId], 201);
+        $commentId = (new ReviewsRepository())->comment($reviewId, (int) $_SESSION['user_id'], $content, $parentId);
+
+        $this->json([
+            'success' => true,
+            'created' => true,
+            'comment_id' => $commentId,
+            'message' => 'Comment posted.',
+        ], 201);
     }
 
     public function like(): void
@@ -36,11 +43,37 @@ final class ReviewsController extends AppController
         $reviewId = (int) ($data['review_id'] ?? 0);
 
         if ($reviewId <= 0) {
-            $this->json(['error' => 'Review id is required'], 422);
+            $this->json(['success' => false, 'message' => 'Review id is required.'], 422);
             return;
         }
 
-        $liked = (new ReviewsRepository())->toggleLike($reviewId, (int) $_SESSION['user_id']);
-        $this->json(['liked' => $liked]);
+        $result = (new ReviewsRepository())->toggleLike($reviewId, (int) $_SESSION['user_id']);
+
+        $this->json([
+            'success' => true,
+            ...$result,
+        ]);
+    }
+
+    public function commentLike(): void
+    {
+        if (!$this->requireLogin()) {
+            return;
+        }
+
+        $data = $this->getJsonInput();
+        $commentId = (int) ($data['comment_id'] ?? 0);
+
+        if ($commentId <= 0) {
+            $this->json(['success' => false, 'message' => 'Comment id is required.'], 422);
+            return;
+        }
+
+        $result = (new ReviewsRepository())->toggleCommentLike($commentId, (int) $_SESSION['user_id']);
+
+        $this->json([
+            'success' => true,
+            ...$result,
+        ]);
     }
 }

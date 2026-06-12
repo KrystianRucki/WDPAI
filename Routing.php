@@ -101,6 +101,7 @@ final class Routing
             'api-film-mark-watched' => [TmdbController::class, 'markWatchedOnly'],
             'api-reviews-comment' => [ReviewsController::class, 'comment'],
             'api-reviews-like' => [ReviewsController::class, 'like'],
+            'api-review-comments-like' => [ReviewsController::class, 'commentLike'],
             'api-diary-delete-log' => [DiaryController::class, 'deleteLog'],
             'api-log-save' => [DiaryController::class, 'saveLog'],
 

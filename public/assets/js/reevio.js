@@ -1449,3 +1449,171 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
+
+
+
+/* Review interactions */
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll(".share-current-url").forEach((button) => {
+    if (button.dataset.reevioShareReady === "1") return;
+    button.dataset.reevioShareReady = "1";
+
+    button.addEventListener("click", async (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+
+      try {
+        await navigator.clipboard.writeText(window.location.href);
+        const previous = button.innerHTML;
+        button.innerHTML = '<span class="material-symbols-outlined">check</span>';
+        setTimeout(() => {
+          button.innerHTML = previous;
+        }, 1200);
+      } catch {
+        window.prompt("Copy this URL", window.location.href);
+      }
+    });
+  });
+
+  document.querySelectorAll("[data-review-like]").forEach((button) => {
+    if (button.dataset.reevioLikeReady === "1") return;
+    button.dataset.reevioLikeReady = "1";
+
+    button.addEventListener("click", async (event) => {
+      event.preventDefault();
+
+      const reviewId = Number(button.dataset.reviewId);
+      if (!reviewId || button.dataset.loading === "1") return;
+
+      button.dataset.loading = "1";
+
+      try {
+        const response = await fetch("/api-reviews-like", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+          },
+          body: JSON.stringify({ review_id: reviewId })
+        });
+
+        const payload = await response.json().catch(() => ({}));
+
+        if (!response.ok || !payload.success) {
+          throw new Error(payload.message || "Could not update like.");
+        }
+
+        button.dataset.liked = payload.liked ? "1" : "0";
+        button.classList.toggle("text-primary", Boolean(payload.liked));
+        button.classList.toggle("text-on-surface-variant", !payload.liked);
+        const count = button.querySelector("[data-review-like-count]");
+        if (count) count.textContent = String(payload.likes_count ?? 0);
+      } finally {
+        button.dataset.loading = "0";
+      }
+    });
+  });
+
+  document.querySelectorAll("[data-comment-like]").forEach((button) => {
+    if (button.dataset.reevioCommentLikeReady === "1") return;
+    button.dataset.reevioCommentLikeReady = "1";
+
+    button.addEventListener("click", async (event) => {
+      event.preventDefault();
+
+      const commentId = Number(button.dataset.commentId);
+      if (!commentId || button.dataset.loading === "1") return;
+
+      button.dataset.loading = "1";
+
+      try {
+        const response = await fetch("/api-review-comments-like", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+          },
+          body: JSON.stringify({ comment_id: commentId })
+        });
+
+        const payload = await response.json().catch(() => ({}));
+
+        if (!response.ok || !payload.success) {
+          throw new Error(payload.message || "Could not update comment like.");
+        }
+
+        button.dataset.liked = payload.liked ? "1" : "0";
+        button.classList.toggle("text-primary", Boolean(payload.liked));
+        button.classList.toggle("text-on-surface-variant", !payload.liked);
+        const count = button.querySelector("[data-comment-like-count]");
+        if (count) count.textContent = String(payload.likes_count ?? 0);
+      } finally {
+        button.dataset.loading = "0";
+      }
+    });
+  });
+
+  document.querySelectorAll("[data-review-comment-form], [data-reply-form]").forEach((form) => {
+    if (form.dataset.reevioCommentFormReady === "1") return;
+    form.dataset.reevioCommentFormReady = "1";
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const reviewId = Number(form.dataset.reviewId);
+      const parentId = Number(form.dataset.parentId || 0);
+      const textarea = form.querySelector('textarea[name="content"]');
+      const status = form.querySelector("[data-comment-status]");
+      const content = textarea ? textarea.value.trim() : "";
+
+      if (!reviewId || !content) {
+        if (status) status.textContent = "Write a comment first.";
+        return;
+      }
+
+      const submit = form.querySelector('button[type="submit"]');
+      if (submit) submit.disabled = true;
+
+      try {
+        const response = await fetch("/api-reviews-comment", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+          },
+          body: JSON.stringify({
+            review_id: reviewId,
+            parent_id: parentId || null,
+            content
+          })
+        });
+
+        const payload = await response.json().catch(() => ({}));
+
+        if (!response.ok || !payload.success) {
+          throw new Error(payload.message || "Could not post comment.");
+        }
+
+        window.location.reload();
+      } catch (error) {
+        if (status) status.textContent = error.message || "Could not post comment.";
+        if (submit) submit.disabled = false;
+      }
+    });
+  });
+
+  document.querySelectorAll("[data-reply-open]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const commentId = button.dataset.commentId;
+      const form = document.querySelector(`[data-reply-form][data-parent-id="${commentId}"]`);
+      if (form) form.classList.remove("hidden");
+    });
+  });
+
+  document.querySelectorAll("[data-reply-cancel]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const form = button.closest("[data-reply-form]");
+      if (form) form.classList.add("hidden");
+    });
+  });
+});

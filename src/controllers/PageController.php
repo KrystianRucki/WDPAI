@@ -50,6 +50,7 @@ final class PageController extends AppController
                 'popularFilms' => $filmsRepository->getPopularThisWeek(4),
                 'friendLogs' => $filmsRepository->getFriendsRecentLogs($currentUserId, 3),
             ],
+            'feed_reviews' => $this->feedReviewsVariables($reviewsRepository),
             'new_from_friends' => [
                 'friendLogs' => $filmsRepository->getFriendsRecentLogs($currentUserId, 30),
             ],
@@ -65,6 +66,8 @@ final class PageController extends AppController
             'profile_p_lists' => $this->userListsVariables($currentUser, $listsRepository),
             'profile_p_watchlist' => $this->userWatchlistVariables($currentUser, $filmsRepository),
             'log_details' => $this->logDetailsVariables($currentUser, $diaryRepository),
+            'review_details' => $this->reviewDetailsVariables($currentUser, $reviewsRepository),
+            'review_comments' => $this->reviewDetailsVariables($currentUser, $reviewsRepository),
             'list_details' => $this->listDetailsVariables($currentUser, $listsRepository),
             'add_to_list' => $this->addToListVariables($currentUser, $filmsRepository, $listsRepository),
             'crew_profile' => $this->crewProfileVariables($currentUser, $filmsRepository),
@@ -80,6 +83,28 @@ final class PageController extends AppController
 
 
 
+
+
+    private function feedReviewsVariables(ReviewsRepository $reviewsRepository): array
+    {
+        $filmId = max(0, (int) ($_GET['film_id'] ?? 0));
+
+        return [
+            'reviews' => $reviewsRepository->feed(40, $filmId > 0 ? $filmId : null),
+            'filterFilmId' => $filmId,
+        ];
+    }
+
+    private function reviewDetailsVariables(array $currentUser, ReviewsRepository $reviewsRepository): array
+    {
+        $reviewId = max(0, (int) ($_GET['id'] ?? $_GET['review_id'] ?? 0));
+        $review = $reviewId > 0 ? $reviewsRepository->getReviewDetails($reviewId, (int) $currentUser['id']) : null;
+
+        return [
+            'review' => $review,
+            'reviewComments' => $review ? $reviewsRepository->getReviewComments((int) $review['review_id'], (int) $currentUser['id']) : [],
+        ];
+    }
 
     private function crewProfileVariables(array $currentUser, FilmsRepository $filmsRepository): array
     {

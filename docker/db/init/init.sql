@@ -134,7 +134,16 @@ CREATE TABLE review_comments (
     review_id INTEGER NOT NULL REFERENCES reviews(id) ON DELETE CASCADE,
     user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     content TEXT NOT NULL,
+    parent_id INTEGER REFERENCES review_comments(id) ON DELETE CASCADE,
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+
+CREATE TABLE review_comment_likes (
+    comment_id INTEGER NOT NULL REFERENCES review_comments(id) ON DELETE CASCADE,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (comment_id, user_id)
 );
 
 CREATE TABLE review_likes (

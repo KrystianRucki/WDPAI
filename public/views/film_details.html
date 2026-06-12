@@ -176,9 +176,9 @@ include __DIR__ . '/partials/navigation.html';
           <div class="mb-6 flex flex-wrap items-end justify-between gap-4">
             <div>
               <h2 class="font-headline text-2xl font-black text-on-surface">Reviews</h2>
-              <p class="mt-1 text-sm text-on-surface-variant">Real reviews written by Reevio users for this film.</p>
+              <p class="mt-1 text-sm text-on-surface-variant">Latest reviews for this film, ordered by the user’s film log date.</p>
             </div>
-            <a href="/feed-reviews" class="rounded-full border border-secondary/35 px-5 py-2.5 font-label text-xs font-bold uppercase tracking-wider text-secondary transition-colors hover:bg-secondary/10">
+            <a href="/feed-reviews?film_id=<?= (int) $filmId; ?>" class="rounded-full border border-secondary/35 px-5 py-2.5 font-label text-xs font-bold uppercase tracking-wider text-secondary transition-colors hover:bg-secondary/10">
               Browse reviews
             </a>
           </div>
