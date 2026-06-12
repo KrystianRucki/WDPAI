@@ -135,6 +135,49 @@ final class ListsController extends AppController
         }
     }
 
+
+    public function removeFilm(): void
+    {
+        if (!$this->requireLogin()) {
+            return;
+        }
+
+        $data = $this->getJsonInput();
+        $listId = (int) ($data['list_id'] ?? 0);
+        $filmId = (int) ($data['film_id'] ?? 0);
+
+        if ($listId <= 0 || $filmId <= 0) {
+            $this->json([
+                'success' => false,
+                'error' => 'Invalid list or film id.',
+            ], 422);
+            return;
+        }
+
+        try {
+            $removed = (new ListsRepository())->removeFilmFromUserList((int) $_SESSION['user_id'], $listId, $filmId);
+
+            if (!$removed) {
+                $this->json([
+                    'success' => false,
+                    'error' => 'Film was not removed.',
+                ], 404);
+                return;
+            }
+
+            $this->json([
+                'success' => true,
+                'removed' => true,
+                'redirect' => '/list-details?id=' . $listId,
+            ]);
+        } catch (Throwable $exception) {
+            $this->json([
+                'success' => false,
+                'error' => 'Could not remove film from list.',
+            ], 500);
+        }
+    }
+
     private function booleanValue(mixed $value, bool $default = false): bool
     {
         if ($value === null) {

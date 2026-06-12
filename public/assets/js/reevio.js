@@ -957,9 +957,6 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-
-
-
 /* Ranked list reorder */
 document.addEventListener("DOMContentLoaded", () => {
   const page = document.querySelector("[data-ranked-list-reorder]");
@@ -970,10 +967,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const listId = Number(page.dataset.listId);
   const grid = page.querySelector("[data-reorder-grid]");
+  const editButton = page.querySelector("[data-start-list-order]");
+  const cancelButton = page.querySelector("[data-cancel-list-order]");
   const saveButton = page.querySelector("[data-save-list-order]");
   const status = page.querySelector("[data-list-order-status]");
 
-  if (!listId || !grid || !saveButton) return;
+  if (!listId || !grid || !saveButton || !editButton) return;
+
+  let editMode = false;
 
   function items() {
     return [...grid.querySelectorAll("[data-reorder-item]")];
@@ -995,12 +996,43 @@ document.addEventListener("DOMContentLoaded", () => {
       const upButton = item.querySelector("[data-move-up]");
       const downButton = item.querySelector("[data-move-down]");
 
-      if (upButton) upButton.disabled = index === 0;
-      if (downButton) downButton.disabled = index === items().length - 1;
+      if (upButton) upButton.disabled = !editMode || index === 0;
+      if (downButton) downButton.disabled = !editMode || index === items().length - 1;
     });
   }
 
+  function setEditMode(enabled) {
+    editMode = enabled;
+
+    page.classList.toggle("is-editing-order", editMode);
+    editButton.classList.toggle("hidden", editMode);
+    cancelButton?.classList.toggle("hidden", !editMode);
+    saveButton.classList.toggle("hidden", !editMode);
+
+    page.querySelectorAll("[data-reorder-controls]").forEach((controls) => {
+      controls.classList.toggle("hidden", !editMode);
+    });
+
+    setStatus(editMode ? "Edit mode enabled. Use arrows, then save order." : "");
+    refreshRanks();
+  }
+
+  editButton.addEventListener("click", () => {
+    setEditMode(true);
+  });
+
+  cancelButton?.addEventListener("click", () => {
+    window.location.reload();
+  });
+
   page.addEventListener("click", (event) => {
+    const filmOpen = event.target.closest("[data-film-open]");
+
+    if (filmOpen && editMode) {
+      event.preventDefault();
+      return;
+    }
+
     const upButton = event.target.closest("[data-move-up]");
     const downButton = event.target.closest("[data-move-down]");
 
@@ -1008,6 +1040,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     event.preventDefault();
     event.stopPropagation();
+
+    if (!editMode) return;
 
     const item = event.target.closest("[data-reorder-item]");
     if (!item) return;
@@ -1073,6 +1107,53 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  refreshRanks();
+  setEditMode(false);
+});
+
+/* Remove film from list */
+document.addEventListener("click", async (event) => {
+  const button = event.target.closest("[data-remove-from-list]");
+
+  if (!button) return;
+
+  event.preventDefault();
+  event.stopPropagation();
+
+  const listId = Number(button.dataset.listId);
+  const filmId = Number(button.dataset.filmId);
+
+  if (!listId || !filmId || button.dataset.loading === "1") return;
+
+  const confirmed = window.confirm("Remove this film from the list?");
+  if (!confirmed) return;
+
+  button.dataset.loading = "1";
+  button.disabled = true;
+
+  try {
+    const response = await fetch("/api-lists-remove-film", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      },
+      body: JSON.stringify({
+        list_id: listId,
+        film_id: filmId
+      })
+    });
+
+    const payload = await response.json().catch(() => ({}));
+
+    if (!response.ok || !payload.success) {
+      throw new Error(payload.error || payload.message || "Could not remove film.");
+    }
+
+    window.location.href = payload.redirect || `/list-details?id=${listId}`;
+  } catch (error) {
+    alert(error.message || "Could not remove film.");
+    button.disabled = false;
+    button.dataset.loading = "0";
+  }
 });
 

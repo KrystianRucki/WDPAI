@@ -336,6 +336,7 @@ final class ListsRepository extends Repository
             $currentListIds = array_map('intval', array_column($currentQuery->fetchAll(), 'id'));
             $toRemove = array_values(array_diff($currentListIds, $selectedListIds));
             $toAdd = array_values(array_diff($selectedListIds, $currentListIds));
+            $touchedListIds = [];
 
             foreach ($toRemove as $listId) {
                 $delete = $pdo->prepare(
@@ -353,10 +354,9 @@ final class ListsRepository extends Repository
                 $delete->bindValue(':user_id', $userId, PDO::PARAM_INT);
                 $delete->execute();
 
-                $update = $pdo->prepare('UPDATE lists SET updated_at = CURRENT_TIMESTAMP WHERE id = :list_id AND user_id = :user_id');
-                $update->bindValue(':list_id', $listId, PDO::PARAM_INT);
-                $update->bindValue(':user_id', $userId, PDO::PARAM_INT);
-                $update->execute();
+                if ($delete->rowCount() > 0) {
+                    $touchedListIds[] = $listId;
+                }
             }
 
             $added = 0;
@@ -388,10 +388,15 @@ final class ListsRepository extends Repository
 
                 if ($insert->rowCount() > 0) {
                     $added++;
+                    $touchedListIds[] = $listId;
                 }
+            }
+
+            foreach (array_unique($touchedListIds) as $listId) {
+                $this->normalizeListPositions($pdo, (int) $listId);
 
                 $update = $pdo->prepare('UPDATE lists SET updated_at = CURRENT_TIMESTAMP WHERE id = :list_id AND user_id = :user_id');
-                $update->bindValue(':list_id', $listId, PDO::PARAM_INT);
+                $update->bindValue(':list_id', (int) $listId, PDO::PARAM_INT);
                 $update->bindValue(':user_id', $userId, PDO::PARAM_INT);
                 $update->execute();
             }
@@ -518,5 +523,107 @@ final class ListsRepository extends Repository
             throw $exception;
         }
     }
+
+
+    public function removeFilmFromUserList(int $userId, int $listId, int $filmId): bool
+    {
+        $pdo = $this->connection();
+        $pdo->beginTransaction();
+
+        try {
+            $delete = $pdo->prepare(
+                'DELETE FROM list_items
+                 WHERE list_id = :list_id
+                   AND film_id = :film_id
+                   AND EXISTS (
+                       SELECT 1 FROM lists
+                       WHERE lists.id = :list_id
+                         AND lists.user_id = :user_id
+                   )'
+            );
+            $delete->bindValue(':list_id', $listId, PDO::PARAM_INT);
+            $delete->bindValue(':film_id', $filmId, PDO::PARAM_INT);
+            $delete->bindValue(':user_id', $userId, PDO::PARAM_INT);
+            $delete->execute();
+
+            $removed = $delete->rowCount() > 0;
+
+            if ($removed) {
+                $this->normalizeListPositions($pdo, $listId);
+
+                $touch = $pdo->prepare('UPDATE lists SET updated_at = CURRENT_TIMESTAMP WHERE id = :list_id AND user_id = :user_id');
+                $touch->bindValue(':list_id', $listId, PDO::PARAM_INT);
+                $touch->bindValue(':user_id', $userId, PDO::PARAM_INT);
+                $touch->execute();
+            }
+
+            $pdo->commit();
+
+            return $removed;
+        } catch (Throwable $exception) {
+            if ($pdo->inTransaction()) {
+                $pdo->rollBack();
+            }
+
+            throw $exception;
+        }
+    }
+
+    private function normalizeListPositions(PDO $pdo, int $listId): void
+    {
+        $itemsQuery = $pdo->prepare(
+            'SELECT film_id
+             FROM list_items
+             WHERE list_id = :list_id
+             ORDER BY position ASC, added_at ASC'
+        );
+        $itemsQuery->bindValue(':list_id', $listId, PDO::PARAM_INT);
+        $itemsQuery->execute();
+
+        $filmIds = array_map('intval', array_column($itemsQuery->fetchAll(), 'film_id'));
+
+        if (!$filmIds) {
+            return;
+        }
+
+        $maxPositionQuery = $pdo->prepare(
+            'SELECT COALESCE(MAX(position), 0)
+             FROM list_items
+             WHERE list_id = :list_id'
+        );
+        $maxPositionQuery->bindValue(':list_id', $listId, PDO::PARAM_INT);
+        $maxPositionQuery->execute();
+
+        $temporaryBase = (int) $maxPositionQuery->fetchColumn() + count($filmIds) + 1000;
+
+        $temporaryUpdate = $pdo->prepare(
+            'UPDATE list_items
+             SET position = :position
+             WHERE list_id = :list_id
+               AND film_id = :film_id'
+        );
+
+        foreach ($filmIds as $index => $filmId) {
+            $temporaryUpdate->bindValue(':position', $temporaryBase + $index + 1, PDO::PARAM_INT);
+            $temporaryUpdate->bindValue(':list_id', $listId, PDO::PARAM_INT);
+            $temporaryUpdate->bindValue(':film_id', $filmId, PDO::PARAM_INT);
+            $temporaryUpdate->execute();
+        }
+
+        $finalUpdate = $pdo->prepare(
+            'UPDATE list_items
+             SET position = :position
+             WHERE list_id = :list_id
+               AND film_id = :film_id'
+        );
+
+        foreach ($filmIds as $index => $filmId) {
+            $finalUpdate->bindValue(':position', $index + 1, PDO::PARAM_INT);
+            $finalUpdate->bindValue(':list_id', $listId, PDO::PARAM_INT);
+            $finalUpdate->bindValue(':film_id', $filmId, PDO::PARAM_INT);
+            $finalUpdate->execute();
+        }
+    }
+
 
 }
