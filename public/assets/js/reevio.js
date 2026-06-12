@@ -225,13 +225,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const input = searchPage.querySelector('input[type="text"], input[type="search"]');
     const buttons = [...searchPage.querySelectorAll("button")];
     const targetByLabel = {
+      all: "/search",
       films: "/search-films",
       actors: "/search-actors",
       users: "/search-users",
       lists: "/search-lists"
     };
 
-    let selectedTarget = "/search-films";
+    let selectedTarget = "/search";
 
     const goToSearch = (target) => {
       const query = input ? input.value.trim() : "";
