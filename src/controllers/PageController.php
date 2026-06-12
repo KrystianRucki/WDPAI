@@ -88,12 +88,15 @@ final class PageController extends AppController
         $tmdbPersonFilms = [];
         $tmdbError = null;
 
-        if ($person && !empty($person['tmdb_id'])) {
+        if ($person) {
             try {
                 $tmdb = new TmdbService();
-                $details = $tmdb->getPersonDetails((int) $person['tmdb_id']);
-                $person = $filmsRepository->updatePersonFromTmdbDetails($personId, $details, $tmdb) ?: $person;
-                $tmdbPersonFilms = $this->tmdbPersonMovieCredits($details, $tmdb);
+                $details = $this->resolveTmdbPersonDetails($person, $tmdb);
+
+                if ($details) {
+                    $person = $filmsRepository->updatePersonFromTmdbDetails($personId, $details, $tmdb) ?: $person;
+                    $tmdbPersonFilms = $this->tmdbPersonMovieCredits($details, $tmdb);
+                }
             } catch (Throwable $exception) {
                 $tmdbError = $exception->getMessage();
             }
@@ -108,6 +111,89 @@ final class PageController extends AppController
             'personFilmsSource' => $tmdbPersonFilms ? 'tmdb' : 'local',
             'tmdbError' => $tmdbError,
         ];
+    }
+
+
+    private function resolveTmdbPersonDetails(array $person, TmdbService $tmdb): ?array
+    {
+        $name = trim((string) ($person['full_name'] ?? ''));
+        $tmdbId = (int) ($person['tmdb_id'] ?? 0);
+
+        if ($name !== '') {
+            try {
+                $response = $tmdb->searchPeople($name);
+                $best = $this->bestTmdbPersonMatch($person, $response['results'] ?? []);
+
+                if ($best && !empty($best['tmdb_id'])) {
+                    $tmdbId = (int) $best['tmdb_id'];
+                }
+            } catch (Throwable) {
+                // If person search is temporarily unavailable, fall back to existing tmdb_id.
+            }
+        }
+
+        if ($tmdbId <= 0) {
+            return null;
+        }
+
+        return $tmdb->getPersonDetails($tmdbId);
+    }
+
+    private function bestTmdbPersonMatch(array $person, array $results): ?array
+    {
+        if (!$results) {
+            return null;
+        }
+
+        $localName = mb_strtolower(trim((string) ($person['full_name'] ?? '')));
+        $localDepartment = mb_strtolower(trim((string) ($person['known_for_department'] ?? '')));
+
+        $departmentAliases = [
+            'director' => 'directing',
+            'directing' => 'directing',
+            'actor' => 'acting',
+            'actors' => 'acting',
+            'acting' => 'acting',
+            'writer' => 'writing',
+            'writing' => 'writing',
+            'composer' => 'sound',
+            'sound' => 'sound',
+        ];
+
+        $expectedDepartment = $departmentAliases[$localDepartment] ?? $localDepartment;
+
+        usort($results, static function (array $a, array $b) use ($localName, $expectedDepartment): int {
+            $aName = mb_strtolower(trim((string) ($a['name'] ?? '')));
+            $bName = mb_strtolower(trim((string) ($b['name'] ?? '')));
+            $aDepartment = mb_strtolower(trim((string) ($a['known_for_department'] ?? '')));
+            $bDepartment = mb_strtolower(trim((string) ($b['known_for_department'] ?? '')));
+
+            $aScore = 0;
+            $bScore = 0;
+
+            if ($aName === $localName) {
+                $aScore += 100;
+            }
+
+            if ($bName === $localName) {
+                $bScore += 100;
+            }
+
+            if ($expectedDepartment !== '' && $aDepartment === $expectedDepartment) {
+                $aScore += 20;
+            }
+
+            if ($expectedDepartment !== '' && $bDepartment === $expectedDepartment) {
+                $bScore += 20;
+            }
+
+            $aScore += (int) round((float) ($a['popularity'] ?? 0));
+            $bScore += (int) round((float) ($b['popularity'] ?? 0));
+
+            return $bScore <=> $aScore;
+        });
+
+        return $results[0] ?? null;
     }
 
     private function tmdbPersonMovieCredits(array $details, TmdbService $tmdb): array

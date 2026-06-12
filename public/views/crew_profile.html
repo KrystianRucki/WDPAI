@@ -87,13 +87,13 @@ include __DIR__ . '/partials/navigation.html';
           </p>
         </section>
         <?php else: ?>
-        <section class="mb-8 rounded-3xl border border-outline-variant/15 bg-surface-container-low p-7 ambient-shadow">
-          <div class="grid gap-8 md:grid-cols-[220px_minmax(0,1fr)]">
-            <div class="overflow-hidden rounded-3xl border border-outline-variant/15 bg-surface-container-lowest poster-shadow">
+        <section class="mb-8 rounded-3xl border border-outline-variant/15 bg-surface-container-low p-6 ambient-shadow">
+          <div class="grid gap-6 md:grid-cols-[150px_minmax(0,1fr)] md:items-start">
+            <div class="max-w-[150px] overflow-hidden rounded-2xl border border-outline-variant/15 bg-surface-container-lowest poster-shadow">
               <?php if (!empty($person['photo_url'])): ?>
               <img src="<?= reevio_crew_e(reevio_crew_photo($person)); ?>" alt="<?= reevio_crew_e($person['full_name'] ?? 'Person'); ?>" class="aspect-[2/3] h-full w-full object-cover" />
               <?php else: ?>
-              <div class="flex aspect-[2/3] h-full w-full items-center justify-center bg-surface-container-high font-headline text-8xl font-black text-primary">
+              <div class="flex aspect-[2/3] h-full w-full items-center justify-center bg-surface-container-high font-headline text-6xl font-black text-primary">
                 <?= reevio_crew_e(reevio_crew_initial($person['full_name'] ?? 'P')); ?>
               </div>
               <?php endif; ?>
@@ -103,7 +103,7 @@ include __DIR__ . '/partials/navigation.html';
               <p class="mb-3 font-label text-xs font-bold uppercase tracking-[0.28em] text-secondary">
                 <?= reevio_crew_e($person['known_for_department'] ?? 'Person'); ?>
               </p>
-              <h1 class="font-headline text-5xl font-black tracking-tight text-on-surface">
+              <h1 class="font-headline text-4xl font-black tracking-tight text-on-surface">
                 <?= reevio_crew_e($person['full_name'] ?? 'Unknown person'); ?>
               </h1>
 
@@ -130,7 +130,7 @@ include __DIR__ . '/partials/navigation.html';
           <div class="mb-5 flex items-end justify-between">
             <div>
               <h2 class="font-headline text-[28px] font-black tracking-tight text-on-surface">Known for</h2>
-              <p class="mt-1 text-sm text-on-surface-variant">Films connected to this person.</p>
+              <p class="mt-1 text-sm text-on-surface-variant">Films and credits connected to this person.</p>
             </div>
           </div>
 

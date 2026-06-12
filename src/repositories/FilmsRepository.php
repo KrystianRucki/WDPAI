@@ -941,6 +941,22 @@ final class FilmsRepository extends Repository
             return $this->getPersonById($personId);
         }
 
+        $targetId = $personId;
+
+        $existingQuery = $this->connection()->prepare(
+            'SELECT id
+             FROM people
+             WHERE tmdb_id = :tmdb_id
+             LIMIT 1'
+        );
+        $existingQuery->bindValue(':tmdb_id', $tmdbId, PDO::PARAM_INT);
+        $existingQuery->execute();
+
+        $existingId = (int) ($existingQuery->fetchColumn() ?: 0);
+        if ($existingId > 0) {
+            $targetId = $existingId;
+        }
+
         $query = $this->connection()->prepare(
             'UPDATE people
              SET tmdb_id = :tmdb_id,
@@ -954,7 +970,7 @@ final class FilmsRepository extends Repository
              RETURNING *'
         );
 
-        $query->bindValue(':person_id', $personId, PDO::PARAM_INT);
+        $query->bindValue(':person_id', $targetId, PDO::PARAM_INT);
         $query->bindValue(':tmdb_id', $tmdbId, PDO::PARAM_INT);
         $query->bindValue(':full_name', $name);
         $query->bindValue(':biography', $details['biography'] ?? null);
@@ -965,8 +981,7 @@ final class FilmsRepository extends Repository
 
         $person = $query->fetch();
 
-        return $person ?: $this->getPersonById($personId);
+        return $person ?: $this->getPersonById($targetId);
     }
-
 
 }
