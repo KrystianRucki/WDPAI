@@ -134,7 +134,7 @@ include __DIR__ . '/partials/navigation.html';
                 <?php endif; ?>
               </div>
               <div class="min-w-0">
-                <p class="truncate font-label text-sm font-bold text-on-surface">@<?= reevio_feed_lists_e($list['username'] ?? 'user'); ?></p>
+                <a href="/profile-u-main?id=<?= (int) ($list['user_id'] ?? 0); ?>" class="truncate font-label text-sm font-bold text-on-surface hover:text-primary">@<?= reevio_feed_lists_e($list['username'] ?? 'user'); ?></a>
                 <p class="font-label text-xs text-on-surface-variant">Updated <?= reevio_feed_lists_e(reevio_feed_lists_date($list['updated_at'] ?? $list['created_at'] ?? null)); ?></p>
               </div>
             </div>

@@ -291,6 +291,71 @@ final class ReviewsRepository extends Repository
         }
     }
 
+
+    public function countPublicUserReviews(int $userId): int
+    {
+        $query = $this->connection()->prepare(
+            'SELECT COUNT(*)
+             FROM reviews
+             WHERE user_id = :user_id
+               AND is_public = TRUE'
+        );
+        $query->execute(['user_id' => $userId]);
+
+        return (int) $query->fetchColumn();
+    }
+
+    public function getPublicUserReviews(int $userId, int $limit = 10): array
+    {
+        $this->ensureReviewCommentsSchema();
+
+        $query = $this->connection()->prepare(
+            'SELECT
+                r.id AS review_id,
+                r.title AS review_title,
+                r.content,
+                r.rating,
+                r.created_at,
+                r.updated_at,
+                f.id AS film_id,
+                f.title AS film_title,
+                f.release_year,
+                f.director,
+                f.poster_url,
+                f.poster_path,
+                latest_log.log_id,
+                latest_log.watched_on,
+                COALESCE(latest_log.is_rewatch, FALSE) AS is_rewatch,
+                COALESCE(COUNT(DISTINCT rl.user_id), 0) AS likes_count,
+                COALESCE(COUNT(DISTINCT rc.id), 0) AS comments_count
+             FROM reviews r
+             JOIN films f ON f.id = r.film_id
+             LEFT JOIN LATERAL (
+                SELECT
+                    de.id AS log_id,
+                    de.watched_on,
+                    de.is_rewatch
+                FROM diary_entries de
+                WHERE de.user_id = r.user_id
+                  AND de.film_id = r.film_id
+                ORDER BY de.watched_on DESC, de.created_at DESC
+                LIMIT 1
+             ) latest_log ON TRUE
+             LEFT JOIN review_likes rl ON rl.review_id = r.id
+             LEFT JOIN review_comments rc ON rc.review_id = r.id
+             WHERE r.user_id = :user_id
+               AND r.is_public = TRUE
+             GROUP BY r.id, f.id, latest_log.log_id, latest_log.watched_on, latest_log.is_rewatch
+             ORDER BY r.created_at DESC
+             LIMIT :limit'
+        );
+        $query->bindValue(':user_id', $userId, PDO::PARAM_INT);
+        $query->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $query->execute();
+
+        return $query->fetchAll();
+    }
+
     public function countUserReviews(int $userId): int
     {
         $query = $this->connection()->prepare(

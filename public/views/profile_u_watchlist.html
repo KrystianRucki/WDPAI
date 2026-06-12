@@ -1,19 +1,60 @@
+<?php
+$publicUser = $publicUser ?? null;
+$collectionItems = $collectionItems ?? [];
+$collectionTotal = (int) ($collectionTotal ?? count($collectionItems));
+$collectionHasMore = (bool) ($collectionHasMore ?? false);
+$collectionNextPage = (int) ($collectionNextPage ?? 2);
+
+if (!function_exists('reevio_public_watch_e')) {
+    function reevio_public_watch_e($value): string
+    {
+        return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
+    }
+}
+
+if (!function_exists('reevio_public_watch_count')) {
+    function reevio_public_watch_count($value): string
+    {
+        return number_format((int) $value, 0, '.', ' ');
+    }
+}
+
+if (!function_exists('reevio_public_watch_poster')) {
+    function reevio_public_watch_poster(array $film): string
+    {
+        return !empty($film['poster_url']) ? (string) $film['poster_url'] : '/public/assets/img/movie_placeholder.svg';
+    }
+}
+
+if (!function_exists('reevio_public_watch_runtime')) {
+    function reevio_public_watch_runtime($minutes): string
+    {
+        $minutes = (int) $minutes;
+
+        if ($minutes <= 0) {
+            return '';
+        }
+
+        $hours = intdiv($minutes, 60);
+        $rest = $minutes % 60;
+
+        if ($hours <= 0) {
+            return $rest . 'm';
+        }
+
+        return $hours . 'h ' . str_pad((string) $rest, 2, '0', STR_PAD_LEFT) . 'm';
+    }
+}
+?>
 <!doctype html>
 <html class="dark" lang="en">
   <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Reevio - Public Profile Watchlist</title>
+    <title><?= $publicUser ? reevio_public_watch_e($publicUser['username']) . ' watchlist - Reevio' : 'Reevio - Public Profile Watchlist'; ?></title>
 
-    <link
-      href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;700;800;900&family=Manrope:wght@400;500;700&display=swap"
-      rel="stylesheet"
-    />
-
-    <link
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;700;800;900&family=Manrope:wght@400;500;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
     <link href="/public/assets/css/reevio.css" rel="stylesheet" /></head>
 
   <body class="bg-surface text-on-surface antialiased overflow-x-hidden reevio-page-profile_u_watchlist">
@@ -26,6 +67,12 @@ include __DIR__ . '/partials/navigation.html';
 <!-- Main content -->
     <main class="relative z-10 ml-64 min-h-screen w-[calc(100%-16rem)] px-4 pb-24 pt-[8.7rem] lg:px-5 xl:px-6">
       <div class="mx-auto max-w-[1120px]">
+        <?php if (!$publicUser): ?>
+        <section class="rounded-3xl border border-outline-variant/15 bg-surface-container-low p-8 ambient-shadow text-on-surface-variant">
+          User not found.
+        </section>
+        <?php else: ?>
+        <?php $publicUserId = (int) $publicUser['id']; ?>
         <!-- Public profile tabs -->
         <nav
           class="mb-10 flex w-fit items-center gap-2 rounded-full border border-outline-variant/20 bg-surface-container-low px-2 py-2"
@@ -33,21 +80,21 @@ include __DIR__ . '/partials/navigation.html';
         >
           <a
             class="rounded-full px-5 py-2.5 font-label text-sm font-bold text-on-surface-variant transition-colors hover:bg-surface-container-high hover:text-on-surface"
-            href="#"
+            href="/profile-u-main?id=<?= $publicUserId; ?>"
           >
             Profile
           </a>
 
           <a
             class="rounded-full px-5 py-2.5 font-label text-sm font-bold text-on-surface-variant transition-colors hover:bg-surface-container-high hover:text-on-surface"
-            href="#"
+            href="/profile-u-lists?id=<?= $publicUserId; ?>"
           >
             Lists
           </a>
 
           <a
             class="rounded-full bg-primary px-5 py-2.5 font-label text-sm font-bold text-on-primary shadow-[0_0_16px_rgba(255,215,155,0.18)]"
-            href="#"
+            href="/profile-u-watchlist?id=<?= $publicUserId; ?>"
           >
             Watchlist
           </a>
@@ -60,219 +107,74 @@ include __DIR__ . '/partials/navigation.html';
           </span>
 
           <span class="font-label text-xs font-bold uppercase tracking-[0.2em] text-secondary">
-            48 total
+            <?= reevio_public_watch_count($collectionTotal); ?> total
           </span>
         </section>
 
         <!-- Watchlist entries -->
         <section class="max-w-[860px]">
+          <?php if ($collectionItems): ?>
           <div class="space-y-4">
-            <!-- Film 1 -->
+            <?php foreach ($collectionItems as $film): ?>
+            <?php $runtime = reevio_public_watch_runtime($film['runtime_minutes'] ?? 0); ?>
             <article
+              data-href="/film-details?id=<?= (int) $film['id']; ?>"
               class="group rounded-3xl border border-outline-variant/15 bg-surface-container-low p-4 ambient-shadow transition-colors hover:bg-surface-container-high"
             >
               <div class="flex items-center gap-5">
                 <div class="h-32 w-[86px] shrink-0 overflow-hidden rounded-xl poster-shadow ghost-border">
                   <img
-                    alt="Dune: Part Two poster"
+                    alt="<?= reevio_public_watch_e($film['title'] ?? 'Film'); ?> poster"
                     class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuDAkCwsmKRuL5MUGjoApr5kDC3B6dMwDa0WSgKmco1jNaDLFEg5lrwsMzhFHkLBTxuzbPQVlsAgW-POAS4R8dDD0fUwTE6TLUK0__cwwx28CFpGe50jZKQgLhnhZDapC44bnzyFw-gyp-p_qDOzSf3E8BRAVCGvT_Pj6XbTQ1Bmwtl_JkLQhNGYTFdYvr2DUlqU8mXBHCrLXf0UaRE_AYklucKh-SK2LyzOhiCYTrLux2Us5hRavcsAj-DTDTJH3Wg0Q58csU4FmoOE"
+                    src="<?= reevio_public_watch_e(reevio_public_watch_poster($film)); ?>"
                   />
                 </div>
 
                 <div class="min-w-0 flex-1">
                   <h2 class="truncate font-headline text-2xl font-black leading-tight text-on-surface transition-colors group-hover:text-primary">
-                    Dune: Part Two
+                    <?= reevio_public_watch_e($film['title'] ?? 'Film'); ?>
                   </h2>
 
                   <p class="mt-1 text-sm text-on-surface-variant">
-                    2024 • 2h 46m
+                    <?= reevio_public_watch_e($film['release_year'] ?? ''); ?><?= $runtime ? ' • ' . reevio_public_watch_e($runtime) : ''; ?>
                   </p>
 
-                  <div class="mt-3 flex flex-wrap items-center gap-2">
-                    <span class="material-symbols-outlined filled text-[17px] text-primary">star</span>
-                    <span class="font-label text-sm font-bold text-primary">4.5</span>
-                    <span class="text-xs text-on-surface-variant/70">124k ratings</span>
-                  </div>
-                </div>
-
-                <button
-                  class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-on-surface-variant transition-colors hover:bg-surface-container-lowest hover:text-primary"
-                  type="button"
-                  aria-label="More options"
-                >
-                  <span class="material-symbols-outlined">more_vert</span>
-                </button>
-              </div>
-            </article>
-
-            <!-- Film 2 -->
-            <article
-              class="group rounded-3xl border border-outline-variant/15 bg-surface-container-low p-4 ambient-shadow transition-colors hover:bg-surface-container-high"
-            >
-              <div class="flex items-center gap-5">
-                <div class="h-32 w-[86px] shrink-0 overflow-hidden rounded-xl poster-shadow ghost-border">
-                  <img
-                    alt="Poor Things poster"
-                    class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuAnCiq7XcI4qV2QsbViwW976U3wsriRpuCnB5TL9DP84G-LcTO_38BnV6dwuj31j40xEbIm6U16Yr0mZRls1dsB6gO_hII7TsYk_vcso8QkFtlB5sbzuIYpoFMW2XJ61SYdNelYSlCsSDda-WNRO1olCFin6AttZJ-9tjEC3GwvaEA40th7jm9RnpfspNo9sA_RzQajJPrMVOOENCTusxhBlXjQwGRERwA69-BhsrHpMvHwEHo_XtXoX7ScExdSCXcP3v8osJRsgt0C"
-                  />
-                </div>
-
-                <div class="min-w-0 flex-1">
-                  <h2 class="truncate font-headline text-2xl font-black leading-tight text-on-surface transition-colors group-hover:text-primary">
-                    Poor Things
-                  </h2>
-
-                  <p class="mt-1 text-sm text-on-surface-variant">
-                    2023 • 2h 21m
+                  <?php if (!empty($film['director'])): ?>
+                  <p class="mt-3 text-sm text-on-surface-variant/80">
+                    <?= reevio_public_watch_e($film['director']); ?>
                   </p>
-
-                  <div class="mt-3 flex flex-wrap items-center gap-2">
-                    <span class="material-symbols-outlined filled text-[17px] text-primary">star</span>
-                    <span class="font-label text-sm font-bold text-primary">4.2</span>
-                    <span class="text-xs text-on-surface-variant/70">86k ratings</span>
-                  </div>
+                  <?php endif; ?>
                 </div>
 
-                <button
-                  class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-on-surface-variant transition-colors hover:bg-surface-container-lowest hover:text-primary"
-                  type="button"
-                  aria-label="More options"
+                <span
+                  class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-on-surface-variant transition-colors group-hover:bg-surface-container-lowest group-hover:text-primary"
+                  aria-label="Open film"
                 >
-                  <span class="material-symbols-outlined">more_vert</span>
-                </button>
+                  <span class="material-symbols-outlined">chevron_right</span>
+                </span>
               </div>
             </article>
-
-            <!-- Film 3 -->
-            <article
-              class="group rounded-3xl border border-outline-variant/15 bg-surface-container-low p-4 ambient-shadow transition-colors hover:bg-surface-container-high"
-            >
-              <div class="flex items-center gap-5">
-                <div class="h-32 w-[86px] shrink-0 overflow-hidden rounded-xl poster-shadow ghost-border">
-                  <img
-                    alt="Arrival poster"
-                    class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuDSndE9aE_Cc634QvUB0eKB-zXMqgAQfdJcpAcR_r0k9UbTZu910IPtmvWIO4cT2524AoChiv02OK7QmBY7DKYrPzyU-7Ew94pqOPv9JkHNDcKHNKSev0kA3UHGvqyxjRjoDW6vj92-vHk98xsvfxTj6F5tT__CcCfINjQ9p8wq1pbD4K9Qm4RejB38dESKXvmNPf9B8iNaIxzaW6dK6Prfvon296z71jILppqvXi4DYs7zkxm1obbeX-mYE5_s2WzmndCsIluAfehi"
-                  />
-                </div>
-
-                <div class="min-w-0 flex-1">
-                  <h2 class="truncate font-headline text-2xl font-black leading-tight text-on-surface transition-colors group-hover:text-primary">
-                    Arrival
-                  </h2>
-
-                  <p class="mt-1 text-sm text-on-surface-variant">
-                    2016 • 1h 56m
-                  </p>
-
-                  <div class="mt-3 flex flex-wrap items-center gap-2">
-                    <span class="material-symbols-outlined filled text-[17px] text-primary">star</span>
-                    <span class="font-label text-sm font-bold text-primary">4.1</span>
-                    <span class="text-xs text-on-surface-variant/70">152k ratings</span>
-                  </div>
-                </div>
-
-                <button
-                  class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-on-surface-variant transition-colors hover:bg-surface-container-lowest hover:text-primary"
-                  type="button"
-                  aria-label="More options"
-                >
-                  <span class="material-symbols-outlined">more_vert</span>
-                </button>
-              </div>
-            </article>
-
-            <!-- Film 4 -->
-            <article
-              class="group rounded-3xl border border-outline-variant/15 bg-surface-container-low p-4 ambient-shadow transition-colors hover:bg-surface-container-high"
-            >
-              <div class="flex items-center gap-5">
-                <div class="h-32 w-[86px] shrink-0 overflow-hidden rounded-xl poster-shadow ghost-border">
-                  <img
-                    alt="Sacred Deer poster"
-                    class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuCINa2nk1mCWVujUoA2nntdcbAOnfKHNRQADLVU0UlTO9YpLRsJWMbQecXDksnvNHEs4qPDteSE0LRwYO-xkeiW1oVVlH4vWjxak6H2KfUd6ksOppTjLUYD9lN__e2r2XDfTfPpxklO9yG374lVSNz1gIv1B9AlQSJIM1OpAGy2mWwnrp_G2HILkfLD4WXvEGzv5XMTdiai9TZ8utoxIbYM-red1uS0FtFB0ZLChrDK-U8ntg3Mj91WeLZLNoiPp7PRS1ITci2ZghPK"
-                  />
-                </div>
-
-                <div class="min-w-0 flex-1">
-                  <h2 class="truncate font-headline text-2xl font-black leading-tight text-on-surface transition-colors group-hover:text-primary">
-                    Sacred Deer
-                  </h2>
-
-                  <p class="mt-1 text-sm text-on-surface-variant">
-                    2017 • 2h 01m
-                  </p>
-
-                  <div class="mt-3 flex flex-wrap items-center gap-2">
-                    <span class="material-symbols-outlined filled text-[17px] text-primary">star</span>
-                    <span class="font-label text-sm font-bold text-primary">3.8</span>
-                    <span class="text-xs text-on-surface-variant/70">42k ratings</span>
-                  </div>
-                </div>
-
-                <button
-                  class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-on-surface-variant transition-colors hover:bg-surface-container-lowest hover:text-primary"
-                  type="button"
-                  aria-label="More options"
-                >
-                  <span class="material-symbols-outlined">more_vert</span>
-                </button>
-              </div>
-            </article>
-
-            <!-- Film 5 -->
-            <article
-              class="group rounded-3xl border border-outline-variant/15 bg-surface-container-low p-4 ambient-shadow transition-colors hover:bg-surface-container-high"
-            >
-              <div class="flex items-center gap-5">
-                <div class="h-32 w-[86px] shrink-0 overflow-hidden rounded-xl poster-shadow ghost-border">
-                  <img
-                    alt="Challengers poster"
-                    class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuCoBxueiGUdGbjLx1t-iFOdD7UOJWOlPy79rfcu1aRFE5n27qWUjp_3l45eOtjDJg4hutiKCAcjitf8yelTKS74Q9t_DuXlG6607r8n3qaMiVJ14vaAOPGWwrB_y3f_YOjAWWNITe6aNVxDdpu2doCzFh0vkkXpvvLrtUC9aFecL7E41suz3WTABVC_2MIFX8nc_BRXKdPLwCzrcoi_VYPYON5avEoVfvdTeYccxIbMI-pEruPsIoycNiRr4kPlem2Uc21EUkxGDE4T"
-                  />
-                </div>
-
-                <div class="min-w-0 flex-1">
-                  <h2 class="truncate font-headline text-2xl font-black leading-tight text-on-surface transition-colors group-hover:text-primary">
-                    Challengers
-                  </h2>
-
-                  <p class="mt-1 text-sm text-on-surface-variant">
-                    2024 • 2h 11m
-                  </p>
-
-                  <div class="mt-3 flex flex-wrap items-center gap-2">
-                    <span class="material-symbols-outlined filled text-[17px] text-primary">star</span>
-                    <span class="font-label text-sm font-bold text-primary">4.0</span>
-                    <span class="text-xs text-on-surface-variant/70">98k ratings</span>
-                  </div>
-                </div>
-
-                <button
-                  class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-on-surface-variant transition-colors hover:bg-surface-container-lowest hover:text-primary"
-                  type="button"
-                  aria-label="More options"
-                >
-                  <span class="material-symbols-outlined">more_vert</span>
-                </button>
-              </div>
-            </article>
+            <?php endforeach; ?>
           </div>
 
+          <?php if ($collectionHasMore): ?>
           <div class="mt-8 flex justify-center">
-            <button
+            <a
               class="inline-flex items-center gap-2 rounded-full border border-secondary/35 px-8 py-3 font-label text-sm font-bold uppercase tracking-widest text-secondary transition-colors hover:border-secondary/70 hover:bg-secondary/10"
-              type="button"
+              href="/profile-u-watchlist?id=<?= $publicUserId; ?>&page=<?= $collectionNextPage; ?>"
             >
               <span class="material-symbols-outlined text-[18px]">expand_more</span>
               Load more
-            </button>
+            </a>
           </div>
+          <?php endif; ?>
+          <?php else: ?>
+          <div class="rounded-3xl border border-outline-variant/15 bg-surface-container-low p-8 ambient-shadow text-on-surface-variant">
+            This user does not have watchlist films yet.
+          </div>
+          <?php endif; ?>
         </section>
+        <?php endif; ?>
       </div>
     </main>
       <script src="/public/assets/js/reevio.js"></script>

@@ -1,5 +1,7 @@
 <?php
 $profileUser = $profileUser ?? $currentUser ?? [];
+$relationTargetUser = $relationTargetUser ?? $profileUser;
+$relationTargetId = (int) ($relationTargetUser['id'] ?? 0);
 $relationUsers = $relationUsers ?? [];
 $relationTotal = (int) ($relationTotal ?? 0);
 $relationPage = (int) ($relationPage ?? 1);
@@ -56,9 +58,14 @@ if (!function_exists('reevio_relation_button_class')) {
 }
 
 if (!function_exists('reevio_relation_page_url')) {
-    function reevio_relation_page_url(string $base, int $page): string
+    function reevio_relation_page_url(string $base, int $page, int $userId = 0): string
     {
-        return $base . '?page=' . max(1, $page);
+        $query = ['page' => max(1, $page)];
+        if ($userId > 0) {
+            $query['id'] = $userId;
+        }
+
+        return $base . '?' . http_build_query($query);
     }
 }
 ?>
@@ -91,17 +98,17 @@ include __DIR__ . '/partials/navigation.html';
     <main class="relative z-10 ml-64 min-h-screen w-[calc(100%-16rem)] px-4 pb-24 pt-[8.7rem] lg:px-5 xl:px-6">
       <div class="mx-auto max-w-[1120px]">
         <a
-          href="/profile"
+          href="/profile-u-main?id=<?= $relationTargetId; ?>"
           class="mb-8 inline-flex items-center gap-2 rounded-full border border-outline-variant/20 bg-surface-container-low/70 px-4 py-2.5 font-label text-sm font-bold text-primary transition-colors hover:bg-surface-container-high hover:text-secondary"
         >
           <span class="material-symbols-outlined text-[20px]">arrow_back</span>
-          Back
+          Back to @<?= reevio_relation_e($relationTargetUser['username'] ?? 'user'); ?>
         </a>
 
         <!-- Following counter -->
         <section class="mb-6 flex max-w-[860px] items-center justify-between rounded-2xl border border-outline-variant/15 bg-surface-container-low px-5 py-4">
           <span class="font-label text-xs font-bold uppercase tracking-[0.2em] text-on-surface-variant">
-            Following
+            Following of @<?= reevio_relation_e($relationTargetUser['username'] ?? 'user'); ?>
           </span>
 
           <span class="font-label text-xs font-bold uppercase tracking-[0.2em] text-secondary">
@@ -161,7 +168,7 @@ include __DIR__ . '/partials/navigation.html';
           <?php if ($relationTotalPages > 1): ?>
           <nav class="mt-8 flex flex-wrap items-center justify-center gap-3" aria-label="Following pagination">
             <?php if ($relationPage > 1): ?>
-            <a class="inline-flex items-center gap-2 rounded-full border border-secondary/35 px-5 py-2.5 font-label text-sm font-bold uppercase tracking-widest text-secondary transition-colors hover:border-secondary/70 hover:bg-secondary/10" href="<?= reevio_relation_page_url('/following', $relationPage - 1); ?>">
+            <a class="inline-flex items-center gap-2 rounded-full border border-secondary/35 px-5 py-2.5 font-label text-sm font-bold uppercase tracking-widest text-secondary transition-colors hover:border-secondary/70 hover:bg-secondary/10" href="<?= reevio_relation_page_url('/following', $relationPage - 1, $relationTargetId); ?>">
               <span class="material-symbols-outlined text-[18px]">chevron_left</span>
               Previous
             </a>
@@ -172,7 +179,7 @@ include __DIR__ . '/partials/navigation.html';
             </span>
 
             <?php if ($relationPage < $relationTotalPages): ?>
-            <a class="inline-flex items-center gap-2 rounded-full border border-secondary/35 px-5 py-2.5 font-label text-sm font-bold uppercase tracking-widest text-secondary transition-colors hover:border-secondary/70 hover:bg-secondary/10" href="<?= reevio_relation_page_url('/following', $relationPage + 1); ?>">
+            <a class="inline-flex items-center gap-2 rounded-full border border-secondary/35 px-5 py-2.5 font-label text-sm font-bold uppercase tracking-widest text-secondary transition-colors hover:border-secondary/70 hover:bg-secondary/10" href="<?= reevio_relation_page_url('/following', $relationPage + 1, $relationTargetId); ?>">
               Next
               <span class="material-symbols-outlined text-[18px]">chevron_right</span>
             </a>

@@ -66,6 +66,9 @@ final class PageController extends AppController
             'profile_p_diary' => $this->diaryVariables($currentUser, $diaryRepository),
             'profile_p_lists' => $this->userListsVariables($currentUser, $listsRepository),
             'profile_p_watchlist' => $this->userWatchlistVariables($currentUser, $filmsRepository),
+            'profile_u_main' => $this->publicUserMainVariables($currentUser, $filmsRepository, $usersRepository, $listsRepository, $reviewsRepository),
+            'profile_u_lists' => $this->publicUserListsVariables($currentUser, $usersRepository, $listsRepository),
+            'profile_u_watchlist' => $this->publicUserWatchlistVariables($currentUser, $usersRepository, $filmsRepository),
             'log_details' => $this->logDetailsVariables($currentUser, $diaryRepository),
             'review_details' => $this->reviewDetailsVariables($currentUser, $reviewsRepository),
             'review_comments' => $this->reviewDetailsVariables($currentUser, $reviewsRepository),
@@ -86,6 +89,84 @@ final class PageController extends AppController
 
 
 
+
+
+    private function targetUser(array $currentUser, UsersRepository $usersRepository): ?array
+    {
+        $targetUserId = max(0, (int) ($_GET['id'] ?? 0));
+
+        if ($targetUserId <= 0) {
+            $targetUserId = (int) ($currentUser['id'] ?? 0);
+        }
+
+        return $targetUserId > 0 ? $usersRepository->getUserById($targetUserId) : null;
+    }
+
+    private function publicUserMainVariables(
+        array $currentUser,
+        FilmsRepository $filmsRepository,
+        UsersRepository $usersRepository,
+        ListsRepository $listsRepository,
+        ReviewsRepository $reviewsRepository
+    ): array {
+        $publicUser = $this->targetUser($currentUser, $usersRepository);
+        $publicUserId = (int) ($publicUser['id'] ?? 0);
+        $currentUserId = (int) ($currentUser['id'] ?? 0);
+
+        return [
+            'profileUser' => $currentUser,
+            'publicUser' => $publicUser,
+            'profileStats' => $publicUserId > 0 ? $usersRepository->getFollowStats($publicUserId) : [],
+            'isFollowing' => $publicUserId > 0 && $publicUserId !== $currentUserId ? $usersRepository->isFollowing($currentUserId, $publicUserId) : false,
+            'favoriteFilms' => $publicUserId > 0 ? $filmsRepository->getUserFavoriteFilms($publicUserId, 4) : [],
+            'recentLists' => $publicUserId > 0 ? $listsRepository->getVisibleUserLists($publicUserId, $currentUserId, 6) : [],
+            'recentReviews' => $publicUserId > 0 ? $reviewsRepository->getPublicUserReviews($publicUserId, 4) : [],
+            'watchlistItems' => $publicUserId > 0 ? $filmsRepository->getUserWatchlist($publicUserId, 6) : [],
+            'ratingDistribution' => $publicUserId > 0 ? $filmsRepository->getUserRatingDistribution($publicUserId) : [],
+            'mostCommonRating' => $publicUserId > 0 ? $filmsRepository->getUserMostCommonRating($publicUserId) : null,
+        ];
+    }
+
+    private function publicUserListsVariables(array $currentUser, UsersRepository $usersRepository, ListsRepository $listsRepository): array
+    {
+        $publicUser = $this->targetUser($currentUser, $usersRepository);
+        $publicUserId = (int) ($publicUser['id'] ?? 0);
+        $currentUserId = (int) ($currentUser['id'] ?? 0);
+        [$page, $limit] = $this->userCollectionLimit();
+        $total = $publicUserId > 0 ? $listsRepository->countVisibleUserLists($publicUserId, $currentUserId) : 0;
+
+        return [
+            'profileUser' => $currentUser,
+            'publicUser' => $publicUser,
+            'collectionType' => 'lists',
+            'collectionItems' => $publicUserId > 0 ? $listsRepository->getVisibleUserLists($publicUserId, $currentUserId, $limit) : [],
+            'collectionTotal' => $total,
+            'collectionPage' => $page,
+            'collectionLimit' => $limit,
+            'collectionHasMore' => $limit < $total,
+            'collectionNextPage' => $page + 1,
+        ];
+    }
+
+    private function publicUserWatchlistVariables(array $currentUser, UsersRepository $usersRepository, FilmsRepository $filmsRepository): array
+    {
+        $publicUser = $this->targetUser($currentUser, $usersRepository);
+        $publicUserId = (int) ($publicUser['id'] ?? 0);
+        [$page, $limit] = $this->userCollectionLimit();
+        $total = $publicUserId > 0 ? $filmsRepository->countUserWatchlist($publicUserId) : 0;
+
+        return [
+            'profileUser' => $currentUser,
+            'publicUser' => $publicUser,
+            'collectionType' => 'watchlist',
+            'collectionItems' => $publicUserId > 0 ? $filmsRepository->getUserWatchlist($publicUserId, $limit) : [],
+            'collectionTotal' => $total,
+            'collectionPage' => $page,
+            'collectionLimit' => $limit,
+            'collectionHasMore' => $limit < $total,
+            'collectionNextPage' => $page + 1,
+        ];
+    }
 
     private function feedListsVariables(ListsRepository $listsRepository): array
     {
@@ -345,20 +426,29 @@ final class PageController extends AppController
     private function relationshipVariables(string $type, array $currentUser, UsersRepository $usersRepository): array
     {
         $currentUserId = (int) $currentUser['id'];
+        $targetUserId = max(0, (int) ($_GET['id'] ?? 0));
+        if ($targetUserId <= 0) {
+            $targetUserId = $currentUserId;
+        }
+
+        $targetUser = $usersRepository->getUserById($targetUserId) ?: $currentUser;
+        $targetUserId = (int) ($targetUser['id'] ?? $currentUserId);
+
         $page = max(1, (int) ($_GET['page'] ?? 1));
         $limit = self::RELATIONS_PER_PAGE;
         $offset = ($page - 1) * $limit;
 
         if ($type === 'followers') {
-            $total = $usersRepository->countFollowers($currentUserId);
-            $users = $usersRepository->getFollowers($currentUserId, $currentUserId, $limit, $offset);
+            $total = $usersRepository->countFollowers($targetUserId);
+            $users = $usersRepository->getFollowers($targetUserId, $currentUserId, $limit, $offset);
         } else {
-            $total = $usersRepository->countFollowing($currentUserId);
-            $users = $usersRepository->getFollowing($currentUserId, $currentUserId, $limit, $offset);
+            $total = $usersRepository->countFollowing($targetUserId);
+            $users = $usersRepository->getFollowing($targetUserId, $currentUserId, $limit, $offset);
         }
 
         return [
             'profileUser' => $currentUser,
+            'relationTargetUser' => $targetUser,
             'relationType' => $type,
             'relationUsers' => $users,
             'relationTotal' => $total,

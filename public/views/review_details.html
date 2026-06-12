@@ -95,7 +95,7 @@ include __DIR__ . '/partials/navigation.html';
                 <?php endif; ?>
               </div>
               <div>
-                <p class="font-bold text-on-surface">@<?= rv_e($review['username'] ?? 'user'); ?></p>
+                <a href="/profile-u-main?id=<?= (int) ($review['user_id'] ?? 0); ?>" class="font-bold text-on-surface hover:text-primary">@<?= rv_e($review['username'] ?? 'user'); ?></a>
                 <p class="mt-1 font-label text-xs uppercase tracking-wider text-on-surface-variant">
                   Reviewed <?= rv_e(rv_date($review['created_at'] ?? null)); ?>
                   <?php if (!empty($review['watched_on'])): ?> • watched <?= rv_e(rv_date($review['watched_on'])); ?><?php endif; ?>

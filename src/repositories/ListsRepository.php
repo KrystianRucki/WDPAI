@@ -275,6 +275,82 @@ final class ListsRepository extends Repository
 
 
 
+
+    public function countVisibleUserLists(int $userId, int $currentUserId): int
+    {
+        $query = $this->connection()->prepare(
+            'SELECT COUNT(*)
+             FROM lists
+             WHERE user_id = :user_id
+               AND (is_public = TRUE OR user_id = :current_user_id)'
+        );
+        $query->execute([
+            'user_id' => $userId,
+            'current_user_id' => $currentUserId,
+        ]);
+
+        return (int) $query->fetchColumn();
+    }
+
+    public function getVisibleUserLists(int $userId, int $currentUserId, int $limit = 10): array
+    {
+        $query = $this->connection()->prepare(
+            'SELECT
+                l.id,
+                l.user_id,
+                l.title,
+                l.description,
+                l.is_public,
+                l.is_ranked,
+                l.created_at,
+                l.updated_at,
+                u.username,
+                u.avatar_url,
+                COUNT(li.film_id) AS films_count,
+                p1.poster_url AS poster_1,
+                p2.poster_url AS poster_2,
+                p3.poster_url AS poster_3
+             FROM lists l
+             JOIN users u ON u.id = l.user_id
+             LEFT JOIN list_items li ON li.list_id = l.id
+             LEFT JOIN LATERAL (
+                SELECT f.poster_url
+                FROM list_items li1
+                JOIN films f ON f.id = li1.film_id
+                WHERE li1.list_id = l.id
+                ORDER BY li1.position ASC, li1.added_at ASC
+                LIMIT 1 OFFSET 0
+             ) p1 ON TRUE
+             LEFT JOIN LATERAL (
+                SELECT f.poster_url
+                FROM list_items li2
+                JOIN films f ON f.id = li2.film_id
+                WHERE li2.list_id = l.id
+                ORDER BY li2.position ASC, li2.added_at ASC
+                LIMIT 1 OFFSET 1
+             ) p2 ON TRUE
+             LEFT JOIN LATERAL (
+                SELECT f.poster_url
+                FROM list_items li3
+                JOIN films f ON f.id = li3.film_id
+                WHERE li3.list_id = l.id
+                ORDER BY li3.position ASC, li3.added_at ASC
+                LIMIT 1 OFFSET 2
+             ) p3 ON TRUE
+             WHERE l.user_id = :user_id
+               AND (l.is_public = TRUE OR l.user_id = :current_user_id)
+             GROUP BY l.id, u.id, p1.poster_url, p2.poster_url, p3.poster_url
+             ORDER BY l.updated_at DESC, l.created_at DESC, l.id DESC
+             LIMIT :limit'
+        );
+        $query->bindValue(':user_id', $userId, PDO::PARAM_INT);
+        $query->bindValue(':current_user_id', $currentUserId, PDO::PARAM_INT);
+        $query->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $query->execute();
+
+        return $query->fetchAll();
+    }
+
     public function getUserListsForFilm(int $userId, int $filmId): array
     {
         $query = $this->connection()->prepare(
