@@ -2,6 +2,7 @@
 $film = $film ?? [];
 $tmdbError = $tmdbError ?? null;
 $filmState = $filmState ?? ['watched' => false, 'watchlisted' => false];
+$filmReviews = $filmReviews ?? [];
 
 if (!function_exists('e_film_details')) {
     function e_film_details($value): string
@@ -31,6 +32,42 @@ if (!function_exists('film_details_rating')) {
         $rating = is_numeric($rating) ? (float) $rating : 0.0;
 
         return $rating > 0 ? number_format($rating, 1) : 'No ratings';
+    }
+}
+
+
+if (!function_exists('film_details_date')) {
+    function film_details_date($date): string
+    {
+        if (!$date) {
+            return 'Recently';
+        }
+
+        try {
+            return (new DateTimeImmutable((string) $date))->format('M j, Y');
+        } catch (Throwable) {
+            return 'Recently';
+        }
+    }
+}
+
+if (!function_exists('film_details_excerpt')) {
+    function film_details_excerpt($text, int $length = 190): string
+    {
+        $text = trim(strip_tags((string) $text));
+
+        if (mb_strlen($text) <= $length) {
+            return $text;
+        }
+
+        return rtrim(mb_substr($text, 0, $length - 1)) . '…';
+    }
+}
+
+if (!function_exists('film_details_avatar_initial')) {
+    function film_details_avatar_initial($username): string
+    {
+        return strtoupper(substr((string) $username, 0, 1) ?: 'U');
     }
 }
 
@@ -69,18 +106,17 @@ include __DIR__ . '/partials/navigation.html';
 ?>
     <main class="relative z-10 ml-64 min-h-screen w-[calc(100%-16rem)] overflow-hidden bg-background" style="margin-left: 16rem; width: calc(100% - 16rem);">
       <?php if ($backdrop): ?>
-      <div class="pointer-events-none absolute inset-x-0 top-0 h-[560px]" style="background-image: linear-gradient(90deg, rgba(19,19,19,.95) 0%, rgba(19,19,19,.58) 48%, rgba(19,19,19,.92) 100%), linear-gradient(to bottom, rgba(19,19,19,.02) 0%, rgba(19,19,19,.42) 54%, #131313 100%), url('<?= e_film_details($backdrop); ?>'); background-size: cover; background-position: center 22%;"></div>
-      <div class="pointer-events-none absolute inset-x-0 top-0 h-[560px]" style="background: radial-gradient(circle at 18% 42%, rgba(255,215,155,.14), transparent 34%), radial-gradient(circle at 72% 18%, rgba(189,244,255,.08), transparent 28%);"></div>
+      <div class="pointer-events-none absolute inset-x-0 top-0 h-[520px]" style="background-image: linear-gradient(90deg, rgba(19,19,19,.96) 0%, rgba(19,19,19,.64) 44%, rgba(19,19,19,.90) 100%), linear-gradient(to bottom, rgba(19,19,19,.10) 0%, rgba(19,19,19,.30) 62%, #131313 100%), url('<?= e_film_details($backdrop); ?>'); background-size: cover; background-position: center 24%;"></div>
       <?php endif; ?>
 
-      <div class="relative z-10 mx-auto max-w-[1180px] px-8 pb-24 pt-28">
+      <div class="relative z-10 mx-auto max-w-[1180px] px-8 pb-24 pt-0">
         <?php if ($tmdbError): ?>
         <div class="mb-6 rounded-2xl border border-error/35 bg-error/10 p-4 text-error"><?= e_film_details($tmdbError); ?></div>
         <?php endif; ?>
 
-        <section class="flex flex-col gap-7 rounded-3xl border border-outline-variant/15 bg-surface-container-low/80 p-6 shadow-[0_24px_60px_rgba(0,0,0,0.45)] backdrop-blur-md md:flex-row md:items-end">
-          <div class="shrink-0 overflow-hidden rounded-2xl border border-outline-variant/20 bg-surface-container-high poster-shadow" style="width: 138px; height: 207px; min-width: 138px; max-width: 138px;">
-            <img alt="<?= e_film_details($title); ?> poster" class="block h-full w-full object-cover" style="width: 138px; height: 207px; object-fit: cover;" src="<?= e_film_details($poster); ?>" />
+        <section class="flex flex-col gap-8 md:flex-row md:items-end" style="min-height: 430px; padding: 96px 0 54px;">
+          <div class="shrink-0 overflow-hidden rounded-2xl border border-white/10 bg-surface-container-high poster-shadow" style="width: 132px; height: 198px; min-width: 132px; max-width: 132px;">
+            <img alt="<?= e_film_details($title); ?> poster" class="block h-full w-full object-cover" style="width: 132px; height: 198px; object-fit: cover;" src="<?= e_film_details($poster); ?>" />
           </div>
 
           <div class="min-w-0 self-end pb-1">
@@ -133,6 +169,65 @@ include __DIR__ . '/partials/navigation.html';
             <span class="block font-label text-xs font-bold uppercase tracking-wider text-on-surface-variant">Runtime</span>
             <strong class="mt-2 block font-headline text-4xl font-black text-secondary"><?= e_film_details($runtime); ?></strong>
           </div>
+        </section>
+
+
+        <section class="mt-8 rounded-3xl border border-outline-variant/15 bg-surface-container-low p-7">
+          <div class="mb-6 flex flex-wrap items-end justify-between gap-4">
+            <div>
+              <h2 class="font-headline text-2xl font-black text-on-surface">Reviews</h2>
+              <p class="mt-1 text-sm text-on-surface-variant">Real reviews written by Reevio users for this film.</p>
+            </div>
+            <a href="/feed-reviews" class="rounded-full border border-secondary/35 px-5 py-2.5 font-label text-xs font-bold uppercase tracking-wider text-secondary transition-colors hover:bg-secondary/10">
+              Browse reviews
+            </a>
+          </div>
+
+          <?php if ($filmReviews): ?>
+          <div class="grid gap-4 md:grid-cols-2">
+            <?php foreach ($filmReviews as $review): ?>
+            <a href="/review-details?id=<?= (int) ($review['review_id'] ?? 0); ?>" class="block rounded-2xl border border-outline-variant/15 bg-surface-container-lowest p-5 transition-colors hover:bg-surface-container-high">
+              <div class="mb-4 flex items-center justify-between gap-4">
+                <div class="flex min-w-0 items-center gap-3">
+                  <div class="h-10 w-10 shrink-0 overflow-hidden rounded-full bg-surface-container-high">
+                    <?php if (!empty($review['avatar_url'])): ?>
+                    <img src="<?= e_film_details($review['avatar_url']); ?>" alt="<?= e_film_details($review['username'] ?? 'User'); ?> avatar" class="h-full w-full object-cover" />
+                    <?php else: ?>
+                    <div class="flex h-full w-full items-center justify-center font-headline text-base font-black text-primary">
+                      <?= e_film_details(film_details_avatar_initial($review['username'] ?? 'U')); ?>
+                    </div>
+                    <?php endif; ?>
+                  </div>
+                  <div class="min-w-0">
+                    <p class="truncate font-label text-sm font-bold text-on-surface">@<?= e_film_details($review['username'] ?? 'user'); ?></p>
+                    <p class="font-label text-xs text-on-surface-variant"><?= e_film_details(film_details_date($review['created_at'] ?? null)); ?></p>
+                  </div>
+                </div>
+                <?php if (!empty($review['rating'])): ?>
+                <span class="rounded-full bg-primary/10 px-3 py-1 font-label text-xs font-black text-primary">
+                  <?= e_film_details(number_format((float) $review['rating'], 1)); ?>
+                </span>
+                <?php endif; ?>
+              </div>
+
+              <h3 class="line-clamp-2 font-headline text-lg font-black text-on-surface">
+                <?= e_film_details($review['review_title'] ?? 'Review'); ?>
+              </h3>
+              <p class="mt-3 line-clamp-3 text-sm leading-relaxed text-on-surface-variant">
+                <?= e_film_details(film_details_excerpt($review['content'] ?? '')); ?>
+              </p>
+              <div class="mt-4 flex gap-4 font-label text-xs text-on-surface-variant">
+                <span><?= (int) ($review['likes_count'] ?? 0); ?> likes</span>
+                <span><?= (int) ($review['comments_count'] ?? 0); ?> comments</span>
+              </div>
+            </a>
+            <?php endforeach; ?>
+          </div>
+          <?php else: ?>
+          <div class="rounded-2xl border border-outline-variant/10 bg-surface-container-lowest p-6 text-sm text-on-surface-variant">
+            No user reviews for this film yet.
+          </div>
+          <?php endif; ?>
         </section>
 
         <section class="mt-8 rounded-3xl border border-outline-variant/15 bg-surface-container-low p-7">

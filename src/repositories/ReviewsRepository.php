@@ -113,4 +113,38 @@ final class ReviewsRepository extends Repository
     }
 
 
+
+    public function getFilmReviews(int $filmId, int $limit = 6): array
+    {
+        $query = $this->connection()->prepare(
+            'SELECT
+                r.id AS review_id,
+                r.title AS review_title,
+                r.content,
+                r.rating,
+                r.created_at,
+                r.updated_at,
+                u.id AS user_id,
+                u.username,
+                u.avatar_url,
+                COALESCE(COUNT(DISTINCT rl.user_id), 0) AS likes_count,
+                COALESCE(COUNT(DISTINCT rc.id), 0) AS comments_count
+             FROM reviews r
+             JOIN users u ON u.id = r.user_id
+             LEFT JOIN review_likes rl ON rl.review_id = r.id
+             LEFT JOIN review_comments rc ON rc.review_id = r.id
+             WHERE r.film_id = :film_id
+               AND r.is_public = TRUE
+             GROUP BY r.id, u.id
+             ORDER BY r.created_at DESC
+             LIMIT :limit'
+        );
+        $query->bindValue(':film_id', $filmId, PDO::PARAM_INT);
+        $query->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $query->execute();
+
+        return $query->fetchAll();
+    }
+
+
 }

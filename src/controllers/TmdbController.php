@@ -5,6 +5,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/AppController.php';
 require_once __DIR__ . '/../services/TmdbService.php';
 require_once __DIR__ . '/../repositories/FilmsRepository.php';
+require_once __DIR__ . '/../repositories/ReviewsRepository.php';
 
 final class TmdbController extends AppController
 {
@@ -161,7 +162,9 @@ final class TmdbController extends AppController
             'watchlisted' => $filmId > 0 && $currentUserId > 0 ? $this->films->userHasFilmInWatchlist($currentUserId, $filmId) : false,
         ];
 
-        $this->render('film_details', compact('film', 'tmdbError', 'filmState'));
+        $filmReviews = $filmId > 0 ? (new ReviewsRepository())->getFilmReviews($filmId, 6) : [];
+
+        $this->render('film_details', compact('film', 'tmdbError', 'filmState', 'filmReviews'));
     }
 
     public function searchFilmsPage(): void
