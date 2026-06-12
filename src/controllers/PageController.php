@@ -61,6 +61,7 @@ final class PageController extends AppController
             ],
             'profile_p_diary' => $this->diaryVariables($currentUser, $diaryRepository),
             'profile_p_lists' => $this->userListsVariables($currentUser, $listsRepository),
+            'profile_p_watchlist' => $this->userWatchlistVariables($currentUser, $filmsRepository),
             'log_details' => $this->logDetailsVariables($currentUser, $diaryRepository),
             'list_details' => $this->listDetailsVariables($currentUser, $listsRepository),
             'add_to_list' => $this->addToListVariables($currentUser, $filmsRepository, $listsRepository),

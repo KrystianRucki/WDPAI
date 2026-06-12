@@ -624,4 +624,20 @@ final class FilmsRepository extends Repository
     }
 
 
+
+    public function removeFromWatchlist(int $userId, int $filmId): bool
+    {
+        $query = $this->connection()->prepare(
+            'DELETE FROM watchlist
+             WHERE user_id = :user_id
+               AND film_id = :film_id'
+        );
+        $query->bindValue(':user_id', $userId, PDO::PARAM_INT);
+        $query->bindValue(':film_id', $filmId, PDO::PARAM_INT);
+        $query->execute();
+
+        return $query->rowCount() > 0;
+    }
+
+
 }

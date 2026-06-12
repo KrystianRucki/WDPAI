@@ -1157,3 +1157,65 @@ document.addEventListener("click", async (event) => {
   }
 });
 
+
+
+
+/* Remove film from watchlist */
+document.addEventListener("click", async (event) => {
+  const button = event.target.closest("[data-remove-watchlist]");
+
+  if (!button) return;
+
+  event.preventDefault();
+  event.stopPropagation();
+
+  const filmId = Number(button.dataset.filmId);
+
+  if (!filmId || button.dataset.loading === "1") return;
+
+  const confirmed = window.confirm("Remove this film from your watchlist?");
+  if (!confirmed) return;
+
+  button.dataset.loading = "1";
+  button.disabled = true;
+
+  try {
+    const response = await fetch("/api-watchlist-remove", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      },
+      body: JSON.stringify({ film_id: filmId })
+    });
+
+    const payload = await response.json().catch(() => ({}));
+
+    if (!response.ok || !payload.success) {
+      throw new Error(payload.error || payload.message || "Could not remove film from watchlist.");
+    }
+
+    const card = button.closest("[data-watchlist-card]");
+    if (card) {
+      card.remove();
+
+      const totalCounter = document.querySelector("[data-watchlist-total-count]");
+      if (totalCounter) {
+        const currentTotal = Number(String(totalCounter.textContent).replace(/\s/g, "")) || 0;
+        const nextTotal = Math.max(0, currentTotal - 1);
+        totalCounter.textContent = new Intl.NumberFormat("en-US").format(nextTotal);
+      }
+
+      if (!document.querySelector("[data-watchlist-card]")) {
+        document.querySelector("[data-watchlist-empty-live]")?.classList.remove("hidden");
+      }
+    } else {
+      window.location.href = payload.redirect || "/profile-watchlist";
+    }
+  } catch (error) {
+    alert(error.message || "Could not remove film from watchlist.");
+    button.disabled = false;
+    button.dataset.loading = "0";
+  }
+});
+

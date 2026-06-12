@@ -92,11 +92,14 @@ final class TmdbController extends AppController
             return;
         }
 
+        $filmId = (int) ($_GET['film_id'] ?? 0);
         $tmdbId = (int) ($_GET['tmdb_id'] ?? $_GET['id'] ?? 0);
         $film = null;
         $tmdbError = null;
 
-        if ($tmdbId > 0) {
+        if ($filmId > 0) {
+            $film = $this->films->getById($filmId);
+        } elseif ($tmdbId > 0) {
             try {
                 $details = $this->tmdb->getMovieDetails($tmdbId);
                 $film = $this->films->saveFromTmdb($details, $this->tmdb);
@@ -190,4 +193,39 @@ final class TmdbController extends AppController
 
         $this->render('search_actors', compact('query', 'peopleResults', 'tmdbError', 'totalResults'));
     }
+
+    public function removeFromWatchlist(): void
+    {
+        if (!$this->requireLogin()) {
+            return;
+        }
+
+        $data = $this->getJsonInput();
+        $filmId = (int) ($data['film_id'] ?? 0);
+
+        if ($filmId <= 0) {
+            $this->json([
+                'success' => false,
+                'error' => 'Invalid film id.',
+            ], 422);
+            return;
+        }
+
+        try {
+            $removed = $this->films->removeFromWatchlist((int) $_SESSION['user_id'], $filmId);
+
+            $this->json([
+                'success' => true,
+                'removed' => $removed,
+                'redirect' => '/profile-watchlist',
+            ]);
+        } catch (Throwable $exception) {
+            $this->json([
+                'success' => false,
+                'error' => 'Could not remove film from watchlist.',
+            ], 500);
+        }
+    }
+
+
 }

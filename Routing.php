@@ -90,6 +90,7 @@ final class Routing
             'api-lists-add-film' => [ListsController::class, 'addFilm'],
             'api-lists-reorder' => [ListsController::class, 'reorder'],
             'api-lists-remove-film' => [ListsController::class, 'removeFilm'],
+            'api-watchlist-remove' => [TmdbController::class, 'removeFromWatchlist'],
             'api-reviews-comment' => [ReviewsController::class, 'comment'],
             'api-reviews-like' => [ReviewsController::class, 'like'],
             'api-diary-delete-log' => [DiaryController::class, 'deleteLog'],
