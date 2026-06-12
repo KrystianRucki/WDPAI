@@ -86,6 +86,7 @@ final class Routing
             'api-notifications-read' => [NotificationsController::class, 'markRead'],
             'api-settings-profile' => [SettingsController::class, 'updateProfile'],
             'api-settings-notifications' => [SettingsController::class, 'updateNotifications'],
+            'api-profile-favorites' => [SettingsController::class, 'saveFavorites'],
             'api-lists-create' => [ListsController::class, 'create'],
             'api-lists-add-film' => [ListsController::class, 'addFilm'],
             'api-lists-reorder' => [ListsController::class, 'reorder'],

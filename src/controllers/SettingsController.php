@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/AppController.php';
 require_once __DIR__ . '/../repositories/UsersRepository.php';
+require_once __DIR__ . '/../repositories/FilmsRepository.php';
 
 final class SettingsController extends AppController
 {
@@ -65,4 +66,47 @@ final class SettingsController extends AppController
 
         $this->json(['success' => true, 'updated' => true]);
     }
+
+    public function saveFavorites(): void
+    {
+        if (!$this->requireLogin()) {
+            return;
+        }
+
+        $data = $this->getJsonInput();
+        $filmIds = $data['film_ids'] ?? [];
+
+        if (!is_array($filmIds)) {
+            $filmIds = [];
+        }
+
+        $filmIds = array_values(array_unique(array_filter(array_map('intval', $filmIds), fn (int $id): bool => $id > 0)));
+
+        if (count($filmIds) > 4) {
+            $this->json([
+                'success' => false,
+                'message' => 'You can select up to 4 favorite films.',
+            ], 422);
+            return;
+        }
+
+        try {
+            $result = (new FilmsRepository())->saveUserFavoriteFilms((int) $_SESSION['user_id'], $filmIds);
+
+            $this->json([
+                'success' => true,
+                'saved' => true,
+                'saved_count' => $result['saved_count'],
+                'film_ids' => $result['film_ids'],
+                'redirect' => '/profile',
+            ]);
+        } catch (Throwable $exception) {
+            $this->json([
+                'success' => false,
+                'message' => 'Could not save favorite films.',
+            ], 500);
+        }
+    }
+
+
 }

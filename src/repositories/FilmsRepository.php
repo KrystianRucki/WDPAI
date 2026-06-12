@@ -640,4 +640,109 @@ final class FilmsRepository extends Repository
     }
 
 
+
+    public function getUserFilmsForFavoriteSelection(int $userId, int $limit = 100): array
+    {
+        $query = $this->connection()->prepare(
+            'SELECT
+                f.*,
+                latest.watched_on,
+                latest.rating AS user_rating,
+                latest.created_at AS logged_at,
+                stats.watch_count,
+                uff.position AS favorite_position
+             FROM (
+                SELECT film_id, COUNT(*) AS watch_count
+                FROM diary_entries
+                WHERE user_id = :user_id
+                GROUP BY film_id
+             ) stats
+             JOIN LATERAL (
+                SELECT watched_on, rating, created_at
+                FROM diary_entries
+                WHERE user_id = :user_id
+                  AND film_id = stats.film_id
+                ORDER BY watched_on DESC, created_at DESC
+                LIMIT 1
+             ) latest ON TRUE
+             JOIN films f ON f.id = stats.film_id
+             LEFT JOIN user_favorite_films uff
+               ON uff.user_id = :user_id
+              AND uff.film_id = f.id
+             ORDER BY
+                uff.position ASC NULLS LAST,
+                latest.watched_on DESC,
+                latest.created_at DESC,
+                f.title ASC
+             LIMIT :limit'
+        );
+        $query->bindValue(':user_id', $userId, PDO::PARAM_INT);
+        $query->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $query->execute();
+
+        return array_map(fn (array $film): array => $this->hydrateFilm($film), $query->fetchAll());
+    }
+
+    public function saveUserFavoriteFilms(int $userId, array $filmIds): array
+    {
+        $filmIds = array_values(array_unique(array_filter(array_map('intval', $filmIds), fn (int $id): bool => $id > 0)));
+        $filmIds = array_slice($filmIds, 0, 4);
+
+        $pdo = $this->connection();
+        $pdo->beginTransaction();
+
+        try {
+            $validFilmIds = [];
+            $check = $pdo->prepare(
+                'SELECT 1
+                 FROM diary_entries
+                 WHERE user_id = :user_id
+                   AND film_id = :film_id
+                 LIMIT 1'
+            );
+
+            foreach ($filmIds as $filmId) {
+                $check->bindValue(':user_id', $userId, PDO::PARAM_INT);
+                $check->bindValue(':film_id', $filmId, PDO::PARAM_INT);
+                $check->execute();
+
+                if ($check->fetchColumn()) {
+                    $validFilmIds[] = $filmId;
+                }
+            }
+
+            $delete = $pdo->prepare('DELETE FROM user_favorite_films WHERE user_id = :user_id');
+            $delete->bindValue(':user_id', $userId, PDO::PARAM_INT);
+            $delete->execute();
+
+            if ($validFilmIds) {
+                $insert = $pdo->prepare(
+                    'INSERT INTO user_favorite_films (user_id, film_id, position)
+                     VALUES (:user_id, :film_id, :position)'
+                );
+
+                foreach ($validFilmIds as $index => $filmId) {
+                    $insert->bindValue(':user_id', $userId, PDO::PARAM_INT);
+                    $insert->bindValue(':film_id', $filmId, PDO::PARAM_INT);
+                    $insert->bindValue(':position', $index + 1, PDO::PARAM_INT);
+                    $insert->execute();
+                }
+            }
+
+            $pdo->commit();
+
+            return [
+                'saved_count' => count($validFilmIds),
+                'film_ids' => $validFilmIds,
+            ];
+        } catch (Throwable $exception) {
+            if ($pdo->inTransaction()) {
+                $pdo->rollBack();
+            }
+
+            throw $exception;
+        }
+    }
+
+
 }

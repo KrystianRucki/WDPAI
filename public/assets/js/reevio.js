@@ -1219,3 +1219,119 @@ document.addEventListener("click", async (event) => {
   }
 });
 
+
+
+
+/* Edit profile favorite films */
+document.addEventListener("DOMContentLoaded", () => {
+  const section = document.querySelector("#profile-favorites-section");
+
+  if (!section || section.dataset.reevioFavoritesReady === "1") return;
+
+  section.dataset.reevioFavoritesReady = "1";
+
+  const editButton = section.querySelector("#profile-edit-favorites");
+  const editor = section.querySelector("#profile-favorites-editor");
+  const cancelButton = section.querySelector("#profile-cancel-favorites");
+  const saveButton = section.querySelector("#profile-save-favorites");
+  const countLabel = section.querySelector("#profile-favorites-count");
+  const status = section.querySelector("#profile-favorites-status");
+  const candidates = [...section.querySelectorAll("[data-favorite-candidate]")];
+
+  function selectedCandidates() {
+    return candidates.filter((button) => button.dataset.selected === "1");
+  }
+
+  function setStatus(message, isError = false) {
+    if (!status) return;
+    status.textContent = message;
+    status.classList.toggle("text-red-300", isError);
+    status.classList.toggle("text-primary", !isError && message.length > 0);
+    status.classList.toggle("text-on-surface-variant", message.length === 0);
+  }
+
+  function renderCandidate(button) {
+    const selected = button.dataset.selected === "1";
+    button.classList.toggle("border-primary/45", selected);
+    button.classList.toggle("bg-surface-container-high", selected);
+    button.classList.toggle("border-outline-variant/15", !selected);
+    button.classList.toggle("bg-surface-container-low", !selected);
+    button.querySelector("[data-favorite-check]")?.classList.toggle("hidden", !selected);
+  }
+
+  function refreshCount() {
+    const count = selectedCandidates().length;
+    if (countLabel) countLabel.textContent = `${count}/4 selected`;
+  }
+
+  candidates.forEach((button) => {
+    renderCandidate(button);
+
+    button.addEventListener("click", () => {
+      const selected = button.dataset.selected === "1";
+
+      if (!selected && selectedCandidates().length >= 4) {
+        setStatus("You can select up to 4 favorite films.", true);
+        return;
+      }
+
+      button.dataset.selected = selected ? "0" : "1";
+      renderCandidate(button);
+      refreshCount();
+      setStatus("");
+    });
+  });
+
+  editButton?.addEventListener("click", () => {
+    editor?.classList.remove("hidden");
+    refreshCount();
+    setStatus("");
+  });
+
+  cancelButton?.addEventListener("click", () => {
+    editor?.classList.add("hidden");
+    setStatus("");
+  });
+
+  saveButton?.addEventListener("click", async () => {
+    const filmIds = selectedCandidates()
+      .map((button) => Number(button.dataset.filmId))
+      .filter(Boolean);
+
+    if (filmIds.length > 4) {
+      setStatus("You can select up to 4 favorite films.", true);
+      return;
+    }
+
+    saveButton.disabled = true;
+    saveButton.classList.add("opacity-70");
+    setStatus("Saving favorites...");
+
+    try {
+      const response = await fetch("/api-profile-favorites", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify({ film_ids: filmIds })
+      });
+
+      const payload = await response.json().catch(() => ({}));
+
+      if (!response.ok || !payload.success) {
+        throw new Error(payload.message || "Could not save favorites.");
+      }
+
+      setStatus("Favorites saved.");
+      window.location.href = payload.redirect || "/profile";
+    } catch (error) {
+      setStatus(error.message || "Could not save favorites.", true);
+      saveButton.disabled = false;
+      saveButton.classList.remove("opacity-70");
+    }
+  });
+
+  refreshCount();
+});
+

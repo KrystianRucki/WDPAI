@@ -56,6 +56,7 @@ final class PageController extends AppController
                 'profileUser' => $currentUser,
                 'profileStats' => $usersRepository->getFollowStats($currentUserId),
                 'favoriteFilms' => $filmsRepository->getUserFavoriteFilms($currentUserId, 4),
+                'favoriteCandidates' => $filmsRepository->getUserFilmsForFavoriteSelection($currentUserId, 100),
                 'ratingDistribution' => $filmsRepository->getUserRatingDistribution($currentUserId),
                 'mostCommonRating' => $filmsRepository->getUserMostCommonRating($currentUserId),
             ],

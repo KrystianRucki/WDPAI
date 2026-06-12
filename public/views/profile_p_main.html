@@ -1,4 +1,5 @@
 <?php
+$favoriteCandidates = $favoriteCandidates ?? [];
 $profileUser = $profileUser ?? $currentUser ?? [];
 $profileStats = $profileStats ?? ['followers_count' => 0, 'following_count' => 0, 'films_count' => 0, 'lists_count' => 0, 'reviews_count' => 0, 'watchlist_count' => 0];
 $favoriteFilms = $favoriteFilms ?? [];
@@ -98,6 +99,7 @@ if (!function_exists('reevio_profile_bar_height')) {
 <body class="bg-surface text-on-surface antialiased overflow-x-hidden reevio-page-profile_p_main">
   <div class="cinematic-glow"></div>
 <?php
+$favoriteCandidates = $favoriteCandidates ?? [];
 $activeNav = 'profile';
 $showAdminLink = ($showAdminLink ?? false);
 include __DIR__ . '/partials/navigation.html';
@@ -105,10 +107,10 @@ include __DIR__ . '/partials/navigation.html';
 <main class="relative z-10 ml-64 min-h-screen w-[calc(100%-16rem)] px-4 pb-24 pt-[8.7rem] lg:px-5 xl:px-6">
     <div class="mx-auto max-w-[1120px]">
       <nav class="mb-10 flex w-fit items-center gap-2 rounded-full border border-outline-variant/20 bg-surface-container-low px-2 py-2">
-        <a class="rounded-full bg-primary px-5 py-2.5 font-label text-sm font-bold text-on-primary" href="profile_p_main.html">Profile</a>
-        <a class="rounded-full px-5 py-2.5 font-label text-sm font-bold text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface" href="profile_p_diary.html">Diary</a>
-        <a class="rounded-full px-5 py-2.5 font-label text-sm font-bold text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface" href="profile_p_lists.html">Lists</a>
-        <a class="rounded-full px-5 py-2.5 font-label text-sm font-bold text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface" href="profile_p_watchlist.html">Watchlist</a>
+        <a class="rounded-full bg-primary px-5 py-2.5 font-label text-sm font-bold text-on-primary" href="/profile">Profile</a>
+        <a class="rounded-full px-5 py-2.5 font-label text-sm font-bold text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface" href="/profile-diary">Diary</a>
+        <a class="rounded-full px-5 py-2.5 font-label text-sm font-bold text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface" href="/profile-lists">Lists</a>
+        <a class="rounded-full px-5 py-2.5 font-label text-sm font-bold text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface" href="/profile-watchlist">Watchlist</a>
       </nav>
 
       <section class="mb-8 rounded-3xl border border-outline-variant/15 bg-surface-container-low p-8 ambient-shadow">
@@ -140,13 +142,23 @@ include __DIR__ . '/partials/navigation.html';
       </section>
 
       <div class="grid gap-8 xl:grid-cols-[minmax(0,1fr)_380px]">
-        <section class="rounded-3xl border border-outline-variant/15 bg-surface-container-low p-7 ambient-shadow">
-          <div class="mb-6 flex items-end justify-between">
-            <h2 class="font-headline text-[28px] font-black tracking-tight text-on-surface">Favorite Films</h2>
-            <a href="/profile-watchlist" class="font-label text-xs font-bold uppercase tracking-wider text-secondary hover:text-primary">Edit favorites</a>
+        <section class="rounded-3xl border border-outline-variant/15 bg-surface-container-low p-7 ambient-shadow" id="profile-favorites-section">
+          <div class="mb-6 flex flex-wrap items-end justify-between gap-4">
+            <div>
+              <h2 class="font-headline text-[28px] font-black tracking-tight text-on-surface">Favorite Films</h2>
+              <p class="mt-1 text-sm text-on-surface-variant">Choose up to 4 films you have watched.</p>
+            </div>
+            <button
+              id="profile-edit-favorites"
+              type="button"
+              class="font-label text-xs font-bold uppercase tracking-wider text-secondary hover:text-primary"
+            >
+              Edit favorites
+            </button>
           </div>
+
           <?php if ($favoriteFilms): ?>
-          <div class="grid grid-cols-2 gap-5 md:grid-cols-4">
+          <div id="profile-favorite-films-grid" class="grid grid-cols-2 gap-5 md:grid-cols-4">
             <?php foreach ($favoriteFilms as $film): ?>
             <a class="group block text-left transition-transform duration-200 hover:scale-[1.02]" href="/film-details?id=<?= (int) $film['id']; ?>">
               <div class="relative aspect-[2/3] overflow-hidden rounded-xl border border-outline-variant/15 poster-shadow">
@@ -157,10 +169,79 @@ include __DIR__ . '/partials/navigation.html';
             <?php endforeach; ?>
           </div>
           <?php else: ?>
-          <div class="rounded-2xl border border-outline-variant/15 bg-surface-container-lowest p-6 text-on-surface-variant">
+          <div id="profile-favorite-films-empty" class="rounded-2xl border border-outline-variant/15 bg-surface-container-lowest p-6 text-on-surface-variant">
             No favorite films selected yet.
           </div>
           <?php endif; ?>
+
+          <div id="profile-favorites-editor" class="mt-7 hidden rounded-3xl border border-outline-variant/15 bg-surface-container-lowest p-5">
+            <div class="mb-5 flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <p class="font-label text-xs font-bold uppercase tracking-[0.22em] text-secondary">Select favorites</p>
+                <p class="mt-1 text-sm text-on-surface-variant">
+                  Only films from your watched films list can be selected.
+                </p>
+              </div>
+              <p id="profile-favorites-count" class="font-label text-xs font-bold uppercase tracking-wider text-primary">0/4 selected</p>
+            </div>
+
+            <?php if ($favoriteCandidates): ?>
+            <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
+              <?php foreach ($favoriteCandidates as $film): ?>
+              <?php $selected = !empty($film['favorite_position']); ?>
+              <button
+                type="button"
+                data-favorite-candidate
+                data-film-id="<?= (int) $film['id']; ?>"
+                data-selected="<?= $selected ? '1' : '0'; ?>"
+                class="group text-left rounded-2xl border <?= $selected ? 'border-primary/45 bg-surface-container-high' : 'border-outline-variant/15 bg-surface-container-low'; ?> p-2 transition-transform duration-200 hover:scale-[1.02] hover:bg-surface-container-high"
+              >
+                <div class="relative aspect-[2/3] overflow-hidden rounded-xl poster-shadow">
+                  <img alt="<?= reevio_profile_e($film['title'] ?? 'Watched film'); ?> poster" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" src="<?= reevio_profile_e(reevio_profile_poster($film)); ?>" />
+                  <div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest/75 to-transparent"></div>
+                  <span data-favorite-check class="<?= $selected ? '' : 'hidden'; ?> absolute right-2 top-2 inline-flex h-8 w-8 items-center justify-center rounded-full bg-primary text-on-primary shadow-[0_0_18px_rgba(255,215,155,0.3)]">
+                    <span class="material-symbols-outlined text-[18px]">check</span>
+                  </span>
+                  <?php if (!empty($film['user_rating'])): ?>
+                  <span class="absolute bottom-2 left-2 rounded-full bg-surface-container-lowest/85 px-2 py-1 font-label text-xs font-bold text-primary">
+                    <?= reevio_profile_e($film['user_rating']); ?>/5
+                  </span>
+                  <?php endif; ?>
+                </div>
+                <span class="mt-2 line-clamp-2 block font-headline text-sm font-bold text-on-surface">
+                  <?= reevio_profile_e($film['title'] ?? 'Untitled'); ?>
+                </span>
+                <span class="mt-1 block font-label text-xs text-on-surface-variant">
+                  <?= reevio_profile_e($film['release_year'] ?? ''); ?>
+                </span>
+              </button>
+              <?php endforeach; ?>
+            </div>
+            <?php else: ?>
+            <div class="rounded-2xl border border-outline-variant/15 bg-surface-container-low p-5 text-on-surface-variant">
+              You need to log a film first before selecting favorites.
+            </div>
+            <?php endif; ?>
+
+            <p id="profile-favorites-status" class="mt-4 min-h-[1.25rem] font-label text-sm text-on-surface-variant" role="status" aria-live="polite"></p>
+
+            <div class="mt-5 flex flex-wrap justify-end gap-3">
+              <button
+                id="profile-cancel-favorites"
+                type="button"
+                class="rounded-full border border-outline-variant/25 px-5 py-3 font-label text-sm font-bold text-on-surface-variant transition-colors hover:bg-surface-container-high"
+              >
+                Cancel
+              </button>
+              <button
+                id="profile-save-favorites"
+                type="button"
+                class="rounded-full bg-primary px-6 py-3 font-label text-sm font-bold text-on-primary shadow-[0_0_18px_rgba(255,215,155,0.24)] transition-all hover:shadow-[0_0_26px_rgba(255,215,155,0.36)]"
+              >
+                Save favorites
+              </button>
+            </div>
+          </div>
         </section>
 
         <section class="rounded-3xl border border-outline-variant/15 bg-surface-container-low p-7 ambient-shadow">
