@@ -461,10 +461,18 @@ final class FilmsRepository extends Repository
 
     public function getUserFavoriteFilms(int $userId, int $limit = 4): array
     {
+        $this->ensureUserFilmsTable();
+
         if ($this->tableExists('user_favorite_films')) {
             $query = $this->connection()->prepare(
-                'SELECT f.*, uff.position
+                'WITH watched AS (
+                    SELECT film_id FROM user_films WHERE user_id = :user_id
+                    UNION
+                    SELECT film_id FROM diary_entries WHERE user_id = :user_id
+                 )
+                 SELECT f.*, uff.position
                  FROM user_favorite_films uff
+                 JOIN watched w ON w.film_id = uff.film_id
                  JOIN films f ON f.id = uff.film_id
                  WHERE uff.user_id = :user_id
                  ORDER BY uff.position ASC
@@ -759,12 +767,17 @@ final class FilmsRepository extends Repository
                 $delete->bindValue(':film_id', $filmId, PDO::PARAM_INT);
                 $delete->execute();
 
+                $favoriteRemoved = $this->pruneFavoriteFilmIfNoLongerWatched($connection, $userId, $filmId);
+
                 $connection->commit();
 
                 return [
                     'status' => 'unwatched',
                     'watched' => false,
-                    'message' => 'Removed from watched films.',
+                    'favorite_removed' => $favoriteRemoved,
+                    'message' => $favoriteRemoved
+                        ? 'Removed from watched films and favorites.'
+                        : 'Removed from watched films.',
                 ];
             }
 
@@ -853,6 +866,77 @@ final class FilmsRepository extends Repository
                 PRIMARY KEY (user_id, film_id)
             )'
         );
+    }
+
+
+    private function pruneFavoriteFilmIfNoLongerWatched(PDO $connection, int $userId, int $filmId): bool
+    {
+        if (!$this->tableExists('user_favorite_films')) {
+            return false;
+        }
+
+        $stillLogged = $connection->prepare(
+            'SELECT 1
+             FROM diary_entries
+             WHERE user_id = :user_id
+               AND film_id = :film_id
+             LIMIT 1'
+        );
+        $stillLogged->bindValue(':user_id', $userId, PDO::PARAM_INT);
+        $stillLogged->bindValue(':film_id', $filmId, PDO::PARAM_INT);
+        $stillLogged->execute();
+
+        if ($stillLogged->fetchColumn()) {
+            return false;
+        }
+
+        $favoriteCheck = $connection->prepare(
+            'SELECT 1
+             FROM user_favorite_films
+             WHERE user_id = :user_id
+               AND film_id = :film_id
+             LIMIT 1'
+        );
+        $favoriteCheck->bindValue(':user_id', $userId, PDO::PARAM_INT);
+        $favoriteCheck->bindValue(':film_id', $filmId, PDO::PARAM_INT);
+        $favoriteCheck->execute();
+
+        if (!$favoriteCheck->fetchColumn()) {
+            return false;
+        }
+
+        $remainingQuery = $connection->prepare(
+            'SELECT film_id
+             FROM user_favorite_films
+             WHERE user_id = :user_id
+               AND film_id <> :film_id
+             ORDER BY position ASC'
+        );
+        $remainingQuery->bindValue(':user_id', $userId, PDO::PARAM_INT);
+        $remainingQuery->bindValue(':film_id', $filmId, PDO::PARAM_INT);
+        $remainingQuery->execute();
+
+        $remainingFilmIds = array_map('intval', array_column($remainingQuery->fetchAll(), 'film_id'));
+
+        $deleteAll = $connection->prepare('DELETE FROM user_favorite_films WHERE user_id = :user_id');
+        $deleteAll->bindValue(':user_id', $userId, PDO::PARAM_INT);
+        $deleteAll->execute();
+
+        if ($remainingFilmIds) {
+            $insert = $connection->prepare(
+                'INSERT INTO user_favorite_films (user_id, film_id, position)
+                 VALUES (:user_id, :film_id, :position)'
+            );
+
+            foreach (array_slice($remainingFilmIds, 0, 4) as $index => $remainingFilmId) {
+                $insert->bindValue(':user_id', $userId, PDO::PARAM_INT);
+                $insert->bindValue(':film_id', $remainingFilmId, PDO::PARAM_INT);
+                $insert->bindValue(':position', $index + 1, PDO::PARAM_INT);
+                $insert->execute();
+            }
+        }
+
+        return true;
     }
 
     public function getUserFilmsForFavoriteSelection(int $userId, int $limit = 100): array

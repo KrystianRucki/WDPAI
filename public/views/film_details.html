@@ -69,7 +69,8 @@ include __DIR__ . '/partials/navigation.html';
 ?>
     <main class="relative z-10 ml-64 min-h-screen w-[calc(100%-16rem)] overflow-hidden bg-background" style="margin-left: 16rem; width: calc(100% - 16rem);">
       <?php if ($backdrop): ?>
-      <div class="pointer-events-none absolute inset-x-0 top-0 h-[520px]" style="background-image: linear-gradient(90deg, rgba(19,19,19,.88) 0%, rgba(19,19,19,.58) 42%, rgba(19,19,19,.86) 100%), linear-gradient(to bottom, rgba(19,19,19,.05), #131313 96%), url('<?= e_film_details($backdrop); ?>'); background-size: cover; background-position: center top;"></div>
+      <div class="pointer-events-none absolute inset-x-0 top-0 h-[560px]" style="background-image: linear-gradient(90deg, rgba(19,19,19,.95) 0%, rgba(19,19,19,.58) 48%, rgba(19,19,19,.92) 100%), linear-gradient(to bottom, rgba(19,19,19,.02) 0%, rgba(19,19,19,.42) 54%, #131313 100%), url('<?= e_film_details($backdrop); ?>'); background-size: cover; background-position: center 22%;"></div>
+      <div class="pointer-events-none absolute inset-x-0 top-0 h-[560px]" style="background: radial-gradient(circle at 18% 42%, rgba(255,215,155,.14), transparent 34%), radial-gradient(circle at 72% 18%, rgba(189,244,255,.08), transparent 28%);"></div>
       <?php endif; ?>
 
       <div class="relative z-10 mx-auto max-w-[1180px] px-8 pb-24 pt-28">
@@ -77,7 +78,7 @@ include __DIR__ . '/partials/navigation.html';
         <div class="mb-6 rounded-2xl border border-error/35 bg-error/10 p-4 text-error"><?= e_film_details($tmdbError); ?></div>
         <?php endif; ?>
 
-        <section class="flex flex-col gap-7 rounded-3xl border border-outline-variant/15 bg-surface-container-low/85 p-6 shadow-[0_24px_60px_rgba(0,0,0,0.45)] backdrop-blur-sm md:flex-row md:items-end" <?php if ($backdrop): ?>style="background-image: linear-gradient(90deg, rgba(28,27,31,.94), rgba(28,27,31,.72)), url('<?= e_film_details($backdrop); ?>'); background-size: cover; background-position: center;"<?php endif; ?>>
+        <section class="flex flex-col gap-7 rounded-3xl border border-outline-variant/15 bg-surface-container-low/80 p-6 shadow-[0_24px_60px_rgba(0,0,0,0.45)] backdrop-blur-md md:flex-row md:items-end">
           <div class="shrink-0 overflow-hidden rounded-2xl border border-outline-variant/20 bg-surface-container-high poster-shadow" style="width: 138px; height: 207px; min-width: 138px; max-width: 138px;">
             <img alt="<?= e_film_details($title); ?> poster" class="block h-full w-full object-cover" style="width: 138px; height: 207px; object-fit: cover;" src="<?= e_film_details($poster); ?>" />
           </div>
