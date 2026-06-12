@@ -96,6 +96,7 @@ final class Routing
             'api-lists-add-film' => [ListsController::class, 'addFilm'],
             'api-lists-reorder' => [ListsController::class, 'reorder'],
             'api-lists-remove-film' => [ListsController::class, 'removeFilm'],
+            'api-lists-delete' => [ListsController::class, 'delete'],
             'api-watchlist-remove' => [TmdbController::class, 'removeFromWatchlist'],
             'api-watchlist-add' => [TmdbController::class, 'addToWatchlist'],
             'api-film-mark-watched' => [TmdbController::class, 'markWatchedOnly'],

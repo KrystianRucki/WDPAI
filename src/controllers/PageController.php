@@ -51,6 +51,7 @@ final class PageController extends AppController
                 'friendLogs' => $filmsRepository->getFriendsRecentLogs($currentUserId, 3),
             ],
             'feed_reviews' => $this->feedReviewsVariables($reviewsRepository),
+            'feed_lists' => $this->feedListsVariables($listsRepository),
             'new_from_friends' => [
                 'friendLogs' => $filmsRepository->getFriendsRecentLogs($currentUserId, 30),
             ],
@@ -84,6 +85,15 @@ final class PageController extends AppController
 
 
 
+
+
+    private function feedListsVariables(ListsRepository $listsRepository): array
+    {
+        return [
+            'publicLists' => $listsRepository->getPublicLists(40),
+            'publicListsTotal' => $listsRepository->countPublicLists(),
+        ];
+    }
 
     private function feedReviewsVariables(ReviewsRepository $reviewsRepository): array
     {

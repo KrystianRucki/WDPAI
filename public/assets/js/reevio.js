@@ -1621,3 +1621,61 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 });
+
+
+
+/* Profile list delete */
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll("[data-delete-list]").forEach((button) => {
+    if (button.dataset.reevioDeleteReady === "1") return;
+    button.dataset.reevioDeleteReady = "1";
+
+    button.addEventListener("click", async (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+
+      const listId = Number(button.dataset.listId);
+      if (!listId || button.dataset.loading === "1") return;
+
+      const confirmed = window.confirm("Delete this list?");
+      if (!confirmed) return;
+
+      const previous = button.innerHTML;
+      button.dataset.loading = "1";
+      button.disabled = true;
+      button.innerHTML = '<span class="material-symbols-outlined text-[15px]">hourglass_top</span>Deleting';
+
+      try {
+        const response = await fetch("/api-lists-delete", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+          },
+          body: JSON.stringify({ list_id: listId })
+        });
+
+        const payload = await response.json().catch(() => ({}));
+
+        if (!response.ok || !payload.success) {
+          throw new Error(payload.error || payload.message || "Could not delete list.");
+        }
+
+        const card = button.closest("[data-profile-list-card]");
+        if (card) card.remove();
+
+        const total = document.querySelector("[data-profile-lists-total]");
+        if (total) {
+          const current = Number(String(total.textContent || "0").replace(/\s/g, "")) || 0;
+          total.textContent = String(Math.max(0, current - 1));
+        }
+      } catch (error) {
+        alert(error.message || "Could not delete list.");
+        button.dataset.loading = "0";
+        button.disabled = false;
+        button.innerHTML = previous;
+      }
+    });
+  });
+});
+

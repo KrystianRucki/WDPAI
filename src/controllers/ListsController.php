@@ -178,6 +178,49 @@ final class ListsController extends AppController
         }
     }
 
+
+    public function delete(): void
+    {
+        if (!$this->requireLogin()) {
+            return;
+        }
+
+        $data = $this->getJsonInput();
+        $listId = (int) ($data['list_id'] ?? 0);
+
+        if ($listId <= 0) {
+            $this->json([
+                'success' => false,
+                'error' => 'Invalid list id.',
+            ], 422);
+            return;
+        }
+
+        try {
+            $deleted = (new ListsRepository())->deleteUserList((int) $_SESSION['user_id'], $listId);
+
+            if (!$deleted) {
+                $this->json([
+                    'success' => false,
+                    'error' => 'List was not deleted.',
+                ], 404);
+                return;
+            }
+
+            $this->json([
+                'success' => true,
+                'deleted' => true,
+                'list_id' => $listId,
+                'message' => 'List deleted.',
+            ]);
+        } catch (Throwable $exception) {
+            $this->json([
+                'success' => false,
+                'error' => 'Could not delete list.',
+            ], 500);
+        }
+    }
+
     private function booleanValue(mixed $value, bool $default = false): bool
     {
         if ($value === null) {
