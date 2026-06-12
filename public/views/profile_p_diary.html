@@ -182,14 +182,14 @@ include __DIR__ . '/partials/navigation.html';
                     </div>
 
                     <p class="font-body text-sm leading-relaxed text-on-surface-variant">
-                      <?php if (!empty($entry['notes'])): ?>
-                        <?= reevio_diary_e($entry['notes']); ?>
+                      <?php if (!empty($entry['review_id']) && !empty($entry['is_rewatch'])): ?>
+                        Rewatch logged with review.
                       <?php elseif (!empty($entry['review_id'])): ?>
                         Logged with review.
                       <?php elseif (!empty($entry['is_rewatch'])): ?>
-                        Rewatched.
+                        Rewatch logged.
                       <?php else: ?>
-                        Logged without review.
+                        Logged.
                       <?php endif; ?>
                     </p>
                   </div>

@@ -76,7 +76,7 @@ include __DIR__ . '/partials/navigation.html';
           </aside>
 
           <section class="rounded-3xl border border-outline-variant/15 bg-surface-container-low p-6 ambient-shadow">
-            <div class="grid gap-4">
+            <div class="grid gap-4 md:grid-cols-2">
               <button
                 id="log-date-button"
                 class="flex items-center justify-between rounded-2xl border border-outline-variant/15 bg-surface-container-lowest p-5 text-left transition-colors hover:bg-surface-container-high"
@@ -91,6 +91,22 @@ include __DIR__ . '/partials/navigation.html';
                 </div>
                 <span class="material-symbols-outlined text-on-surface-variant">chevron_right</span>
               </button>
+
+              <div class="flex items-center justify-between rounded-2xl border border-outline-variant/15 bg-surface-container-lowest p-5">
+                <div>
+                  <p class="font-label text-xs font-bold uppercase tracking-wider text-on-surface-variant">Rewatch</p>
+                  <p id="log-rewatch-label" class="mt-2 font-body text-base text-on-surface">No</p>
+                </div>
+                <button
+                  id="log-rewatch-toggle"
+                  class="relative h-7 w-14 rounded-full bg-surface-container-highest transition-colors"
+                  type="button"
+                  aria-label="Rewatch toggle"
+                  aria-pressed="false"
+                >
+                  <span id="log-rewatch-knob" class="absolute left-1 top-1 h-5 w-5 rounded-full bg-on-surface-variant shadow-sm transition-all"></span>
+                </button>
+              </div>
             </div>
 
             <div id="log-rating-panel" class="mt-6 rounded-2xl border border-outline-variant/15 bg-surface-container-lowest p-6 text-center">

@@ -27,7 +27,6 @@ final class DiaryRepository extends Repository
                 de.film_id,
                 de.watched_on,
                 de.rating AS log_rating,
-                de.notes,
                 de.is_rewatch,
                 de.is_public,
                 de.created_at AS logged_at,
@@ -76,7 +75,6 @@ final class DiaryRepository extends Repository
                 de.film_id,
                 de.watched_on,
                 de.rating AS log_rating,
-                de.notes,
                 de.is_rewatch,
                 de.is_public,
                 de.created_at AS logged_at,
@@ -142,6 +140,7 @@ final class DiaryRepository extends Repository
         int $filmId,
         string $watchedOn,
         ?float $rating,
+        bool $isRewatch,
         string $reviewContent
     ): array {
         $connection = $this->connection();
@@ -149,17 +148,19 @@ final class DiaryRepository extends Repository
 
         try {
             $logQuery = $connection->prepare(
-                'INSERT INTO diary_entries (user_id, film_id, watched_on, rating, notes, is_rewatch, is_public)
-                 VALUES (:user_id, :film_id, :watched_on, :rating, NULL, FALSE, TRUE)
+                'INSERT INTO diary_entries (user_id, film_id, watched_on, rating, is_rewatch, is_public)
+                 VALUES (:user_id, :film_id, :watched_on, :rating, :is_rewatch, TRUE)
                  ON CONFLICT (user_id, film_id, watched_on)
                  DO UPDATE SET
                     rating = EXCLUDED.rating,
+                    is_rewatch = EXCLUDED.is_rewatch,
                     is_public = TRUE
                  RETURNING id'
             );
             $logQuery->bindValue(':user_id', $userId, PDO::PARAM_INT);
             $logQuery->bindValue(':film_id', $filmId, PDO::PARAM_INT);
             $logQuery->bindValue(':watched_on', $watchedOn);
+            $logQuery->bindValue(':is_rewatch', $isRewatch, PDO::PARAM_BOOL);
             if ($rating === null) {
                 $logQuery->bindValue(':rating', null, PDO::PARAM_NULL);
             } else {

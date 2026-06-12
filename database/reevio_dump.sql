@@ -168,7 +168,6 @@ CREATE TABLE diary_entries (
     film_id INTEGER NOT NULL REFERENCES films(id) ON DELETE CASCADE,
     watched_on DATE NOT NULL,
     rating NUMERIC(2,1) CHECK (rating >= 0 AND rating <= 5),
-    notes TEXT,
     is_rewatch BOOLEAN NOT NULL DEFAULT FALSE,
     is_public BOOLEAN NOT NULL DEFAULT TRUE,
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -351,7 +350,6 @@ SELECT
     de.created_at,
     de.watched_on,
     de.rating,
-    de.notes,
     u.id AS user_id,
     u.username,
     f.id AS film_id,
@@ -538,12 +536,12 @@ INSERT INTO list_items (list_id, film_id, position, note) VALUES
 (3,2,1,'Emotional precision.'),(3,3,2,'Wild design.'),
 (4,1,1,'The big one.');
 
-INSERT INTO diary_entries (user_id, film_id, watched_on, rating, notes, is_rewatch, is_public) VALUES
-(2,1,CURRENT_DATE,5.0,'Huge cinema experience.',FALSE,TRUE),
-(2,10,CURRENT_DATE - 1,5.0,'A beautiful, melancholic film about time.',FALSE,TRUE),
-(3,2,CURRENT_DATE - 1,4.5,'Quiet and devastating.',FALSE,TRUE),
-(5,4,CURRENT_DATE - 2,4.8,'Neon rain and loneliness.',TRUE,TRUE),
-(8,3,CURRENT_DATE - 3,4.7,'Unhinged in the best way.',FALSE,TRUE);
+INSERT INTO diary_entries (user_id, film_id, watched_on, rating, is_rewatch, is_public) VALUES
+(2,1,CURRENT_DATE,5.0,FALSE,TRUE),
+(2,10,CURRENT_DATE - 1,5.0,FALSE,TRUE),
+(3,2,CURRENT_DATE - 1,4.5,FALSE,TRUE),
+(5,4,CURRENT_DATE - 2,4.8,TRUE,TRUE),
+(8,3,CURRENT_DATE - 3,4.7,FALSE,TRUE);
 
 INSERT INTO watchlist (user_id, film_id) VALUES
 (2,2),(2,3),(2,4),(2,7),(3,1),(5,1),(8,10),(11,9);

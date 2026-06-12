@@ -170,21 +170,7 @@ include __DIR__ . '/partials/navigation.html';
                 </p>
               </div>
             </div>
-
-            <div class="mb-6 rounded-2xl border border-outline-variant/15 bg-surface-container-lowest p-5">
-              <h2 class="mb-3 font-headline text-xl font-black tracking-tight text-on-surface">Notes</h2>
-              <?php if (!empty($logEntry['notes'])): ?>
-              <p class="text-base leading-relaxed text-on-surface-variant italic">
-                “<?= reevio_log_e($logEntry['notes']); ?>”
-              </p>
-              <?php else: ?>
-              <p class="text-base leading-relaxed text-on-surface-variant">
-                No notes added to this log.
-              </p>
-              <?php endif; ?>
-            </div>
-
-            <?php if (!empty($logEntry['review_id'])): ?>
+<?php if (!empty($logEntry['review_id'])): ?>
             <a href="/review-details?id=<?= (int) $logEntry['review_id']; ?>" class="block rounded-2xl border border-primary/25 bg-surface-container-lowest p-5 transition-colors hover:border-primary/60 hover:bg-surface-container-high">
               <p class="mb-2 inline-flex items-center gap-2 font-label text-xs font-bold uppercase tracking-wider text-primary">
                 <span class="material-symbols-outlined text-[17px]">rate_review</span>

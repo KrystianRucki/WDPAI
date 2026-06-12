@@ -54,6 +54,7 @@ final class DiaryController extends AppController
         $filmId = (int) ($data['film_id'] ?? 0);
         $watchedOn = trim((string) ($data['watched_on'] ?? ''));
         $rating = $data['rating'] ?? null;
+        $isRewatch = (bool) ($data['is_rewatch'] ?? false);
         $review = trim((string) ($data['review'] ?? ''));
 
         if (!$currentUser || $filmId <= 0) {
@@ -96,6 +97,7 @@ final class DiaryController extends AppController
                 $filmId,
                 $watchedOn,
                 $ratingValue,
+                $isRewatch,
                 $review
             );
 

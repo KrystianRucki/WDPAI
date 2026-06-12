@@ -516,6 +516,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const filmId = Number(form.dataset.filmId);
   const dateButton = document.querySelector("#log-date-button");
   const dateLabel = document.querySelector("#log-date-label");
+  const rewatchToggle = document.querySelector("#log-rewatch-toggle");
+  const rewatchKnob = document.querySelector("#log-rewatch-knob");
+  const rewatchLabel = document.querySelector("#log-rewatch-label");
   const ratingControl = document.querySelector("#log-rating-control");
   const ratingLabel = document.querySelector("#log-rating-label");
   const reviewInput = document.querySelector("#log-review");
@@ -536,6 +539,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let selectedDate = parseIsoDate(form.dataset.initialDate) || today;
   let calendarView = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1);
   let rating = Number(form.dataset.initialRating || 3.5);
+  let isRewatch = false;
 
   function parseIsoDate(value) {
     if (!value) return null;
@@ -572,6 +576,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const isToday = toIsoDate(selectedDate) === toIsoDate(today);
     dateLabel.textContent = isToday ? "Today" : formatDate(selectedDate);
+  }
+
+  function renderRewatch() {
+    if (rewatchLabel) rewatchLabel.textContent = isRewatch ? "Yes" : "No";
+
+    if (rewatchToggle) {
+      rewatchToggle.setAttribute("aria-pressed", isRewatch ? "true" : "false");
+      rewatchToggle.classList.toggle("bg-primary", isRewatch);
+      rewatchToggle.classList.toggle("bg-surface-container-highest", !isRewatch);
+    }
+
+    if (rewatchKnob) {
+      rewatchKnob.className = isRewatch
+        ? "absolute right-1 top-1 h-5 w-5 rounded-full bg-on-primary shadow-sm transition-all"
+        : "absolute left-1 top-1 h-5 w-5 rounded-full bg-on-surface-variant shadow-sm transition-all";
+    }
   }
 
   function renderRating() {
@@ -687,6 +707,11 @@ document.addEventListener("DOMContentLoaded", () => {
     renderCalendar();
   });
 
+  rewatchToggle?.addEventListener("click", () => {
+    isRewatch = !isRewatch;
+    renderRewatch();
+  });
+
   ratingControl?.querySelectorAll("[data-rating-star]").forEach((button) => {
     button.addEventListener("click", (event) => {
       const starNumber = Number(button.dataset.ratingStar);
@@ -718,6 +743,7 @@ document.addEventListener("DOMContentLoaded", () => {
           film_id: filmId,
           watched_on: toIsoDate(selectedDate),
           rating,
+          is_rewatch: isRewatch,
           review: reviewInput ? reviewInput.value.trim() : ""
         })
       });
@@ -738,6 +764,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   renderDate();
+  renderRewatch();
   renderRating();
 });
 
