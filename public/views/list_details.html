@@ -1,271 +1,194 @@
+<?php
+$listDetails = $listDetails ?? null;
+$listItems = $listItems ?? [];
+$profileUser = $profileUser ?? $currentUser ?? [];
+
+if (!function_exists('reevio_list_e')) {
+    function reevio_list_e($value): string
+    {
+        return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
+    }
+}
+
+if (!function_exists('reevio_list_poster')) {
+    function reevio_list_poster(?string $poster): string
+    {
+        return $poster ?: '/public/assets/img/movie_placeholder.svg';
+    }
+}
+
+if (!function_exists('reevio_list_date')) {
+    function reevio_list_date($date): string
+    {
+        if (!$date) {
+            return 'Recently';
+        }
+
+        try {
+            return (new DateTimeImmutable((string) $date))->format('M j, Y');
+        } catch (Throwable) {
+            return 'Recently';
+        }
+    }
+}
+
+if (!function_exists('reevio_list_runtime')) {
+    function reevio_list_runtime($minutes): string
+    {
+        $minutes = (int) $minutes;
+
+        if ($minutes <= 0) {
+            return 'Runtime unavailable';
+        }
+
+        $hours = intdiv($minutes, 60);
+        $rest = $minutes % 60;
+
+        return $hours > 0 ? $hours . 'h ' . $rest . 'm' : $rest . 'm';
+    }
+}
+
+$isOwnList = $listDetails && (int) ($listDetails['user_id'] ?? 0) === (int) ($profileUser['id'] ?? 0);
+?>
 <!doctype html>
 <html class="dark" lang="en">
   <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Neon Drenched Masterpieces - Reevio</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;600;800&amp;family=Manrope:wght@400;500;700&amp;display=swap"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
-      rel="stylesheet"
-    />
-    <link href="/public/assets/css/reevio.css" rel="stylesheet" /></head>
-  <body
-    class="font-body antialiased min-h-screen overflow-x-hidden bg-surface selection:bg-primary/30 selection:text-primary reevio-page-list_details"
-  >
+    <title><?= $listDetails ? reevio_list_e($listDetails['title']) . ' - Reevio' : 'List not found - Reevio'; ?></title>
+    <link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;700;800;900&family=Manrope:wght@400;500;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <link href="/public/assets/css/reevio.css" rel="stylesheet" />
+  </head>
+
+  <body class="bg-surface text-on-surface antialiased overflow-x-hidden reevio-page-list_details">
+    <div class="cinematic-glow"></div>
 <?php
 $activeNav = 'lists';
 $showAdminLink = ($showAdminLink ?? false);
 include __DIR__ . '/partials/navigation.html';
 ?>
-<!-- Main Content -->
-    <main
-      class="relative z-10 ml-64 min-h-screen w-[calc(100%-16rem)] overflow-y-auto bg-surface"
-    >
-      <!-- Ambient Background Glow -->
-      <div
-        class="absolute top-0 left-0 w-full h-[420px] bg-gradient-to-b from-secondary/5 via-primary/5 to-transparent pointer-events-none"
-      ></div>
-      <div class="max-w-[1120px] px-4 lg:px-5 xl:px-6 pt-[8.7rem] pb-24 relative z-10">
-        <!-- Header Section -->
-        <header class="mb-10 pr-44">
-          <div
-            class="flex flex-col md:flex-row md:items-end justify-between gap-8"
-          >
-            <div class="max-w-2xl">
-              <div class="flex items-center gap-3 mb-4">
-                <button
-                  aria-label="Back to Community Lists"
-                  class="flex items-center gap-2 text-primary hover:text-primary-fixed-dim transition-colors group"
-                >
-                  <span class="material-symbols-outlined text-[20px]"
-                    >arrow_back</span
-                  ><span class="font-label text-sm font-medium">Back</span>
-                </button>
-                <div class="w-px h-4 bg-outline-variant/30 mx-1"></div>
-                <span
-                  class="text-on-surface-variant font-label text-sm flex items-center gap-1"
-                  ><span class="material-symbols-outlined text-[16px]"
-                    >movie_filter</span
-                  >
-                  9 films</span
-                >
-              </div>
-              <h1
-                class="font-headline text-4xl md:text-5xl font-extrabold text-on-surface leading-tight mb-4 tracking-tight"
-              >
-                Neon Drenched <br /><span
-                  class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary"
-                  >Masterpieces</span
-                >
-              </h1>
-              <p
-                class="font-body text-on-surface-variant text-base leading-relaxed mb-6 max-w-3xl"
-              >
-                A cinematic exploration of urban isolation, rain-slicked
-                streets, and profound existential dread, all bathed in the
-                electric glow of city nights.
+    <main class="relative z-10 ml-64 min-h-screen w-[calc(100%-16rem)] px-4 pb-24 pt-[8.7rem] lg:px-5 xl:px-6">
+      <div class="mx-auto max-w-[1120px]">
+        <a href="<?= $isOwnList ? '/profile-lists' : '/users-lists'; ?>" class="mb-8 inline-flex items-center gap-2 rounded-full border border-outline-variant/20 bg-surface-container-low/70 px-4 py-2.5 font-label text-sm font-bold text-primary transition-colors hover:bg-surface-container-high hover:text-secondary">
+          <span class="material-symbols-outlined text-[20px]">arrow_back</span>
+          Back to lists
+        </a>
+
+        <?php if (!$listDetails): ?>
+        <section class="rounded-3xl border border-outline-variant/15 bg-surface-container-low p-8 ambient-shadow">
+          <p class="font-headline text-3xl font-black text-on-surface">List not found</p>
+          <p class="mt-3 text-sm leading-relaxed text-on-surface-variant">
+            This list does not exist or you do not have access to it.
+          </p>
+        </section>
+        <?php else: ?>
+        <header class="mb-8 rounded-3xl border border-outline-variant/15 bg-surface-container-low p-7 ambient-shadow">
+          <div class="flex flex-wrap items-start justify-between gap-6">
+            <div class="max-w-3xl">
+              <p class="mb-3 font-label text-xs font-bold uppercase tracking-[0.28em] text-secondary">
+                @<?= reevio_list_e($listDetails['username'] ?? 'user'); ?> collection
               </p>
-              <div class="flex items-center gap-4 text-sm font-label">
-                <img
-                  alt="Curator Avatar"
-                  class="w-8 h-8 rounded-full ghost-border"
-                  data-alt="A small circular portrait of a man in shadows with amber highlights, cinematic lighting."
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuCj2EGdGvFPYbFR6qTM3gBCJ0ZXFfiXxFNgkCkHBUXqMWHuBd6xxzADLE5ww19GYJ2vefdBHhYQYIcW0ad4VrujwDTKLDML9v-fJIe0rkQquxHZjAJNx7X1WwacNWiSOxCPIkNrfG5K1TGMNvmlUlxLHH6m7dINCCoto-fUlldS01JoiiKYQMDjJx_NZjobxQzlIHIiev_UWI4_fGNg84x7bwV1p-yzC66HaJc-C7E_4JqM3Y7uPLgg2Jke6gtDQC8glZ2NXq8viuJE"
-                />
-                <span class="text-on-surface"
-                  >Curated by
-                  <span class="text-primary hover:underline cursor-pointer"
-                    >@cinephile_max</span
-                  ></span
-                >
-              </div>
+
+              <h1 class="font-headline text-[40px] font-black tracking-tight text-on-surface">
+                <?= reevio_list_e($listDetails['title'] ?? 'Untitled list'); ?>
+              </h1>
+
+              <p class="mt-4 max-w-2xl text-base leading-relaxed text-on-surface-variant">
+                <?= reevio_list_e($listDetails['description'] ?: 'No description yet.'); ?>
+              </p>
             </div>
-            <div class="flex items-center gap-3">
-              <button
-                class="bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-label font-medium py-2.5 px-5 rounded-full flex items-center gap-2 transition-colors ghost-border"
-              >
-                <span class="material-symbols-outlined text-[20px]">share</span>
-                Share
-              </button>
+
+            <div class="flex flex-wrap gap-2">
+              <span class="inline-flex items-center gap-1 rounded-full border border-outline-variant/20 bg-surface-container-lowest px-3 py-1.5 font-label text-xs font-bold uppercase tracking-wider text-on-surface-variant">
+                <span class="material-symbols-outlined text-[15px]">movie</span>
+                <?= (int) ($listDetails['films_count'] ?? count($listItems)); ?> films
+              </span>
+
+              <span class="inline-flex items-center gap-1 rounded-full border border-outline-variant/20 bg-surface-container-lowest px-3 py-1.5 font-label text-xs font-bold uppercase tracking-wider text-on-surface-variant">
+                <span class="material-symbols-outlined text-[15px]"><?= !empty($listDetails['is_public']) ? 'public' : 'lock'; ?></span>
+                <?= !empty($listDetails['is_public']) ? 'Public' : 'Private'; ?>
+              </span>
+
+              <?php if (!empty($listDetails['is_ranked'])): ?>
+              <span class="inline-flex items-center gap-1 rounded-full border border-secondary/25 bg-secondary/10 px-3 py-1.5 font-label text-xs font-bold uppercase tracking-wider text-secondary">
+                <span class="material-symbols-outlined text-[15px]">format_list_numbered</span>
+                Ranked
+              </span>
+              <?php endif; ?>
             </div>
           </div>
+
+          <p class="mt-6 font-label text-xs font-bold uppercase tracking-wider text-on-surface-variant">
+            Updated <?= reevio_list_e(reevio_list_date($listDetails['updated_at'] ?? $listDetails['created_at'] ?? null)); ?>
+          </p>
         </header>
-        <!-- Film Grid -->
-        <section
-          class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5 xl:gap-6 gap-y-10"
-        >
-          <!-- Movie Item 1 -->
-          <article
-            class="group relative flex flex-col gap-3 poster-hover transition-transform duration-300"
-          >
-            <div
-              class="relative aspect-[2/3] rounded-xl overflow-hidden ambient-shadow bg-surface-container-highest"
-            >
-              <img
-                alt="Movie Poster"
-                class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                data-alt="A vertically oriented movie poster featuring a dark, rain-soaked cyberpunk street corner illuminated by a glaring neon red sign. The scene is incredibly moody, captured with a deep charcoal background and vibrant, high-contrast light leaks typical of noir editorial aesthetics. The typography on the poster is sharp, modern, and minimal."
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuD-r88jgze_iSdD_0s-VnRuHG3E4yrA0MgAyoDUIGxCnY3nkfC44dWqLlE9XKEUOeLQE7HzyBnlt4Kwv4FYj-I4zzH2wQLPaub-wQ4kHOLhGRinhSKteYXchMQCb5swVp1DAKd766z89gSGpX4t2grt4yDhdzDiAhtQgw8PaSz3jrsv854O0OswL7FzG5Pv3AKdyjqbC9ho9t3op-AaZtHorEWomt51JuynphdG6LL5tvRPvzKWQBhJBI28tpz2u8MR4oO60WbCCQWE"
-              />
-              <div
-                class="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent opacity-80"
-              ></div>
-              <button
-                class="absolute top-3 right-3 w-8 h-8 rounded-full glass-panel flex items-center justify-center text-on-surface hover:text-primary transition-colors opacity-0 group-hover:opacity-100"
-              >
-                <span class="material-symbols-outlined text-[18px]">add</span>
-              </button>
-            </div>
-            <div>
-              <h3
-                class="font-headline font-bold text-on-surface text-lg truncate group-hover:text-primary transition-colors"
-              >
-                Blade Runner 2049
-              </h3>
-              <p class="font-label text-on-surface-variant text-xs mt-1">
-                2017 • Denis Villeneuve
-              </p>
-            </div>
-          </article>
-          <!-- Movie Item 2 -->
-          <article
-            class="group relative flex flex-col gap-3 poster-hover transition-transform duration-300"
-          >
-            <div
-              class="relative aspect-[2/3] rounded-xl overflow-hidden ambient-shadow bg-surface-container-highest"
-            >
-              <img
-                alt="Movie Poster"
-                class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                data-alt="A portrait movie poster showing a lone figure walking down an empty urban alleyway at night. The scene is bathed in a distinct, moody neon pink and teal glow reflecting off wet pavement. The overall style is high-end editorial noir, with deep blacks dominating the frame and subtle typography integrated into the shadows."
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuD0wZIxNQrfgqOlFZm6vLRWHTHOHUY7v2olawM_gsS7SbO3Y4aryCj0d1r2Z8IgFE0el8zI3EiCa2GEF3Kitos7Tdfj3eF8sfEgkqbPmGNhoRHFQAqaG6qEuvk1kZK-u8uvNqJMvbIe7QVZCqYv0M8d7iB9Vbemu3VLlzqTvJA5RGOKPdANLLE5CX3BBfRg2HB6TzoY7-4jw7vsre1ADTcTeGrvpjtlGicuLfxlsOkjLRxOyRffjGoa1N32cRzaVVCGCo3V-Fo1xcAf"
-              />
-              <div
-                class="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent opacity-80"
-              ></div>
-              <button
-                class="absolute top-3 right-3 w-8 h-8 rounded-full glass-panel flex items-center justify-center text-on-surface hover:text-primary transition-colors opacity-0 group-hover:opacity-100"
-              >
-                <span class="material-symbols-outlined text-[18px]">add</span>
-              </button>
-            </div>
-            <div>
-              <h3
-                class="font-headline font-bold text-on-surface text-lg truncate group-hover:text-primary transition-colors"
-              >
-                Drive
-              </h3>
-              <p class="font-label text-on-surface-variant text-xs mt-1">
-                2011 • Nicolas Winding Refn
-              </p>
+
+        <?php if ($listItems): ?>
+        <section class="grid gap-4">
+          <?php foreach ($listItems as $index => $film): ?>
+          <article data-href="/film-details?id=<?= (int) $film['film_id']; ?>" class="group rounded-3xl border border-outline-variant/15 bg-surface-container-low p-5 ambient-shadow transition-colors hover:bg-surface-container-high">
+            <div class="grid gap-5 md:grid-cols-[92px_minmax(0,1fr)]">
+              <a href="/film-details?id=<?= (int) $film['film_id']; ?>" class="block w-[92px] overflow-hidden rounded-xl poster-shadow">
+                <img
+                  src="<?= reevio_list_e(reevio_list_poster($film['poster_url'] ?? null)); ?>"
+                  alt="<?= reevio_list_e($film['title'] ?? 'Film'); ?> poster"
+                  class="aspect-[2/3] w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+              </a>
+
+              <div class="min-w-0">
+                <div class="mb-2 flex flex-wrap items-center gap-3">
+                  <?php if (!empty($listDetails['is_ranked'])): ?>
+                  <span class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-primary font-headline text-sm font-black text-on-primary">
+                    <?= (int) ($film['position'] ?? ($index + 1)); ?>
+                  </span>
+                  <?php endif; ?>
+
+                  <a href="/film-details?id=<?= (int) $film['film_id']; ?>" class="font-headline text-2xl font-black text-on-surface transition-colors group-hover:text-primary">
+                    <?= reevio_list_e($film['title'] ?? 'Untitled film'); ?>
+                  </a>
+
+                  <?php if (!empty($film['release_year'])): ?>
+                  <span class="font-label text-sm text-on-surface-variant"><?= reevio_list_e($film['release_year']); ?></span>
+                  <?php endif; ?>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-4 font-label text-xs font-bold uppercase tracking-wider text-on-surface-variant">
+                  <?php if (!empty($film['director'])): ?>
+                  <span>Directed by <?= reevio_list_e($film['director']); ?></span>
+                  <?php endif; ?>
+                  <span><?= reevio_list_e(reevio_list_runtime($film['runtime_minutes'] ?? 0)); ?></span>
+                  <?php if (!empty($film['genres_text'])): ?>
+                  <span><?= reevio_list_e($film['genres_text']); ?></span>
+                  <?php endif; ?>
+                </div>
+
+                <p class="mt-4 line-clamp-2 text-sm leading-relaxed text-on-surface-variant">
+                  <?= reevio_list_e($film['description'] ?: 'No film description available.'); ?>
+                </p>
+
+                <?php if (!empty($film['note'])): ?>
+                <p class="mt-4 rounded-2xl border border-outline-variant/15 bg-surface-container-lowest p-4 text-sm italic leading-relaxed text-on-surface-variant">
+                  “<?= reevio_list_e($film['note']); ?>”
+                </p>
+                <?php endif; ?>
+              </div>
             </div>
           </article>
-          <!-- Movie Item 3 -->
-          <article
-            class="group relative flex flex-col gap-3 poster-hover transition-transform duration-300"
-          >
-            <div
-              class="relative aspect-[2/3] rounded-xl overflow-hidden ambient-shadow bg-surface-container-highest"
-            >
-              <img
-                alt="Movie Poster"
-                class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                data-alt="Movie poster design featuring an abstract, blurred cityscape at night. Prominent streaks of amber and cyan light cut through a profound darkness, suggesting motion and urban isolation. The visual language is premium, asymmetric, and heavily favors the dark mode cinematic lens with barely legible, sophisticated sans-serif text overlays."
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuAa7RDERunysB8799U8_hsh2XifMrhxMxtqUuUSopIED9PEEmlb1DPmopitAJY4QP8xfJ_yogaAmlCNYESTmYYX41BTO_-hDL2Bj2rTwvTIl9PljAYfMPMb2wPFjpOl1hto_EPsXfiCTd_3cJvZj08lC1E8RyN3Wt40ojNy0v2QLoiMLupK3Qg2RCTGR1tlyCPVv6jU--3PiCTj-zxrZ4PThwvEulFaWnH24QKcfj8w6nBGHD961rHGBwBKZtmAY-l868zYClmkRIqR"
-              />
-              <div
-                class="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent opacity-80"
-              ></div>
-              <button
-                class="absolute top-3 right-3 w-8 h-8 rounded-full glass-panel flex items-center justify-center text-on-surface hover:text-primary transition-colors opacity-0 group-hover:opacity-100"
-              >
-                <span class="material-symbols-outlined text-[18px]">add</span>
-              </button>
-            </div>
-            <div>
-              <h3
-                class="font-headline font-bold text-on-surface text-lg truncate group-hover:text-primary transition-colors"
-              >
-                Chungking Express
-              </h3>
-              <p class="font-label text-on-surface-variant text-xs mt-1">
-                1994 • Wong Kar-wai
-              </p>
-            </div>
-          </article>
-          <!-- Movie Item 4 -->
-          <article
-            class="group relative flex flex-col gap-3 poster-hover transition-transform duration-300"
-          >
-            <div
-              class="relative aspect-[2/3] rounded-xl overflow-hidden ambient-shadow bg-surface-container-highest"
-            >
-              <img
-                alt="Movie Poster"
-                class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                data-alt="A stylized movie poster focused on a glowing neon kanji sign hanging in a dark, hazy cyberpunk market. The lighting is dominated by deep amber and electric teal, contrasting sharply against a pitch-black background. The composition is off-center, leaning into an editorial, high-fashion presentation of science fiction."
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBJwNqNYFbDonfDRXvsyH5TADKGHtKrRAT6T-bssDGqUX74s0m-eNcjcbqVWNNeR3b86LYySPRFi5ZIVvDpdQREFb2Cb9X7tBJcy9ekxgAPCYqiVYhWWQng988iEtp2rtojAcwZKC4JZJfKSEKyFWCBxW3B6Z6lme3I9fxAtpc-e_gkDtPjI7zy8vJ-oil2idg8mRO3wDhRwTy4dKpLy6myGjpCuUio-XMszUHrK5X_moOe9EWpQJ9lZBSs1qXSc6Cuug0cdxUN5pXg"
-              />
-              <div
-                class="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent opacity-80"
-              ></div>
-              <button
-                class="absolute top-3 right-3 w-8 h-8 rounded-full glass-panel flex items-center justify-center text-on-surface hover:text-primary transition-colors opacity-0 group-hover:opacity-100"
-              >
-                <span class="material-symbols-outlined text-[18px]">add</span>
-              </button>
-            </div>
-            <div>
-              <h3
-                class="font-headline font-bold text-on-surface text-lg truncate group-hover:text-primary transition-colors"
-              >
-                Fallen Angels
-              </h3>
-              <p class="font-label text-on-surface-variant text-xs mt-1">
-                1995 • Wong Kar-wai
-              </p>
-            </div>
-          </article>
-          <!-- Movie Item 5 -->
-          <article
-            class="group relative flex flex-col gap-3 poster-hover transition-transform duration-300"
-          >
-            <div
-              class="relative aspect-[2/3] rounded-xl overflow-hidden ambient-shadow bg-surface-container-highest"
-            >
-              <img
-                alt="Movie Poster"
-                class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                data-alt="Portrait movie poster displaying a slick, modern sports car interior illuminated solely by the dashboard's teal neon glow. The exterior world visible through the window is a blur of dark charcoal and amber city lights. The aesthetic is extremely polished, moody, and utilizes the cinematic glassmorphism style intended for premium UI backgrounds."
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBmEFMhgNiKG3aedcmt8q4WezZYKBfhPhcWpmv0Zls7omLLE3GWwXvHIpWMz9uWEO8HyCLKoyrIw_mlxtQSUPJTU2sO32m7vnSWk0prCHVjyRoSHZKzVNrvkEW6c4bngxUNUlATy9hujPkh7zVdVrCSMhmhKitI2k3NP9g0aR2OGZ6Qq2MJz42Q_VU1vrVpzkvn_t1UuOEBWdPu29CSOhGIjLL3LAbZLqypqxfTVsHtvpPd9N0K6LjKx955HN5TiNrvSix6aVBCTcFx"
-              />
-              <div
-                class="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent opacity-80"
-              ></div>
-              <button
-                class="absolute top-3 right-3 w-8 h-8 rounded-full glass-panel flex items-center justify-center text-on-surface hover:text-primary transition-colors opacity-0 group-hover:opacity-100"
-              >
-                <span class="material-symbols-outlined text-[18px]">add</span>
-              </button>
-            </div>
-            <div>
-              <h3
-                class="font-headline font-bold text-on-surface text-lg truncate group-hover:text-primary transition-colors"
-              >
-                Thief
-              </h3>
-              <p class="font-label text-on-surface-variant text-xs mt-1">
-                1981 • Michael Mann
-              </p>
-            </div>
-          </article>
+          <?php endforeach; ?>
         </section>
+        <?php else: ?>
+        <section class="rounded-3xl border border-outline-variant/15 bg-surface-container-low p-8 ambient-shadow">
+          <p class="font-headline text-2xl font-black text-on-surface">This list is empty</p>
+          <p class="mt-3 text-sm leading-relaxed text-on-surface-variant">
+            Films added to this list will appear here.
+          </p>
+        </section>
+        <?php endif; ?>
+        <?php endif; ?>
       </div>
     </main>
-      <script src="/public/assets/js/reevio.js"></script>
-</body>
+    <script src="/public/assets/js/reevio.js"></script>
+  </body>
 </html>

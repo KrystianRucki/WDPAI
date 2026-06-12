@@ -118,4 +118,74 @@ final class ListsRepository extends Repository
     }
 
 
+
+    public function getListDetails(int $listId, int $currentUserId): ?array
+    {
+        $query = $this->connection()->prepare(
+            'SELECT
+                l.id,
+                l.user_id,
+                l.title,
+                l.description,
+                l.is_public,
+                l.is_ranked,
+                l.created_at,
+                l.updated_at,
+                u.username,
+                u.avatar_url,
+                COUNT(li.film_id) AS films_count
+             FROM lists l
+             JOIN users u ON u.id = l.user_id
+             LEFT JOIN list_items li ON li.list_id = l.id
+             WHERE l.id = :list_id
+               AND (l.is_public = TRUE OR l.user_id = :current_user_id)
+             GROUP BY l.id, u.id
+             LIMIT 1'
+        );
+        $query->bindValue(':list_id', $listId, PDO::PARAM_INT);
+        $query->bindValue(':current_user_id', $currentUserId, PDO::PARAM_INT);
+        $query->execute();
+
+        $list = $query->fetch();
+
+        return $list ?: null;
+    }
+
+    public function getListItems(int $listId, int $currentUserId): array
+    {
+        $query = $this->connection()->prepare(
+            "SELECT
+                li.position,
+                li.note,
+                li.added_at,
+                f.id AS film_id,
+                f.tmdb_id,
+                f.title,
+                f.original_title,
+                f.release_year,
+                f.director,
+                f.description,
+                f.poster_url,
+                f.poster_path,
+                f.runtime_minutes,
+                f.tmdb_vote_average,
+                COALESCE(string_agg(DISTINCT g.name, ' • ' ORDER BY g.name), '') AS genres_text
+             FROM list_items li
+             JOIN lists l ON l.id = li.list_id
+             JOIN films f ON f.id = li.film_id
+             LEFT JOIN film_genres fg ON fg.film_id = f.id
+             LEFT JOIN genres g ON g.id = fg.genre_id
+             WHERE li.list_id = :list_id
+               AND (l.is_public = TRUE OR l.user_id = :current_user_id)
+             GROUP BY li.list_id, li.film_id, li.position, li.note, li.added_at, f.id
+             ORDER BY li.position ASC, li.added_at ASC"
+        );
+        $query->bindValue(':list_id', $listId, PDO::PARAM_INT);
+        $query->bindValue(':current_user_id', $currentUserId, PDO::PARAM_INT);
+        $query->execute();
+
+        return $query->fetchAll();
+    }
+
+
 }

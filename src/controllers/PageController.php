@@ -62,6 +62,7 @@ final class PageController extends AppController
             'profile_p_diary' => $this->diaryVariables($currentUser, $diaryRepository),
             'profile_p_lists' => $this->userListsVariables($currentUser, $listsRepository),
             'log_details' => $this->logDetailsVariables($currentUser, $diaryRepository),
+            'list_details' => $this->listDetailsVariables($currentUser, $listsRepository),
             'followers' => $this->relationshipVariables('followers', $currentUser, $usersRepository),
             'following' => $this->relationshipVariables('following', $currentUser, $usersRepository),
             'users_films' => $this->userFilmsVariables($currentUser, $filmsRepository),
@@ -92,6 +93,19 @@ final class PageController extends AppController
         return [
             'profileUser' => $currentUser,
             'logEntry' => $logId > 0 ? $diaryRepository->getEntryForUser($logId, $userId) : null,
+        ];
+    }
+
+
+    private function listDetailsVariables(array $currentUser, ListsRepository $listsRepository): array
+    {
+        $listId = max(0, (int) ($_GET['id'] ?? 0));
+        $currentUserId = (int) $currentUser['id'];
+
+        return [
+            'profileUser' => $currentUser,
+            'listDetails' => $listId > 0 ? $listsRepository->getListDetails($listId, $currentUserId) : null,
+            'listItems' => $listId > 0 ? $listsRepository->getListItems($listId, $currentUserId) : [],
         ];
     }
 
