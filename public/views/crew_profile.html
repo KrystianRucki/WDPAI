@@ -87,13 +87,13 @@ include __DIR__ . '/partials/navigation.html';
           </p>
         </section>
         <?php else: ?>
-        <section class="mb-8 rounded-3xl border border-outline-variant/15 bg-surface-container-low p-6 ambient-shadow">
-          <div class="grid gap-6 md:grid-cols-[150px_minmax(0,1fr)] md:items-start">
-            <div class="max-w-[150px] overflow-hidden rounded-2xl border border-outline-variant/15 bg-surface-container-lowest poster-shadow">
+        <section class="mb-8 rounded-3xl border border-outline-variant/15 bg-surface-container-low p-5 ambient-shadow">
+          <div class="flex flex-col gap-6 md:flex-row md:items-start">
+            <div class="shrink-0 overflow-hidden rounded-2xl border border-outline-variant/15 bg-surface-container-lowest poster-shadow" style="width: 96px; height: 144px; min-width: 96px; max-width: 96px;">
               <?php if (!empty($person['photo_url'])): ?>
-              <img src="<?= reevio_crew_e(reevio_crew_photo($person)); ?>" alt="<?= reevio_crew_e($person['full_name'] ?? 'Person'); ?>" class="aspect-[2/3] h-full w-full object-cover" />
+              <img src="<?= reevio_crew_e(reevio_crew_photo($person)); ?>" alt="<?= reevio_crew_e($person['full_name'] ?? 'Person'); ?>" class="block h-full w-full object-cover" style="width: 96px; height: 144px; object-fit: cover;" />
               <?php else: ?>
-              <div class="flex aspect-[2/3] h-full w-full items-center justify-center bg-surface-container-high font-headline text-6xl font-black text-primary">
+              <div class="flex h-full w-full items-center justify-center bg-surface-container-high font-headline text-3xl font-black text-primary" style="width: 96px; height: 144px;">
                 <?= reevio_crew_e(reevio_crew_initial($person['full_name'] ?? 'P')); ?>
               </div>
               <?php endif; ?>
