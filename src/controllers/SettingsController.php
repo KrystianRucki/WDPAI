@@ -58,6 +58,108 @@ final class SettingsController extends AppController
         }
     }
 
+
+    public function uploadAvatar(): void
+    {
+        if (!$this->requireLogin()) {
+            return;
+        }
+
+        if (!isset($_FILES['avatar']) || !is_array($_FILES['avatar'])) {
+            $this->json(['success' => false, 'message' => 'Avatar file is required.'], 422);
+            return;
+        }
+
+        $file = $_FILES['avatar'];
+        $maxBytes = 2 * 1024 * 1024;
+        $maxWidth = 1024;
+        $maxHeight = 1024;
+
+        if (($file['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK) {
+            $this->json(['success' => false, 'message' => 'Could not upload avatar.'], 422);
+            return;
+        }
+
+        if (($file['size'] ?? 0) <= 0 || ($file['size'] ?? 0) > $maxBytes) {
+            $this->json(['success' => false, 'message' => 'Avatar must be smaller than 2 MB.'], 422);
+            return;
+        }
+
+        $tmpPath = (string) ($file['tmp_name'] ?? '');
+        $info = @getimagesize($tmpPath);
+
+        if (!$info) {
+            $this->json(['success' => false, 'message' => 'Avatar must be a valid image.'], 422);
+            return;
+        }
+
+        [$width, $height] = $info;
+        $mime = $info['mime'] ?? '';
+
+        $extensions = [
+            'image/jpeg' => 'jpg',
+            'image/png' => 'png',
+            'image/webp' => 'webp',
+        ];
+
+        if (!isset($extensions[$mime])) {
+            $this->json(['success' => false, 'message' => 'Avatar must be JPG, PNG or WEBP.'], 422);
+            return;
+        }
+
+        if ($width > $maxWidth || $height > $maxHeight) {
+            $this->json([
+                'success' => false,
+                'message' => 'Avatar resolution cannot exceed 1024 × 1024 px.',
+            ], 422);
+            return;
+        }
+
+        $userId = (int) $_SESSION['user_id'];
+        $uploadDir = __DIR__ . '/../../public/uploads/avatars';
+
+        if (!is_dir($uploadDir) && !mkdir($uploadDir, 0775, true) && !is_dir($uploadDir)) {
+            $this->json(['success' => false, 'message' => 'Could not create upload directory.'], 500);
+            return;
+        }
+
+        $extension = $extensions[$mime];
+        $filename = 'avatar_' . $userId . '_' . bin2hex(random_bytes(8)) . '.' . $extension;
+        $targetPath = $uploadDir . '/' . $filename;
+        $publicUrl = '/public/uploads/avatars/' . $filename;
+
+        if (!move_uploaded_file($tmpPath, $targetPath)) {
+            $this->json(['success' => false, 'message' => 'Could not save avatar.'], 500);
+            return;
+        }
+
+        $repository = new UsersRepository();
+        $oldUser = $repository->getUserById($userId);
+        $repository->updateAvatar($userId, $publicUrl);
+
+        $oldAvatar = (string) ($oldUser['avatar_url'] ?? '');
+        if (str_starts_with($oldAvatar, '/public/uploads/avatars/')) {
+            $oldPath = __DIR__ . '/../..' . $oldAvatar;
+            if (is_file($oldPath) && realpath(dirname($oldPath)) === realpath($uploadDir)) {
+                @unlink($oldPath);
+            }
+        }
+
+        $user = $repository->getUserById($userId);
+
+        $this->json([
+            'success' => true,
+            'updated' => true,
+            'avatar_url' => $publicUrl,
+            'user' => [
+                'id' => $userId,
+                'username' => $user['username'] ?? null,
+                'bio' => $user['bio'] ?? null,
+                'avatar_url' => $user['avatar_url'] ?? $publicUrl,
+            ],
+        ]);
+    }
+
     public function updateNotifications(): void
     {
         if (!$this->requireLogin()) {

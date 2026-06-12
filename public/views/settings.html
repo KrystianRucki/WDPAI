@@ -55,7 +55,7 @@ include __DIR__ . '/partials/navigation.html';
             Settings
           </h1>
           <p class="mt-2 max-w-2xl text-sm leading-relaxed text-on-surface-variant">
-            Edit your username, bio and notification preferences.
+            Edit your username, avatar, bio and notification preferences.
           </p>
         </header>
 
@@ -64,8 +64,21 @@ include __DIR__ . '/partials/navigation.html';
             <h2 class="mb-5 font-headline text-2xl font-black text-on-surface">Profile</h2>
 
             <div class="grid gap-5 md:grid-cols-[96px_minmax(0,1fr)]">
-              <div class="h-24 w-24 overflow-hidden rounded-full border-2 border-primary/45 bg-surface-container-high">
-                <?= reevio_settings_avatar($settingsUser); ?>
+              <div class="space-y-3">
+                <div id="settings-avatar-preview" class="h-24 w-24 overflow-hidden rounded-full border-2 border-primary/45 bg-surface-container-high">
+                  <?= reevio_settings_avatar($settingsUser); ?>
+                </div>
+
+                <label class="inline-flex cursor-pointer items-center gap-2 rounded-full border border-secondary/35 px-4 py-2 font-label text-xs font-bold uppercase tracking-wider text-secondary transition-colors hover:bg-secondary/10">
+                  <span class="material-symbols-outlined text-[16px]">upload</span>
+                  Avatar
+                  <input id="settings-avatar-input" name="avatar" type="file" accept="image/jpeg,image/png,image/webp" class="hidden" />
+                </label>
+
+                <p class="text-xs leading-relaxed text-on-surface-variant">
+                  JPG, PNG or WEBP. Max 1024 × 1024 px and 2 MB.
+                </p>
+                <p id="settings-avatar-status" class="min-h-[1rem] font-label text-xs text-on-surface-variant" role="status" aria-live="polite"></p>
               </div>
 
               <div class="grid gap-4">

@@ -363,6 +363,123 @@ document.addEventListener("click", async (event) => {
 
 
 
+
+/* Settings avatar upload */
+document.addEventListener("DOMContentLoaded", () => {
+  const input = document.querySelector("#settings-avatar-input");
+  const preview = document.querySelector("#settings-avatar-preview");
+  const status = document.querySelector("#settings-avatar-status");
+  const maxBytes = 2 * 1024 * 1024;
+  const maxSize = 1024;
+
+  if (!input || input.dataset.reevioAvatarReady === "1") return;
+  input.dataset.reevioAvatarReady = "1";
+
+  function setAvatarStatus(message, isError = false) {
+    if (!status) return;
+    status.textContent = message;
+    status.classList.toggle("text-red-300", isError);
+    status.classList.toggle("text-primary", !isError && message.length > 0);
+    status.classList.toggle("text-on-surface-variant", message.length === 0);
+  }
+
+  function updateAvatarPreview(url) {
+    if (!preview) return;
+    preview.innerHTML = `<img alt="Profile avatar" class="h-full w-full object-cover" src="${url}" />`;
+
+    document.querySelectorAll("[data-nav-account-avatar]").forEach((target) => {
+      target.innerHTML = `<img src="${url}" alt="Account avatar" class="h-7 w-7 rounded-full object-cover" />`;
+    });
+  }
+
+  function validateImage(file) {
+    return new Promise((resolve, reject) => {
+      if (!file) {
+        reject(new Error("Choose an image first."));
+        return;
+      }
+
+      const allowed = ["image/jpeg", "image/png", "image/webp"];
+
+      if (!allowed.includes(file.type)) {
+        reject(new Error("Avatar must be JPG, PNG or WEBP."));
+        return;
+      }
+
+      if (file.size > maxBytes) {
+        reject(new Error("Avatar must be smaller than 2 MB."));
+        return;
+      }
+
+      const img = new Image();
+      const url = URL.createObjectURL(file);
+
+      img.onload = () => {
+        URL.revokeObjectURL(url);
+        if (img.width > maxSize || img.height > maxSize) {
+          reject(new Error("Avatar resolution cannot exceed 1024 × 1024 px."));
+          return;
+        }
+
+        resolve();
+      };
+
+      img.onerror = () => {
+        URL.revokeObjectURL(url);
+        reject(new Error("Avatar must be a valid image."));
+      };
+
+      img.src = url;
+    });
+  }
+
+  input.addEventListener("change", async () => {
+    const file = input.files?.[0];
+
+    try {
+      await validateImage(file);
+    } catch (error) {
+      setAvatarStatus(error.message || "Invalid avatar.", true);
+      input.value = "";
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("avatar", file);
+
+    setAvatarStatus("Uploading avatar...");
+
+    try {
+      const response = await fetch("/api-settings-avatar", {
+        method: "POST",
+        headers: {
+          "Accept": "application/json"
+        },
+        body: formData
+      });
+
+      const payload = await response.json().catch(() => ({}));
+
+      if (!response.ok || !payload.success) {
+        throw new Error(payload.message || payload.error || "Could not upload avatar.");
+      }
+
+      const avatarUrl = payload.avatar_url || payload.user?.avatar_url;
+      if (avatarUrl) {
+        updateAvatarPreview(avatarUrl);
+      }
+
+      setAvatarStatus("Avatar updated.");
+    } catch (error) {
+      setAvatarStatus(error.message || "Could not upload avatar.", true);
+    } finally {
+      input.value = "";
+    }
+  });
+});
+
+
+
 /* Settings profile save */
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.querySelector("#settings-profile-form");

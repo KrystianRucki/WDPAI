@@ -118,6 +118,22 @@ final class UsersRepository extends Repository
         ]);
     }
 
+
+    public function updateAvatar(int $id, string $avatarUrl): bool
+    {
+        $query = $this->connection()->prepare(
+            'UPDATE users
+             SET avatar_url = :avatar_url,
+                 updated_at = CURRENT_TIMESTAMP
+             WHERE id = :id'
+        );
+
+        return $query->execute([
+            'id' => $id,
+            'avatar_url' => $avatarUrl,
+        ]);
+    }
+
     public function deleteUser(int $id): bool
     {
         return $this->setBlocked($id, true);

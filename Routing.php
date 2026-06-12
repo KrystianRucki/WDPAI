@@ -90,6 +90,7 @@ final class Routing
             'api-notifications' => [NotificationsController::class, 'list'],
             'api-notifications-read' => [NotificationsController::class, 'markRead'],
             'api-settings-profile' => [SettingsController::class, 'updateProfile'],
+            'api-settings-avatar' => [SettingsController::class, 'uploadAvatar'],
             'api-settings-notifications' => [SettingsController::class, 'updateNotifications'],
             'api-profile-favorites' => [SettingsController::class, 'saveFavorites'],
             'api-lists-create' => [ListsController::class, 'create'],
