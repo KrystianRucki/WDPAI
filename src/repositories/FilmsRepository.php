@@ -214,7 +214,7 @@ final class FilmsRepository extends Repository
              INNER JOIN film_people fp ON fp.person_id = p.id
              WHERE fp.film_id = :film_id AND fp.credit_type = :credit_type
              ORDER BY fp.cast_order NULLS LAST, p.full_name ASC
-             LIMIT 12'
+             LIMIT 40'
         );
         $query->execute([':film_id' => $filmId, ':credit_type' => $type]);
         return $query->fetchAll();
@@ -222,10 +222,30 @@ final class FilmsRepository extends Repository
 
     private function averageRating(int $filmId): float
     {
-        $query = $this->connection()->prepare('SELECT COALESCE(ROUND(AVG(rating), 2), 0) AS average_rating FROM reviews WHERE film_id = :film_id');
-        $query->bindValue(':film_id', $filmId, PDO::PARAM_INT);
-        $query->execute();
-        return (float) ($query->fetch()['average_rating'] ?? 0);
+        $diaryQuery = $this->connection()->prepare(
+            'SELECT COUNT(rating) AS ratings_count, COALESCE(ROUND(AVG(rating), 2), 0) AS average_rating
+             FROM diary_entries
+             WHERE film_id = :film_id
+               AND rating IS NOT NULL'
+        );
+        $diaryQuery->bindValue(':film_id', $filmId, PDO::PARAM_INT);
+        $diaryQuery->execute();
+        $diary = $diaryQuery->fetch();
+
+        if ((int) ($diary['ratings_count'] ?? 0) > 0) {
+            return (float) ($diary['average_rating'] ?? 0);
+        }
+
+        $reviewQuery = $this->connection()->prepare(
+            'SELECT COALESCE(ROUND(AVG(rating), 2), 0) AS average_rating
+             FROM reviews
+             WHERE film_id = :film_id
+               AND is_public = TRUE'
+        );
+        $reviewQuery->bindValue(':film_id', $filmId, PDO::PARAM_INT);
+        $reviewQuery->execute();
+
+        return (float) ($reviewQuery->fetch()['average_rating'] ?? 0);
     }
 
     private function replaceFilmGenres(int $filmId, array $genres): void
@@ -254,7 +274,7 @@ final class FilmsRepository extends Repository
         $connection = $this->connection();
         $connection->prepare('DELETE FROM film_people WHERE film_id = :film_id')->execute([':film_id' => $filmId]);
 
-        $cast = array_slice($credits['cast'] ?? [], 0, 12);
+        $cast = array_slice($credits['cast'] ?? [], 0, 40);
         foreach ($cast as $person) {
             $personId = $this->upsertPerson($person, $tmdb);
             $this->insertCredit($filmId, $personId, 'actor', $person['character'] ?? null, null, 'Acting', $person['order'] ?? null);
@@ -262,13 +282,13 @@ final class FilmsRepository extends Repository
 
         foreach (($credits['crew'] ?? []) as $person) {
             $job = $person['job'] ?? '';
-            if (!in_array($job, ['Director', 'Writer', 'Screenplay', 'Composer'], true)) {
+            if (!in_array($job, ['Director', 'Writer', 'Screenplay', 'Story', 'Producer', 'Executive Producer', 'Original Music Composer', 'Composer', 'Director of Photography', 'Editor'], true)) {
                 continue;
             }
 
             $type = match ($job) {
                 'Director' => 'director',
-                'Composer' => 'composer',
+                'Composer', 'Original Music Composer' => 'composer',
                 default => 'writer',
             };
 
@@ -639,6 +659,66 @@ final class FilmsRepository extends Repository
     }
 
 
+
+
+    public function addToWatchlist(int $userId, int $filmId): void
+    {
+        $query = $this->connection()->prepare(
+            'INSERT INTO watchlist (user_id, film_id)
+             VALUES (:user_id, :film_id)
+             ON CONFLICT (user_id, film_id) DO UPDATE SET
+                added_at = CURRENT_TIMESTAMP'
+        );
+        $query->bindValue(':user_id', $userId, PDO::PARAM_INT);
+        $query->bindValue(':film_id', $filmId, PDO::PARAM_INT);
+        $query->execute();
+    }
+
+    public function markWatchedOnly(int $userId, int $filmId): array
+    {
+        $connection = $this->connection();
+        $connection->beginTransaction();
+
+        try {
+            $query = $connection->prepare(
+                'INSERT INTO diary_entries (user_id, film_id, watched_on, rating, is_rewatch, is_public)
+                 VALUES (:user_id, :film_id, CURRENT_DATE, NULL, FALSE, FALSE)
+                 ON CONFLICT (user_id, film_id, watched_on)
+                 DO UPDATE SET
+                    is_public = FALSE
+                 RETURNING id'
+            );
+            $query->bindValue(':user_id', $userId, PDO::PARAM_INT);
+            $query->bindValue(':film_id', $filmId, PDO::PARAM_INT);
+            $query->execute();
+
+            $logId = (int) $query->fetchColumn();
+
+            $connection->prepare(
+                'DELETE FROM watchlist
+                 WHERE user_id = :user_id
+                   AND film_id = :film_id'
+            )->execute([
+                'user_id' => $userId,
+                'film_id' => $filmId,
+            ]);
+
+            $connection->commit();
+
+            return [
+                'status' => 'watched',
+                'log_id' => $logId,
+                'message' => 'Marked as watched.',
+                'redirect' => '/users-films',
+            ];
+        } catch (Throwable $exception) {
+            if ($connection->inTransaction()) {
+                $connection->rollBack();
+            }
+
+            throw $exception;
+        }
+    }
 
     public function removeFromWatchlist(int $userId, int $filmId): bool
     {

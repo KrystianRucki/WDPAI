@@ -1336,3 +1336,80 @@ document.addEventListener("DOMContentLoaded", () => {
   refreshCount();
 });
 
+
+
+
+/* Film details actions */
+document.addEventListener("DOMContentLoaded", () => {
+  const actions = document.querySelector("#film-details-actions");
+
+  if (!actions || actions.dataset.reevioActionsReady === "1") return;
+
+  actions.dataset.reevioActionsReady = "1";
+
+  const filmId = Number(actions.dataset.filmId);
+  const status = document.querySelector("#film-details-action-status");
+
+  function setStatus(message, isError = false) {
+    if (!status) return;
+
+    status.textContent = message;
+    status.classList.toggle("text-red-300", isError);
+    status.classList.toggle("text-primary", !isError && message.length > 0);
+    status.classList.toggle("text-on-surface-variant", message.length === 0);
+  }
+
+  async function postAction(endpoint, button, loadingText) {
+    if (!filmId || button.dataset.loading === "1") return;
+
+    const originalHtml = button.innerHTML;
+    button.dataset.loading = "1";
+    button.disabled = true;
+    button.classList.add("opacity-70");
+    button.innerHTML = `<span class="material-symbols-outlined text-[18px]">hourglass_top</span>${loadingText}`;
+    setStatus("");
+
+    try {
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify({ film_id: filmId })
+      });
+
+      const payload = await response.json().catch(() => ({}));
+
+      if (!response.ok || !payload.success) {
+        throw new Error(payload.message || "Action failed.");
+      }
+
+      setStatus(payload.message || "Done.");
+      button.innerHTML = `<span class="material-symbols-outlined text-[18px]">check_circle</span>${payload.status === "watchlisted" ? "In watchlist" : "Watched"}`;
+    } catch (error) {
+      setStatus(error.message || "Action failed.", true);
+      button.innerHTML = originalHtml;
+      button.disabled = false;
+      button.classList.remove("opacity-70");
+      button.dataset.loading = "0";
+    }
+  }
+
+  actions.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-film-action]");
+    if (!button) return;
+
+    event.preventDefault();
+
+    if (button.dataset.filmAction === "watchlist") {
+      postAction("/api-watchlist-add", button, "Adding...");
+      return;
+    }
+
+    if (button.dataset.filmAction === "watched") {
+      postAction("/api-film-mark-watched", button, "Saving...");
+    }
+  });
+});
+

@@ -154,8 +154,11 @@ include __DIR__ . '/partials/navigation.html';
                 <p class="mb-2 font-label text-xs text-secondary"><?= reevio_feed_e(reevio_feed_meta($film)); ?></p>
 
                 <div class="flex items-center gap-[2px]">
-                  <?= reevio_feed_stars($film['average_rating'] ?? $film['tmdb_vote_average'] ?? 0, '14'); ?>
+                  <?= reevio_feed_stars($film['average_rating'] ?? 0, '14'); ?>
                 </div>
+                <p class="mt-1 font-label text-[11px] font-bold text-primary">
+                  <?= (float) ($film['average_rating'] ?? 0) > 0 ? reevio_feed_e(number_format((float) $film['average_rating'], 1)) . ' Reevio avg' : 'No ratings yet'; ?>
+                </p>
 
                 <?php if (!empty($film['watch_count'])): ?>
                 <p class="mt-2 font-label text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">

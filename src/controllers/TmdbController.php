@@ -137,6 +137,16 @@ final class TmdbController extends AppController
             }
         } elseif ($id > 0) {
             $film = $this->films->getById($id);
+
+            if ($film && !empty($film['tmdb_id'])) {
+                try {
+                    $details = $this->tmdb->getMovieDetails((int) $film['tmdb_id']);
+                    $film = $this->films->saveFromTmdb($details, $this->tmdb);
+                } catch (Throwable $exception) {
+                    $tmdbError = $exception->getMessage();
+                    $film = $this->films->getById($id);
+                }
+            }
         }
 
         if (!$film) {
@@ -226,6 +236,73 @@ final class TmdbController extends AppController
             ], 500);
         }
     }
+
+
+    public function addToWatchlist(): void
+    {
+        if (!$this->requireLogin()) {
+            return;
+        }
+
+        $data = $this->getJsonInput();
+        $filmId = (int) ($data['film_id'] ?? 0);
+
+        if ($filmId <= 0) {
+            $this->json([
+                'success' => false,
+                'message' => 'Invalid film id.',
+            ], 422);
+            return;
+        }
+
+        try {
+            $this->films->addToWatchlist((int) $_SESSION['user_id'], $filmId);
+
+            $this->json([
+                'success' => true,
+                'status' => 'watchlisted',
+                'message' => 'Added to watchlist.',
+            ]);
+        } catch (Throwable $exception) {
+            $this->json([
+                'success' => false,
+                'message' => 'Could not add film to watchlist.',
+            ], 500);
+        }
+    }
+
+    public function markWatchedOnly(): void
+    {
+        if (!$this->requireLogin()) {
+            return;
+        }
+
+        $data = $this->getJsonInput();
+        $filmId = (int) ($data['film_id'] ?? 0);
+
+        if ($filmId <= 0) {
+            $this->json([
+                'success' => false,
+                'message' => 'Invalid film id.',
+            ], 422);
+            return;
+        }
+
+        try {
+            $result = $this->films->markWatchedOnly((int) $_SESSION['user_id'], $filmId);
+
+            $this->json([
+                'success' => true,
+                ...$result,
+            ]);
+        } catch (Throwable $exception) {
+            $this->json([
+                'success' => false,
+                'message' => 'Could not mark film as watched.',
+            ], 500);
+        }
+    }
+
 
 
 }
