@@ -768,3 +768,77 @@ document.addEventListener("DOMContentLoaded", () => {
   renderRating();
 });
 
+
+
+
+/* Create list form */
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.querySelector("#create-list-form");
+
+  if (!form || form.dataset.reevioCreateListReady === "1") return;
+
+  form.dataset.reevioCreateListReady = "1";
+
+  const titleInput = form.querySelector("#list-name");
+  const descriptionInput = form.querySelector("#list-desc");
+  const publicInput = form.querySelector("#privacy-toggle");
+  const rankedInput = form.querySelector("#ranked-toggle");
+  const submitButton = form.querySelector("#create-list-submit");
+  const status = form.querySelector("#create-list-status");
+
+  function setStatus(message, isError = false) {
+    if (!status) return;
+
+    status.textContent = message;
+    status.classList.toggle("text-red-300", isError);
+    status.classList.toggle("text-primary", !isError && message.length > 0);
+    status.classList.toggle("text-on-surface-variant", message.length === 0);
+  }
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const title = titleInput?.value.trim() || "";
+    const description = descriptionInput?.value.trim() || "";
+
+    if (!title) {
+      setStatus("List name is required.", true);
+      titleInput?.focus();
+      return;
+    }
+
+    submitButton.disabled = true;
+    submitButton.classList.add("opacity-70");
+    setStatus("Creating list...");
+
+    try {
+      const response = await fetch("/api-lists-create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify({
+          title,
+          description,
+          is_public: publicInput ? publicInput.checked : true,
+          is_ranked: rankedInput ? rankedInput.checked : false
+        })
+      });
+
+      const payload = await response.json().catch(() => ({}));
+
+      if (!response.ok || (!payload.created && !payload.id)) {
+        throw new Error(payload.error || payload.message || "Could not create list.");
+      }
+
+      setStatus("List created.");
+      window.location.href = payload.redirect || (payload.id ? `/list-details?id=${payload.id}` : "/profile-lists");
+    } catch (error) {
+      setStatus(error.message || "Could not create list.", true);
+      submitButton.disabled = false;
+      submitButton.classList.remove("opacity-70");
+    }
+  });
+});
+

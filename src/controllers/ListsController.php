@@ -25,11 +25,11 @@ final class ListsController extends AppController
             (int) $_SESSION['user_id'],
             $title,
             trim($data['description'] ?? $_POST['description'] ?? '') ?: null,
-            (bool) ($data['is_public'] ?? true),
-            (bool) ($data['is_ranked'] ?? false)
+            $this->booleanValue($data['is_public'] ?? $_POST['is_public'] ?? null, true),
+            $this->booleanValue($data['is_ranked'] ?? $_POST['is_ranked'] ?? null, false)
         );
 
-        $this->json(['created' => true, 'id' => $id], 201);
+        $this->json(['success' => true, 'created' => true, 'id' => $id, 'redirect' => '/list-details?id=' . $id], 201);
     }
 
     public function addFilm(): void
@@ -50,4 +50,29 @@ final class ListsController extends AppController
         (new ListsRepository())->addFilm($listId, $filmId);
         $this->json(['added' => true]);
     }
+
+    private function booleanValue(mixed $value, bool $default = false): bool
+    {
+        if ($value === null) {
+            return $default;
+        }
+
+        if (is_bool($value)) {
+            return $value;
+        }
+
+        if (is_int($value)) {
+            return $value === 1;
+        }
+
+        $normalized = strtolower(trim((string) $value));
+
+        if ($normalized === '') {
+            return $default;
+        }
+
+        return in_array($normalized, ['1', 'true', 'on', 'yes'], true);
+    }
+
+
 }

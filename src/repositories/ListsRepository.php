@@ -6,18 +6,21 @@ require_once __DIR__ . '/Repository.php';
 
 final class ListsRepository extends Repository
 {
-    public function create(int $userId, string $title, ?string $description, bool $isPublic, bool $isRanked): int
+    public function create(int $userId, string $title, ?string $description = null, bool $isPublic = true, bool $isRanked = false): int
     {
         $query = $this->connection()->prepare(
-            'INSERT INTO lists (user_id, title, description, is_public, is_ranked) VALUES (:user_id, :title, :description, :is_public, :is_ranked) RETURNING id'
+            'INSERT INTO lists (user_id, title, description, is_public, is_ranked)
+             VALUES (:user_id, :title, :description, :is_public, :is_ranked)
+             RETURNING id'
         );
-        $query->execute([
-            'user_id' => $userId,
-            'title' => $title,
-            'description' => $description,
-            'is_public' => $isPublic,
-            'is_ranked' => $isRanked,
-        ]);
+
+        $query->bindValue(':user_id', $userId, PDO::PARAM_INT);
+        $query->bindValue(':title', $title);
+        $query->bindValue(':description', $description, $description === null ? PDO::PARAM_NULL : PDO::PARAM_STR);
+        $query->bindValue(':is_public', $isPublic, PDO::PARAM_BOOL);
+        $query->bindValue(':is_ranked', $isRanked, PDO::PARAM_BOOL);
+        $query->execute();
+
         return (int) $query->fetchColumn();
     }
 

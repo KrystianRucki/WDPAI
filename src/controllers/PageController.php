@@ -60,6 +60,7 @@ final class PageController extends AppController
                 'mostCommonRating' => $filmsRepository->getUserMostCommonRating($currentUserId),
             ],
             'profile_p_diary' => $this->diaryVariables($currentUser, $diaryRepository),
+            'profile_p_lists' => $this->userListsVariables($currentUser, $listsRepository),
             'log_details' => $this->logDetailsVariables($currentUser, $diaryRepository),
             'followers' => $this->relationshipVariables('followers', $currentUser, $usersRepository),
             'following' => $this->relationshipVariables('following', $currentUser, $usersRepository),
