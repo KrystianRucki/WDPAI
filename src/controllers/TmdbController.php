@@ -265,28 +265,16 @@ final class TmdbController extends AppController
         }
 
         try {
-            if ($this->films->userHasFilmInWatchlist($userId, $filmId)) {
-                $this->json([
-                    'success' => true,
-                    'status' => 'watchlisted',
-                    'already' => true,
-                    'message' => 'Already in watchlist.',
-                ]);
-                return;
-            }
-
-            $this->films->addToWatchlist($userId, $filmId);
+            $result = $this->films->toggleWatchlist($userId, $filmId);
 
             $this->json([
                 'success' => true,
-                'status' => 'watchlisted',
-                'already' => false,
-                'message' => 'Added to watchlist.',
+                ...$result,
             ]);
         } catch (Throwable $exception) {
             $this->json([
                 'success' => false,
-                'message' => 'Could not add film to watchlist.',
+                'message' => 'Could not update watchlist.',
             ], 500);
         }
     }
@@ -310,27 +298,16 @@ final class TmdbController extends AppController
         }
 
         try {
-            if ($this->films->userHasWatchedFilm($userId, $filmId)) {
-                $this->json([
-                    'success' => true,
-                    'status' => 'watched',
-                    'already' => true,
-                    'message' => 'Already marked as watched.',
-                ]);
-                return;
-            }
-
-            $result = $this->films->markWatchedOnly($userId, $filmId);
+            $result = $this->films->toggleUserFilm($userId, $filmId);
 
             $this->json([
                 'success' => true,
-                'already' => false,
                 ...$result,
             ]);
         } catch (Throwable $exception) {
             $this->json([
                 'success' => false,
-                'message' => 'Could not mark film as watched.',
+                'message' => 'Could not update watched films.',
             ], 500);
         }
     }

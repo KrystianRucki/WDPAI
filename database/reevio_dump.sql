@@ -181,6 +181,13 @@ CREATE TABLE watchlist (
     PRIMARY KEY (user_id, film_id)
 );
 
+CREATE TABLE user_films (
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    film_id INTEGER NOT NULL REFERENCES films(id) ON DELETE CASCADE,
+    added_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (user_id, film_id)
+);
+
 CREATE TABLE user_favorite_films (
     user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     film_id INTEGER NOT NULL REFERENCES films(id) ON DELETE CASCADE,

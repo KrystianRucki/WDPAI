@@ -585,10 +585,19 @@ final class FilmsRepository extends Repository
 
     public function countUserFilms(int $userId): int
     {
+        $this->ensureUserFilmsTable();
+
         $query = $this->connection()->prepare(
-            'SELECT COUNT(DISTINCT film_id)
-             FROM diary_entries
-             WHERE user_id = :user_id'
+            'SELECT COUNT(*)
+             FROM (
+                SELECT film_id
+                FROM user_films
+                WHERE user_id = :user_id
+                UNION
+                SELECT film_id
+                FROM diary_entries
+                WHERE user_id = :user_id
+             ) films'
         );
         $query->execute(['user_id' => $userId]);
 
@@ -597,29 +606,52 @@ final class FilmsRepository extends Repository
 
     public function getUserFilms(int $userId, int $limit = 10): array
     {
+        $this->ensureUserFilmsTable();
+
         $query = $this->connection()->prepare(
-            'SELECT
+            'WITH combined AS (
+                SELECT
+                    film_id,
+                    added_at AS activity_at,
+                    NULL::DATE AS watched_on,
+                    NULL::NUMERIC(2,1) AS rating
+                FROM user_films
+                WHERE user_id = :user_id
+
+                UNION ALL
+
+                SELECT
+                    film_id,
+                    created_at AS activity_at,
+                    watched_on,
+                    rating
+                FROM diary_entries
+                WHERE user_id = :user_id
+             ),
+             stats AS (
+                SELECT
+                    film_id,
+                    COUNT(*) AS watch_count,
+                    MAX(activity_at) AS latest_activity_at
+                FROM combined
+                GROUP BY film_id
+             )
+             SELECT
                 f.*,
                 latest.watched_on,
                 latest.rating AS user_rating,
-                latest.created_at AS logged_at,
+                latest.activity_at AS logged_at,
                 stats.watch_count
-             FROM (
-                SELECT film_id, COUNT(*) AS watch_count
-                FROM diary_entries
-                WHERE user_id = :user_id
-                GROUP BY film_id
-             ) stats
+             FROM stats
              JOIN LATERAL (
-                SELECT watched_on, rating, created_at
-                FROM diary_entries
-                WHERE user_id = :user_id
-                  AND film_id = stats.film_id
-                ORDER BY watched_on DESC, created_at DESC
+                SELECT watched_on, rating, activity_at
+                FROM combined
+                WHERE film_id = stats.film_id
+                ORDER BY activity_at DESC
                 LIMIT 1
              ) latest ON TRUE
              JOIN films f ON f.id = stats.film_id
-             ORDER BY latest.watched_on DESC, latest.created_at DESC, f.title ASC
+             ORDER BY stats.latest_activity_at DESC, f.title ASC
              LIMIT :limit'
         );
         $query->bindValue(':user_id', $userId, PDO::PARAM_INT);
@@ -664,9 +696,11 @@ final class FilmsRepository extends Repository
 
     public function userHasWatchedFilm(int $userId, int $filmId): bool
     {
+        $this->ensureUserFilmsTable();
+
         $query = $this->connection()->prepare(
             'SELECT 1
-             FROM diary_entries
+             FROM user_films
              WHERE user_id = :user_id
                AND film_id = :film_id
              LIMIT 1'
@@ -707,25 +741,42 @@ final class FilmsRepository extends Repository
         $query->execute();
     }
 
-    public function markWatchedOnly(int $userId, int $filmId): array
+    public function toggleUserFilm(int $userId, int $filmId): array
     {
+        $this->ensureUserFilmsTable();
+
         $connection = $this->connection();
         $connection->beginTransaction();
 
         try {
-            $query = $connection->prepare(
-                'INSERT INTO diary_entries (user_id, film_id, watched_on, rating, is_rewatch, is_public)
-                 VALUES (:user_id, :film_id, CURRENT_DATE, NULL, FALSE, TRUE)
-                 ON CONFLICT (user_id, film_id, watched_on)
-                 DO UPDATE SET
-                    is_public = TRUE
-                 RETURNING id'
-            );
-            $query->bindValue(':user_id', $userId, PDO::PARAM_INT);
-            $query->bindValue(':film_id', $filmId, PDO::PARAM_INT);
-            $query->execute();
+            if ($this->userHasWatchedFilm($userId, $filmId)) {
+                $delete = $connection->prepare(
+                    'DELETE FROM user_films
+                     WHERE user_id = :user_id
+                       AND film_id = :film_id'
+                );
+                $delete->bindValue(':user_id', $userId, PDO::PARAM_INT);
+                $delete->bindValue(':film_id', $filmId, PDO::PARAM_INT);
+                $delete->execute();
 
-            $logId = (int) $query->fetchColumn();
+                $connection->commit();
+
+                return [
+                    'status' => 'unwatched',
+                    'watched' => false,
+                    'message' => 'Removed from watched films.',
+                ];
+            }
+
+            $insert = $connection->prepare(
+                'INSERT INTO user_films (user_id, film_id)
+                 VALUES (:user_id, :film_id)
+                 ON CONFLICT (user_id, film_id) DO UPDATE SET
+                    added_at = CURRENT_TIMESTAMP'
+            );
+            $insert->bindValue(':user_id', $userId, PDO::PARAM_INT);
+            $insert->bindValue(':film_id', $filmId, PDO::PARAM_INT);
+            $insert->execute();
 
             $connection->prepare(
                 'DELETE FROM watchlist
@@ -740,8 +791,9 @@ final class FilmsRepository extends Repository
 
             return [
                 'status' => 'watched',
-                'log_id' => $logId,
-                'message' => 'Marked as watched.',
+                'watched' => true,
+                'watchlisted' => false,
+                'message' => 'Added to watched films.',
                 'redirect' => '/users-films',
             ];
         } catch (Throwable $exception) {
@@ -769,28 +821,85 @@ final class FilmsRepository extends Repository
 
 
 
+
+    public function toggleWatchlist(int $userId, int $filmId): array
+    {
+        if ($this->userHasFilmInWatchlist($userId, $filmId)) {
+            $this->removeFromWatchlist($userId, $filmId);
+
+            return [
+                'status' => 'unwatchlisted',
+                'watchlisted' => false,
+                'message' => 'Removed from watchlist.',
+            ];
+        }
+
+        $this->addToWatchlist($userId, $filmId);
+
+        return [
+            'status' => 'watchlisted',
+            'watchlisted' => true,
+            'message' => 'Added to watchlist.',
+        ];
+    }
+
+    private function ensureUserFilmsTable(): void
+    {
+        $this->connection()->exec(
+            'CREATE TABLE IF NOT EXISTS user_films (
+                user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+                film_id INTEGER NOT NULL REFERENCES films(id) ON DELETE CASCADE,
+                added_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY (user_id, film_id)
+            )'
+        );
+    }
+
     public function getUserFilmsForFavoriteSelection(int $userId, int $limit = 100): array
     {
+        $this->ensureUserFilmsTable();
+
         $query = $this->connection()->prepare(
-            'SELECT
+            'WITH combined AS (
+                SELECT
+                    film_id,
+                    added_at AS activity_at,
+                    NULL::DATE AS watched_on,
+                    NULL::NUMERIC(2,1) AS rating
+                FROM user_films
+                WHERE user_id = :user_id
+
+                UNION ALL
+
+                SELECT
+                    film_id,
+                    created_at AS activity_at,
+                    watched_on,
+                    rating
+                FROM diary_entries
+                WHERE user_id = :user_id
+             ),
+             stats AS (
+                SELECT
+                    film_id,
+                    COUNT(*) AS watch_count,
+                    MAX(activity_at) AS latest_activity_at
+                FROM combined
+                GROUP BY film_id
+             )
+             SELECT
                 f.*,
                 latest.watched_on,
                 latest.rating AS user_rating,
-                latest.created_at AS logged_at,
+                latest.activity_at AS logged_at,
                 stats.watch_count,
                 uff.position AS favorite_position
-             FROM (
-                SELECT film_id, COUNT(*) AS watch_count
-                FROM diary_entries
-                WHERE user_id = :user_id
-                GROUP BY film_id
-             ) stats
+             FROM stats
              JOIN LATERAL (
-                SELECT watched_on, rating, created_at
-                FROM diary_entries
-                WHERE user_id = :user_id
-                  AND film_id = stats.film_id
-                ORDER BY watched_on DESC, created_at DESC
+                SELECT watched_on, rating, activity_at
+                FROM combined
+                WHERE film_id = stats.film_id
+                ORDER BY activity_at DESC
                 LIMIT 1
              ) latest ON TRUE
              JOIN films f ON f.id = stats.film_id
@@ -799,8 +908,7 @@ final class FilmsRepository extends Repository
               AND uff.film_id = f.id
              ORDER BY
                 uff.position ASC NULLS LAST,
-                latest.watched_on DESC,
-                latest.created_at DESC,
+                stats.latest_activity_at DESC,
                 f.title ASC
              LIMIT :limit'
         );
@@ -823,9 +931,12 @@ final class FilmsRepository extends Repository
             $validFilmIds = [];
             $check = $pdo->prepare(
                 'SELECT 1
-                 FROM diary_entries
-                 WHERE user_id = :user_id
-                   AND film_id = :film_id
+                 FROM (
+                    SELECT film_id FROM user_films WHERE user_id = :user_id
+                    UNION
+                    SELECT film_id FROM diary_entries WHERE user_id = :user_id
+                 ) watched
+                 WHERE film_id = :film_id
                  LIMIT 1'
             );
 
