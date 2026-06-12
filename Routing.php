@@ -76,8 +76,12 @@ final class Routing
             'log-search-results' => [TmdbController::class, 'logSearchResults'],
             'log-selected' => [TmdbController::class, 'logSelected'],
             'film-details' => [TmdbController::class, 'filmDetails'],
-            'search-films' => [TmdbController::class, 'searchFilmsPage'],
-            'search-actors' => [TmdbController::class, 'searchActorsPage'],
+
+            'search' => [SearchController::class, 'index'],
+            'search-films' => [SearchController::class, 'filmsPage'],
+            'search-actors' => [SearchController::class, 'actorsPage'],
+            'search-users' => [SearchController::class, 'usersPage'],
+            'search-lists' => [SearchController::class, 'listsPage'],
 
             'api-search' => [SearchController::class, 'search'],
             'api-search-users' => [SearchController::class, 'users'],

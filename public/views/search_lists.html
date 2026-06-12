@@ -1,199 +1,286 @@
+<?php
+$query = $query ?? trim((string) ($_GET['q'] ?? $_GET['query'] ?? ''));
+$activeSearchType = $activeSearchType ?? 'all';
+$filmResults = $filmResults ?? [];
+$actorResults = $actorResults ?? [];
+$userResults = $userResults ?? [];
+$listResults = $listResults ?? [];
+$tmdbFilmFallback = $tmdbFilmFallback ?? [];
+$tmdbActorFallback = $tmdbActorFallback ?? [];
+$tmdbError = $tmdbError ?? null;
+
+if (!function_exists('reevio_search_e')) {
+    function reevio_search_e($value): string
+    {
+        return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
+    }
+}
+
+if (!function_exists('reevio_search_url')) {
+    function reevio_search_url(string $path, string $query): string
+    {
+        return $query !== '' ? $path . '?q=' . urlencode($query) : $path;
+    }
+}
+
+if (!function_exists('reevio_search_active_class')) {
+    function reevio_search_active_class(string $type, string $active): string
+    {
+        return $type === $active
+            ? 'glass-gradient-cta text-on-primary shadow-[0_0_15px_rgba(255,215,155,0.25)]'
+            : 'bg-surface-container-high text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface';
+    }
+}
+
+if (!function_exists('reevio_search_poster')) {
+    function reevio_search_poster(?string $poster): string
+    {
+        return $poster ?: '/public/assets/img/movie_placeholder.svg';
+    }
+}
+
+if (!function_exists('reevio_search_avatar')) {
+    function reevio_search_avatar(array $user): string
+    {
+        return $user['avatar_url'] ?? '';
+    }
+}
+
+if (!function_exists('reevio_search_initial')) {
+    function reevio_search_initial($value): string
+    {
+        return strtoupper(substr((string) $value, 0, 1) ?: 'U');
+    }
+}
+
+if (!function_exists('reevio_search_count')) {
+    function reevio_search_count($value): string
+    {
+        return number_format((int) $value, 0, '.', ' ');
+    }
+}
+
+if (!function_exists('reevio_search_list_poster')) {
+    function reevio_search_list_poster(array $list): string
+    {
+        return $list['poster_1'] ?? $list['poster_2'] ?? $list['poster_3'] ?? '/public/assets/img/movie_placeholder.svg';
+    }
+}
+
+if (!function_exists('reevio_search_chips')) {
+    function reevio_search_chips(string $active, string $query): void
+    {
+        $items = [
+            ['all', 'All', '/search'],
+            ['films', 'Films', '/search-films'],
+            ['actors', 'Actors', '/search-actors'],
+            ['users', 'Users', '/search-users'],
+            ['lists', 'Lists', '/search-lists'],
+        ];
+
+        echo '<div class="flex gap-3 pb-10 overflow-x-auto scrollbar-hide">';
+        foreach ($items as [$type, $label, $path]) {
+            echo '<a class="' . reevio_search_active_class($type, $active) . ' rounded-full px-6 py-2.5 font-label text-sm font-bold whitespace-nowrap transition-colors" href="' . reevio_search_e(reevio_search_url($path, $query)) . '">' . reevio_search_e($label) . '</a>';
+        }
+        echo '</div>';
+    }
+}
+
+if (!function_exists('reevio_search_header')) {
+    function reevio_search_header(string $active, string $query, string $title, string $subtitle): void
+    {
+        ?>
+        <header class="mb-8">
+          <p class="mb-3 font-label text-xs font-bold uppercase tracking-[0.28em] text-secondary">Search</p>
+          <h1 class="font-headline text-[38px] font-black tracking-tight text-on-surface"><?= reevio_search_e($title); ?></h1>
+          <p class="mt-2 text-sm text-on-surface-variant"><?= reevio_search_e($subtitle); ?></p>
+        </header>
+
+        <form action="<?= reevio_search_e($active === 'all' ? '/search' : '/search-' . $active); ?>" method="get" class="mb-5 max-w-3xl">
+          <div class="relative flex items-center bg-surface-container-lowest rounded-full px-5 py-4 shadow-[0_20px_40px_rgba(0,0,0,0.4)] ring-1 ring-outline-variant/15 focus-within:ring-secondary focus-within:ring-2 focus-within:shadow-[0_0_20px_rgba(189,244,255,0.18)] transition-all">
+            <span class="material-symbols-outlined text-on-surface-variant mr-3">search</span>
+            <input
+              class="bg-transparent border-none focus:ring-0 text-on-surface font-body w-full placeholder-on-surface-variant text-lg outline-none"
+              name="q"
+              placeholder="Search films, actors, users or lists..."
+              type="search"
+              value="<?= reevio_search_e($query); ?>"
+            />
+            <?php if ($query !== ''): ?>
+            <a class="ml-2 text-on-surface-variant hover:text-on-surface transition-colors" aria-label="Clear search" href="<?= reevio_search_e($active === 'all' ? '/search' : '/search-' . $active); ?>">
+              <span class="material-symbols-outlined text-xl">cancel</span>
+            </a>
+            <?php endif; ?>
+          </div>
+        </form>
+
+        <?php reevio_search_chips($active, $query); ?>
+        <?php
+    }
+}
+
+if (!function_exists('reevio_search_film_card')) {
+    function reevio_search_film_card(array $film): void
+    {
+        $isTmdb = ($film['source'] ?? '') === 'tmdb' || !empty($film['tmdb_id']) && empty($film['id']);
+        $href = $isTmdb ? '/film-details?tmdb_id=' . (int) ($film['tmdb_id'] ?? 0) : '/film-details?id=' . (int) ($film['id'] ?? 0);
+        $rating = $film['tmdb_vote_average'] ?? $film['average_rating'] ?? $film['vote_average'] ?? null;
+        ?>
+        <a href="<?= reevio_search_e($href); ?>" class="group block rounded-2xl border border-outline-variant/15 bg-surface-container-low p-3 ambient-shadow transition-transform duration-200 hover:scale-[1.02] hover:bg-surface-container-high">
+          <div class="relative aspect-[2/3] overflow-hidden rounded-xl poster-shadow">
+            <img src="<?= reevio_search_e(reevio_search_poster($film['poster_url'] ?? null)); ?>" alt="<?= reevio_search_e($film['title'] ?? 'Film'); ?> poster" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+            <div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest/75 to-transparent"></div>
+            <?php if ($rating !== null && $rating !== ''): ?>
+            <div class="absolute bottom-2 left-2 rounded-full bg-surface-container-lowest/85 px-2 py-1 font-label text-xs font-bold text-primary">
+              <?= reevio_search_e(number_format((float) $rating, 1)); ?>
+            </div>
+            <?php endif; ?>
+          </div>
+          <h2 class="mt-3 line-clamp-2 font-headline text-base font-bold text-on-surface group-hover:text-primary"><?= reevio_search_e($film['title'] ?? 'Untitled'); ?></h2>
+          <p class="mt-1 font-label text-xs text-on-surface-variant">
+            <?= reevio_search_e($film['release_year'] ?? ''); ?><?= !empty($film['director']) ? ' • ' . reevio_search_e($film['director']) : ''; ?>
+          </p>
+        </a>
+        <?php
+    }
+}
+
+if (!function_exists('reevio_search_actor_card')) {
+    function reevio_search_actor_card(array $actor): void
+    {
+        $isTmdb = ($actor['source'] ?? '') === 'tmdb' || !empty($actor['tmdb_id']) && empty($actor['id']);
+        $name = $actor['full_name'] ?? $actor['name'] ?? 'Unknown';
+        $photo = $actor['photo_url'] ?? $actor['profile_url'] ?? '';
+        $href = $isTmdb ? '/search-actors?q=' . urlencode($name) : '/crew-profile?id=' . (int) ($actor['id'] ?? 0);
+        ?>
+        <a href="<?= reevio_search_e($href); ?>" class="group block rounded-2xl border border-outline-variant/15 bg-surface-container-low p-3 ambient-shadow transition-transform duration-200 hover:scale-[1.02] hover:bg-surface-container-high">
+          <div class="relative aspect-[2/3] overflow-hidden rounded-xl poster-shadow bg-surface-container-lowest">
+            <?php if ($photo): ?>
+            <img src="<?= reevio_search_e($photo); ?>" alt="<?= reevio_search_e($name); ?>" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+            <?php else: ?>
+            <div class="flex h-full w-full items-center justify-center bg-surface-container-high font-headline text-6xl font-black text-primary"><?= reevio_search_e(reevio_search_initial($name)); ?></div>
+            <?php endif; ?>
+            <div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest/85 to-transparent"></div>
+            <?php if ($isTmdb): ?>
+            <div class="absolute top-2 left-2 rounded-full bg-secondary/90 px-2 py-1 font-label text-[10px] font-black uppercase tracking-wider text-on-primary">TMDB</div>
+            <?php else: ?>
+            <div class="absolute bottom-2 left-2 rounded-full bg-surface-container-lowest/85 px-2 py-1 font-label text-xs font-bold text-secondary">
+              <?= reevio_search_count($actor['film_count'] ?? 0); ?> films
+            </div>
+            <?php endif; ?>
+          </div>
+          <h2 class="mt-3 line-clamp-2 font-headline text-base font-bold text-on-surface group-hover:text-primary"><?= reevio_search_e($name); ?></h2>
+          <p class="mt-1 font-label text-xs text-on-surface-variant">
+            <?= reevio_search_e($actor['known_for_department'] ?? 'Person'); ?><?= !empty($actor['known_for_title']) ? ' • ' . reevio_search_e($actor['known_for_title']) : ''; ?>
+          </p>
+        </a>
+        <?php
+    }
+}
+
+if (!function_exists('reevio_search_user_card')) {
+    function reevio_search_user_card(array $user): void
+    {
+        $avatar = reevio_search_avatar($user);
+        ?>
+        <a href="/profile-u-main?id=<?= (int) $user['id']; ?>" class="group block rounded-2xl border border-outline-variant/15 bg-surface-container-low p-4 ambient-shadow transition-transform duration-200 hover:scale-[1.02] hover:bg-surface-container-high">
+          <div class="mb-4 flex items-center gap-4">
+            <div class="h-16 w-16 shrink-0 overflow-hidden rounded-full border border-outline-variant/15 bg-surface-container-high">
+              <?php if ($avatar): ?>
+              <img src="<?= reevio_search_e($avatar); ?>" alt="<?= reevio_search_e($user['username'] ?? 'User'); ?> avatar" class="h-full w-full object-cover" />
+              <?php else: ?>
+              <div class="flex h-full w-full items-center justify-center font-headline text-2xl font-black text-primary"><?= reevio_search_e(reevio_search_initial($user['username'] ?? 'U')); ?></div>
+              <?php endif; ?>
+            </div>
+            <div class="min-w-0">
+              <h2 class="truncate font-headline text-lg font-bold text-on-surface group-hover:text-primary">@<?= reevio_search_e($user['username'] ?? 'user'); ?></h2>
+              <p class="font-label text-xs text-on-surface-variant"><?= reevio_search_count($user['films_count'] ?? 0); ?> films</p>
+            </div>
+          </div>
+          <p class="line-clamp-3 text-sm leading-relaxed text-on-surface-variant"><?= reevio_search_e($user['bio'] ?? 'No bio yet.'); ?></p>
+          <div class="mt-4 flex gap-3 font-label text-xs text-on-surface-variant">
+            <span><?= reevio_search_count($user['followers_count'] ?? 0); ?> followers</span>
+            <span><?= reevio_search_count($user['following_count'] ?? 0); ?> following</span>
+          </div>
+        </a>
+        <?php
+    }
+}
+
+if (!function_exists('reevio_search_list_card')) {
+    function reevio_search_list_card(array $list): void
+    {
+        ?>
+        <a href="/list-details?id=<?= (int) $list['id']; ?>" class="group block rounded-2xl border border-outline-variant/15 bg-surface-container-low p-4 ambient-shadow transition-transform duration-200 hover:scale-[1.02] hover:bg-surface-container-high">
+          <div class="relative mb-4 h-36 w-24">
+            <div class="absolute inset-0 rotate-4 translate-x-1 -translate-y-1 scale-90 overflow-hidden rounded-xl bg-surface-container-high opacity-60 poster-shadow">
+              <img alt="" class="h-full w-full object-cover grayscale opacity-50" src="<?= reevio_search_e(reevio_search_poster($list['poster_3'] ?? null)); ?>" />
+            </div>
+            <div class="absolute inset-0 -rotate-2 -translate-x-1 scale-95 overflow-hidden rounded-xl bg-surface-container-highest opacity-80 poster-shadow">
+              <img alt="" class="h-full w-full object-cover grayscale opacity-70" src="<?= reevio_search_e(reevio_search_poster($list['poster_2'] ?? null)); ?>" />
+            </div>
+            <div class="absolute inset-0 overflow-hidden rounded-xl border border-white/10 bg-surface-container poster-shadow">
+              <img alt="<?= reevio_search_e($list['title'] ?? 'List'); ?> front poster" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" src="<?= reevio_search_e(reevio_search_list_poster($list)); ?>" />
+              <div class="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-surface-container-lowest to-transparent opacity-80"></div>
+            </div>
+          </div>
+          <h2 class="line-clamp-2 font-headline text-lg font-bold text-on-surface group-hover:text-primary"><?= reevio_search_e($list['title'] ?? 'Untitled list'); ?></h2>
+          <p class="mt-1 font-label text-xs text-on-surface-variant">
+            @<?= reevio_search_e($list['username'] ?? 'user'); ?> • <?= (int) ($list['films_count'] ?? 0); ?> films<?= !empty($list['is_ranked']) ? ' • ranked' : ''; ?>
+          </p>
+          <?php if (!empty($list['description'])): ?>
+          <p class="mt-3 line-clamp-2 text-sm leading-relaxed text-on-surface-variant"><?= reevio_search_e($list['description']); ?></p>
+          <?php endif; ?>
+        </a>
+        <?php
+    }
+}
+
+if (!function_exists('reevio_search_empty_state')) {
+    function reevio_search_empty_state(string $label): void
+    {
+        ?>
+        <div class="rounded-3xl border border-outline-variant/15 bg-surface-container-low p-8 ambient-shadow text-on-surface-variant">
+          No <?= reevio_search_e($label); ?> found.
+        </div>
+        <?php
+    }
+}
+?>
+<?php
+$pageTitle = 'Reevio - Search Lists';
+$bodyClass = 'search_lists';
+?>
 <!doctype html>
 <html class="dark" lang="en">
   <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Reevio - Search Lists</title>
+    <title><?= reevio_search_e($pageTitle ?? 'Reevio - Search'); ?></title>
+    <link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;600;700;800;900&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <link href="/public/assets/css/reevio.css" rel="stylesheet" />
+  </head>
 
-    <link
-      href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;600;700;800;900&family=Manrope:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
-
-    <link
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
-      rel="stylesheet"
-    />
-    <link href="/public/assets/css/reevio.css" rel="stylesheet" /></head>
-
-  <body class="bg-surface text-on-surface font-body min-h-screen antialiased search-compact-page reevio-page-search_lists">
+  <body class="bg-surface text-on-surface font-body min-h-screen antialiased search-compact-page reevio-page-<?= reevio_search_e($bodyClass ?? 'search'); ?>">
     <div class="cinematic-glow"></div>
 <?php
 $activeNav = 'search';
 $showAdminLink = ($showAdminLink ?? false);
 include __DIR__ . '/partials/navigation.html';
 ?>
-<!-- MAIN CONTENT AREA -->
-    <div class="relative z-10 min-h-screen pl-64">
-<!-- SEARCH LISTS BODY -->
-      <main class="w-full relative z-10">
-        <div class="max-w-7xl mx-auto px-8 pb-20 pt-6">
-          <!-- SEARCH BAR -->
-          <div class="mb-5 max-w-3xl">
-            <div
-              class="relative flex items-center bg-surface-container-lowest rounded-full px-5 py-4 shadow-[0_20px_40px_rgba(0,0,0,0.4)] ring-1 ring-outline-variant/15 focus-within:ring-secondary focus-within:ring-2 focus-within:shadow-[0_0_20px_rgba(189,244,255,0.18)] transition-all"
-            >
-              <span
-                class="material-symbols-outlined text-on-surface-variant mr-3"
-                >search</span
-              >
+    <main class="relative z-10 ml-64 min-h-screen w-[calc(100%-16rem)] px-4 pb-24 pt-[8.7rem] lg:px-5 xl:px-6">
+      <div class="mx-auto max-w-[1120px]">
 
-              <input
-                class="bg-transparent border-none focus:ring-0 text-on-surface font-body w-full placeholder-on-surface-variant text-lg outline-none"
-                placeholder="Search films, directors, actors..."
-                type="text"
-                value="Sci-Fi Essentials"
-              />
+        <?php reevio_search_header('lists', $query, 'Search Lists', $query !== '' ? 'Real list results for "' . $query . '".' : 'Browse public lists and your private lists.'); ?>
 
-              <button
-                class="ml-2 text-on-surface-variant hover:text-on-surface transition-colors"
-                aria-label="Clear search"
-              >
-                <span class="material-symbols-outlined text-xl">cancel</span>
-              </button>
-            </div>
-          </div>
-
-          <!-- CATEGORY CHIPS -->
-          <div class="flex gap-3 pb-10 overflow-x-auto scrollbar-hide">
-            <button
-              class="bg-surface-container-high text-on-surface-variant rounded-full px-6 py-2.5 font-label text-sm font-medium whitespace-nowrap hover:bg-surface-bright hover:text-on-surface transition-colors"
-            >
-              Films
-            </button>
-
-            <button
-              class="bg-surface-container-high text-on-surface-variant rounded-full px-6 py-2.5 font-label text-sm font-medium whitespace-nowrap hover:bg-surface-bright hover:text-on-surface transition-colors"
-            >
-              Actors
-            </button>
-
-            <button
-              class="bg-surface-container-high text-on-surface-variant rounded-full px-6 py-2.5 font-label text-sm font-medium whitespace-nowrap hover:bg-surface-bright hover:text-on-surface transition-colors"
-            >
-              Users
-            </button>
-
-            <button
-              class="glass-gradient-cta text-on-primary rounded-full px-6 py-2.5 font-label text-sm font-bold whitespace-nowrap shadow-[0_0_15px_rgba(255,215,155,0.25)]"
-            >
-              Lists
-            </button>
-          </div>
-
-          <!-- RESULTS SECTION -->
-          <section>
-            <h2 class="font-headline text-2xl font-bold text-on-surface mb-5">
-              Live Results
-            </h2>
-
-            <div
-              class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6 xl:gap-8"
-            >
-              <!-- LIST CARD -->
-              <article
-                class="relative rounded-xl overflow-hidden shadow-[0_20px_40px_rgba(0,0,0,0.4)] bg-surface-container-low group cursor-pointer aspect-[2/3]"
-              >
-                <img
-                  alt="Sci-Fi Essentials list preview"
-                  class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuDcUUfsq09JEYm-m6vrU_Kzy5eDguwBKd7mKOGcZvnu09DCgNHuWOzKU5w4MYzwtMuCtWj6uBBzC-ibwrx9g9s4EjWv6aAx-DlNj7EKU-1xpwTUfBbR3cs_AYAyBN2-vr9lrDOEfc_Lv5Ep246cF3MKTEzSMg5xRXfiDNkB1orfff94O9dWMMJkpqStnBtBtUoqv_dJb-ArzZpdX9l_N3ABf_XopPTrMNlMwGIHX7CZ_rgXRwpY9QOZRYARHIyoYl3SnwlMcR-Eimi5"
-                />
-
-                <div
-                  class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-surface-container-lowest/35 to-transparent flex flex-col justify-end p-5"
-                >
-                  <h3
-                    class="font-headline text-xl font-bold text-on-surface leading-tight group-hover:text-primary transition-colors"
-                  >
-                    Sci-Fi Essentials
-                  </h3>
-
-                  <p class="font-label text-xs text-on-surface-variant mt-1">
-                    Film list
-                  </p>
-                </div>
-              </article>
-
-              <!-- LIST CARD -->
-              <article
-                class="relative rounded-xl overflow-hidden shadow-[0_20px_40px_rgba(0,0,0,0.4)] bg-surface-container-low group cursor-pointer aspect-[2/3]"
-              >
-                <img
-                  alt="Slow Cinema Starters list preview"
-                  class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuCCS5-p3t2RWoHV9ljjnnXqAEyGTqJFZM_BgBL48Zi0TKiVDDyDRCxLgUBqsqjpT9BQRGVS2Mva6YaRd9OnPsiqkCQoc6rjVODOF9xourYgN_mLnQjx5bafXnWGq9Zh2fxHDREZk4YACW7GBxbs4UvVpcsE2ciq-uMBRs3wsYAtSeUqOZeYr-wXQMknoGJbSg1hgiHPjlnbWeYcGAH7yx4b6H5TBr2DGLFL3u7I1Rmv7PqLWDwEk7EXQoT1TkkIEZjbKp-mr_zNSJF_"
-                />
-
-                <div
-                  class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-surface-container-lowest/35 to-transparent flex flex-col justify-end p-5"
-                >
-                  <h3
-                    class="font-headline text-xl font-bold text-on-surface leading-tight group-hover:text-primary transition-colors"
-                  >
-                    Slow Cinema Starters
-                  </h3>
-
-                  <p class="font-label text-xs text-on-surface-variant mt-1">
-                    Film list
-                  </p>
-                </div>
-              </article>
-
-              <!-- LIST CARD -->
-              <article
-                class="relative rounded-xl overflow-hidden shadow-[0_20px_40px_rgba(0,0,0,0.4)] bg-surface-container-low group cursor-pointer aspect-[2/3]"
-              >
-                <img
-                  alt="Neon Noir Nights list preview"
-                  class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuDXwcfo6YeA1PxhGQKmchBEU3P_4K7cj7vTkiZETQWTVK9DlsTydWL8g0yhfI6WQ98wNQi_9pJBotQb3g5_X7nDb8CxSoKj9EgNQVw879tkKjcQddiQtGuNFasCSAp1GbR25XqYXgUGmUKeJOSEfEo7ZK6z2vceuQTKp_aUQNFmlO1PHfq_lK_E1Bzulng0bk3CwfVX8JJ85tX5TfzbvI5Vh_iWB2ftWj0sBKSIZU7ruhFcRYu-ANdw6Iyr5ZO8QrCSAESNlraHtynk"
-                />
-
-                <div
-                  class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-surface-container-lowest/35 to-transparent flex flex-col justify-end p-5"
-                >
-                  <h3
-                    class="font-headline text-xl font-bold text-on-surface leading-tight group-hover:text-primary transition-colors"
-                  >
-                    Neon Noir Nights
-                  </h3>
-
-                  <p class="font-label text-xs text-on-surface-variant mt-1">
-                    Film list
-                  </p>
-                </div>
-              </article>
-
-              <!-- LIST CARD -->
-              <article
-                class="relative rounded-xl overflow-hidden shadow-[0_20px_40px_rgba(0,0,0,0.4)] bg-surface-container-low group cursor-pointer aspect-[2/3]"
-              >
-                <img
-                  alt="Villeneuve Ranked list preview"
-                  class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuDZ20geHNulqDqa045PwSlUhcWdmOjNlErbx5LSJqh8iL5IIA9AbeEtRYJ9bxZF4IJWYOtujNovkk6VuodYNfYx7VePKAemb0QiwdyMnmh81nKRInvCJ-w9E1zsC-P8aEtHZMJNpIAAEH3eYd6Wk3h5y1IxB8s1rwMaJcqCu7F-6IsYDAPoYT--e0SAlv0bDOwefBEb0XUcUwCSMhZQOkoQDRnAbDGfvu9aecNcBN1-n5JclIPXlQcL4e7bDo5TFgzvSp9xsJVL3OI_"
-                />
-
-                <div
-                  class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-surface-container-lowest/35 to-transparent flex flex-col justify-end p-5"
-                >
-                  <h3
-                    class="font-headline text-xl font-bold text-on-surface leading-tight group-hover:text-primary transition-colors"
-                  >
-                    Villeneuve Ranked
-                  </h3>
-
-                  <p class="font-label text-xs text-on-surface-variant mt-1">
-                    Film list
-                  </p>
-                </div>
-              </article>
-            </div>
-          </section>
-        </div>
-      </main>
-    </div>
-      <script src="/public/assets/js/reevio.js"></script>
-</body>
+        <?php if ($listResults): ?>
+        <section class="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+          <?php foreach ($listResults as $list): reevio_search_list_card($list); endforeach; ?>
+        </section>
+        <?php else: reevio_search_empty_state('lists'); endif; ?>
+      </div>
+    </main>
+    <script src="/public/assets/js/reevio.js"></script>
+  </body>
 </html>

@@ -626,4 +626,75 @@ final class ListsRepository extends Repository
     }
 
 
+
+    public function searchVisibleLists(string $term, int $currentUserId, int $limit = 20): array
+    {
+        $term = trim($term);
+        $like = '%' . $term . '%';
+
+        $query = $this->connection()->prepare(
+            'SELECT
+                l.id,
+                l.user_id,
+                l.title,
+                l.description,
+                l.is_public,
+                l.is_ranked,
+                l.created_at,
+                l.updated_at,
+                u.username,
+                COUNT(li.film_id) AS films_count,
+                p1.poster_url AS poster_1,
+                p2.poster_url AS poster_2,
+                p3.poster_url AS poster_3
+             FROM lists l
+             JOIN users u ON u.id = l.user_id
+             LEFT JOIN list_items li ON li.list_id = l.id
+             LEFT JOIN LATERAL (
+                SELECT f.poster_url
+                FROM list_items li1
+                JOIN films f ON f.id = li1.film_id
+                WHERE li1.list_id = l.id
+                ORDER BY li1.position ASC, li1.added_at ASC
+                LIMIT 1 OFFSET 0
+             ) p1 ON TRUE
+             LEFT JOIN LATERAL (
+                SELECT f.poster_url
+                FROM list_items li2
+                JOIN films f ON f.id = li2.film_id
+                WHERE li2.list_id = l.id
+                ORDER BY li2.position ASC, li2.added_at ASC
+                LIMIT 1 OFFSET 1
+             ) p2 ON TRUE
+             LEFT JOIN LATERAL (
+                SELECT f.poster_url
+                FROM list_items li3
+                JOIN films f ON f.id = li3.film_id
+                WHERE li3.list_id = l.id
+                ORDER BY li3.position ASC, li3.added_at ASC
+                LIMIT 1 OFFSET 2
+             ) p3 ON TRUE
+             WHERE (l.is_public = TRUE OR l.user_id = :current_user_id)
+               AND (
+                    :term_empty = TRUE
+                    OR l.title ILIKE :like_title
+                    OR l.description ILIKE :like_description
+                    OR u.username ILIKE :like_username
+               )
+             GROUP BY l.id, u.id, p1.poster_url, p2.poster_url, p3.poster_url
+             ORDER BY l.updated_at DESC, l.created_at DESC, l.title ASC
+             LIMIT :limit'
+        );
+        $query->bindValue(':current_user_id', $currentUserId, PDO::PARAM_INT);
+        $query->bindValue(':term_empty', $term === '', PDO::PARAM_BOOL);
+        $query->bindValue(':like_title', $like);
+        $query->bindValue(':like_description', $like);
+        $query->bindValue(':like_username', $like);
+        $query->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $query->execute();
+
+        return $query->fetchAll();
+    }
+
+
 }

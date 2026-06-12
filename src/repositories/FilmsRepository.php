@@ -9,19 +9,34 @@ final class FilmsRepository extends Repository
 {
     public function search(string $term, int $limit = 20): array
     {
+        $term = trim($term);
+        $like = '%' . $term . '%';
+
         $query = $this->connection()->prepare(
-            'SELECT f.*, COALESCE(ROUND(AVG(r.rating), 2), 0) AS average_rating
+            'SELECT
+                f.*,
+                COALESCE(ROUND(AVG(r.rating), 2), 0) AS average_rating,
+                COUNT(DISTINCT r.id) AS reviews_count
              FROM films f
              LEFT JOIN reviews r ON r.film_id = f.id
-             WHERE f.title ILIKE :term OR f.original_title ILIKE :term OR f.director ILIKE :term
+             WHERE :term_empty = TRUE
+                OR f.title ILIKE :like_title
+                OR f.original_title ILIKE :like_original
+                OR f.director ILIKE :like_director
+                OR f.description ILIKE :like_description
              GROUP BY f.id
-             ORDER BY f.title ASC
+             ORDER BY f.created_at DESC, f.title ASC
              LIMIT :limit'
         );
-        $query->bindValue(':term', '%' . $term . '%');
+        $query->bindValue(':term_empty', $term === '', PDO::PARAM_BOOL);
+        $query->bindValue(':like_title', $like);
+        $query->bindValue(':like_original', $like);
+        $query->bindValue(':like_director', $like);
+        $query->bindValue(':like_description', $like);
         $query->bindValue(':limit', $limit, PDO::PARAM_INT);
         $query->execute();
-        return $query->fetchAll();
+
+        return array_map(fn (array $film): array => $this->hydrateFilm($film), $query->fetchAll());
     }
 
     public function getFeed(int $limit = 24): array
@@ -742,6 +757,50 @@ final class FilmsRepository extends Repository
 
             throw $exception;
         }
+    }
+
+
+
+    public function searchPeople(string $term, int $limit = 20): array
+    {
+        $term = trim($term);
+        $like = '%' . $term . '%';
+
+        $query = $this->connection()->prepare(
+            "SELECT
+                p.id,
+                p.tmdb_id,
+                p.full_name,
+                p.biography,
+                p.photo_url,
+                p.profile_path,
+                p.known_for_department,
+                COUNT(DISTINCT fp.film_id) AS film_count,
+                COALESCE(
+                    (array_agg(DISTINCT f.title) FILTER (WHERE f.title IS NOT NULL))[1],
+                    ''
+                ) AS known_for_title
+             FROM people p
+             LEFT JOIN film_people fp ON fp.person_id = p.id
+             LEFT JOIN films f ON f.id = fp.film_id
+             WHERE :term_empty = TRUE
+                OR p.full_name ILIKE :like_name
+                OR p.known_for_department ILIKE :like_department
+                OR p.biography ILIKE :like_biography
+                OR f.title ILIKE :like_film
+             GROUP BY p.id
+             ORDER BY COUNT(DISTINCT fp.film_id) DESC, p.full_name ASC
+             LIMIT :limit"
+        );
+        $query->bindValue(':term_empty', $term === '', PDO::PARAM_BOOL);
+        $query->bindValue(':like_name', $like);
+        $query->bindValue(':like_department', $like);
+        $query->bindValue(':like_biography', $like);
+        $query->bindValue(':like_film', $like);
+        $query->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $query->execute();
+
+        return $query->fetchAll();
     }
 
 

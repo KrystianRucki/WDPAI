@@ -286,4 +286,52 @@ final class UsersRepository extends Repository
     }
 
 
+
+    public function searchPublicUsers(string $term, int $currentUserId, int $limit = 20): array
+    {
+        $term = trim($term);
+        $like = '%' . $term . '%';
+
+        $query = $this->connection()->prepare(
+            'SELECT
+                u.id,
+                u.username,
+                u.email,
+                u.avatar_url,
+                u.bio,
+                u.role,
+                u.is_active,
+                u.created_at,
+                (SELECT COUNT(*) FROM followers WHERE followed_id = u.id) AS followers_count,
+                (SELECT COUNT(*) FROM followers WHERE follower_id = u.id) AS following_count,
+                (SELECT COUNT(DISTINCT film_id) FROM diary_entries WHERE user_id = u.id) AS films_count,
+                CASE WHEN EXISTS (
+                    SELECT 1
+                    FROM followers mine
+                    WHERE mine.follower_id = :current_user_id
+                      AND mine.followed_id = u.id
+                ) THEN 1 ELSE 0 END AS is_following
+             FROM users u
+             WHERE u.is_active = TRUE
+               AND (
+                    :term_empty = TRUE
+                    OR u.username ILIKE :like_username
+                    OR u.email ILIKE :like_email
+                    OR u.bio ILIKE :like_bio
+               )
+             ORDER BY followers_count DESC, u.created_at DESC, u.username ASC
+             LIMIT :limit'
+        );
+        $query->bindValue(':current_user_id', $currentUserId, PDO::PARAM_INT);
+        $query->bindValue(':term_empty', $term === '', PDO::PARAM_BOOL);
+        $query->bindValue(':like_username', $like);
+        $query->bindValue(':like_email', $like);
+        $query->bindValue(':like_bio', $like);
+        $query->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $query->execute();
+
+        return $query->fetchAll();
+    }
+
+
 }
