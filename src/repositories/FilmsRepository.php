@@ -661,6 +661,39 @@ final class FilmsRepository extends Repository
 
 
 
+
+    public function userHasWatchedFilm(int $userId, int $filmId): bool
+    {
+        $query = $this->connection()->prepare(
+            'SELECT 1
+             FROM diary_entries
+             WHERE user_id = :user_id
+               AND film_id = :film_id
+             LIMIT 1'
+        );
+        $query->bindValue(':user_id', $userId, PDO::PARAM_INT);
+        $query->bindValue(':film_id', $filmId, PDO::PARAM_INT);
+        $query->execute();
+
+        return (bool) $query->fetchColumn();
+    }
+
+    public function userHasFilmInWatchlist(int $userId, int $filmId): bool
+    {
+        $query = $this->connection()->prepare(
+            'SELECT 1
+             FROM watchlist
+             WHERE user_id = :user_id
+               AND film_id = :film_id
+             LIMIT 1'
+        );
+        $query->bindValue(':user_id', $userId, PDO::PARAM_INT);
+        $query->bindValue(':film_id', $filmId, PDO::PARAM_INT);
+        $query->execute();
+
+        return (bool) $query->fetchColumn();
+    }
+
     public function addToWatchlist(int $userId, int $filmId): void
     {
         $query = $this->connection()->prepare(
@@ -682,10 +715,10 @@ final class FilmsRepository extends Repository
         try {
             $query = $connection->prepare(
                 'INSERT INTO diary_entries (user_id, film_id, watched_on, rating, is_rewatch, is_public)
-                 VALUES (:user_id, :film_id, CURRENT_DATE, NULL, FALSE, FALSE)
+                 VALUES (:user_id, :film_id, CURRENT_DATE, NULL, FALSE, TRUE)
                  ON CONFLICT (user_id, film_id, watched_on)
                  DO UPDATE SET
-                    is_public = FALSE
+                    is_public = TRUE
                  RETURNING id'
             );
             $query->bindValue(':user_id', $userId, PDO::PARAM_INT);

@@ -11,8 +11,7 @@ final class DiaryRepository extends Repository
         $query = $this->connection()->prepare(
             'SELECT COUNT(*)
              FROM diary_entries
-             WHERE user_id = :user_id
-               AND NOT (is_public = FALSE AND rating IS NULL)'
+             WHERE user_id = :user_id'
         );
         $query->execute(['user_id' => $userId]);
 
@@ -56,7 +55,6 @@ final class DiaryRepository extends Repository
              LEFT JOIN film_genres fg ON fg.film_id = f.id
              LEFT JOIN genres g ON g.id = fg.genre_id
              WHERE de.user_id = :user_id
-               AND NOT (de.is_public = FALSE AND de.rating IS NULL)
              GROUP BY de.id, f.id, r.id
              ORDER BY de.watched_on DESC, de.created_at DESC
              LIMIT :limit"

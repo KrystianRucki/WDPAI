@@ -153,7 +153,15 @@ final class TmdbController extends AppController
             $film = $this->films->getFallbackFilm();
         }
 
-        $this->render('film_details', compact('film', 'tmdbError'));
+        $filmId = (int) ($film['id'] ?? 0);
+        $currentUserId = (int) ($_SESSION['user_id'] ?? 0);
+
+        $filmState = [
+            'watched' => $filmId > 0 && $currentUserId > 0 ? $this->films->userHasWatchedFilm($currentUserId, $filmId) : false,
+            'watchlisted' => $filmId > 0 && $currentUserId > 0 ? $this->films->userHasFilmInWatchlist($currentUserId, $filmId) : false,
+        ];
+
+        $this->render('film_details', compact('film', 'tmdbError', 'filmState'));
     }
 
     public function searchFilmsPage(): void
@@ -246,6 +254,7 @@ final class TmdbController extends AppController
 
         $data = $this->getJsonInput();
         $filmId = (int) ($data['film_id'] ?? 0);
+        $userId = (int) $_SESSION['user_id'];
 
         if ($filmId <= 0) {
             $this->json([
@@ -256,11 +265,22 @@ final class TmdbController extends AppController
         }
 
         try {
-            $this->films->addToWatchlist((int) $_SESSION['user_id'], $filmId);
+            if ($this->films->userHasFilmInWatchlist($userId, $filmId)) {
+                $this->json([
+                    'success' => true,
+                    'status' => 'watchlisted',
+                    'already' => true,
+                    'message' => 'Already in watchlist.',
+                ]);
+                return;
+            }
+
+            $this->films->addToWatchlist($userId, $filmId);
 
             $this->json([
                 'success' => true,
                 'status' => 'watchlisted',
+                'already' => false,
                 'message' => 'Added to watchlist.',
             ]);
         } catch (Throwable $exception) {
@@ -279,6 +299,7 @@ final class TmdbController extends AppController
 
         $data = $this->getJsonInput();
         $filmId = (int) ($data['film_id'] ?? 0);
+        $userId = (int) $_SESSION['user_id'];
 
         if ($filmId <= 0) {
             $this->json([
@@ -289,10 +310,21 @@ final class TmdbController extends AppController
         }
 
         try {
-            $result = $this->films->markWatchedOnly((int) $_SESSION['user_id'], $filmId);
+            if ($this->films->userHasWatchedFilm($userId, $filmId)) {
+                $this->json([
+                    'success' => true,
+                    'status' => 'watched',
+                    'already' => true,
+                    'message' => 'Already marked as watched.',
+                ]);
+                return;
+            }
+
+            $result = $this->films->markWatchedOnly($userId, $filmId);
 
             $this->json([
                 'success' => true,
+                'already' => false,
                 ...$result,
             ]);
         } catch (Throwable $exception) {
@@ -302,7 +334,5 @@ final class TmdbController extends AppController
             ], 500);
         }
     }
-
-
 
 }

@@ -1359,8 +1359,17 @@ document.addEventListener("DOMContentLoaded", () => {
     status.classList.toggle("text-on-surface-variant", message.length === 0);
   }
 
+  function setButtonActive(button, label, icon) {
+    button.dataset.active = "1";
+    button.dataset.loading = "0";
+    button.disabled = true;
+    button.classList.add("opacity-80", "bg-surface-container-high", "text-primary");
+    button.classList.remove("text-on-surface");
+    button.innerHTML = `<span class="material-symbols-outlined text-[18px]">${icon}</span>${label}`;
+  }
+
   async function postAction(endpoint, button, loadingText) {
-    if (!filmId || button.dataset.loading === "1") return;
+    if (!filmId || button.dataset.loading === "1" || button.dataset.active === "1") return;
 
     const originalHtml = button.innerHTML;
     button.dataset.loading = "1";
@@ -1386,7 +1395,21 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       setStatus(payload.message || "Done.");
-      button.innerHTML = `<span class="material-symbols-outlined text-[18px]">check_circle</span>${payload.status === "watchlisted" ? "In watchlist" : "Watched"}`;
+
+      if (payload.status === "watchlisted") {
+        setButtonActive(button, "In watchlist", "bookmark_added");
+      } else {
+        setButtonActive(button, "Watched", "check_circle");
+
+        const watchlistButton = actions.querySelector('[data-film-action="watchlist"]');
+        if (watchlistButton && watchlistButton.dataset.active === "1") {
+          watchlistButton.dataset.active = "0";
+          watchlistButton.disabled = false;
+          watchlistButton.classList.remove("opacity-80", "bg-surface-container-high", "text-primary");
+          watchlistButton.classList.add("text-on-surface");
+          watchlistButton.innerHTML = '<span class="material-symbols-outlined text-[18px]">bookmark_add</span>Watchlist';
+        }
+      }
     } catch (error) {
       setStatus(error.message || "Action failed.", true);
       button.innerHTML = originalHtml;

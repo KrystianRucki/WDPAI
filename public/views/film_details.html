@@ -1,6 +1,7 @@
 <?php
 $film = $film ?? [];
 $tmdbError = $tmdbError ?? null;
+$filmState = $filmState ?? ['watched' => false, 'watchlisted' => false];
 
 if (!function_exists('e_film_details')) {
     function e_film_details($value): string
@@ -47,6 +48,8 @@ $cast = $film['cast'] ?? [];
 $crew = $film['crew'] ?? [];
 $filmId = (int) ($film['id'] ?? 0);
 $tmdbId = (int) ($film['tmdb_id'] ?? 0);
+$isWatched = !empty($filmState['watched']);
+$isWatchlisted = !empty($filmState['watchlisted']);
 ?>
 <!doctype html>
 <html class="dark" lang="en">
@@ -64,7 +67,7 @@ $activeNav = 'films';
 $showAdminLink = ($showAdminLink ?? false);
 include __DIR__ . '/partials/navigation.html';
 ?>
-    <main class="relative z-10 ml-64 min-h-screen w-[calc(100%-16rem)] overflow-hidden bg-background">
+    <main class="relative z-10 ml-64 min-h-screen w-[calc(100%-16rem)] overflow-hidden bg-background" style="margin-left: 16rem; width: calc(100% - 16rem);">
       <?php if ($backdrop): ?>
       <div class="pointer-events-none absolute inset-x-0 top-0 h-[430px] opacity-30" style="background-image: linear-gradient(90deg, rgba(19,19,19,.96) 0%, rgba(19,19,19,.76) 42%, rgba(19,19,19,.92) 100%), linear-gradient(to bottom, rgba(19,19,19,.12), #131313), url('<?= e_film_details($backdrop); ?>'); background-size: cover; background-position: center top;"></div>
       <?php endif; ?>
@@ -74,9 +77,9 @@ include __DIR__ . '/partials/navigation.html';
         <div class="mb-6 rounded-2xl border border-error/35 bg-error/10 p-4 text-error"><?= e_film_details($tmdbError); ?></div>
         <?php endif; ?>
 
-        <section class="grid gap-8 rounded-3xl border border-outline-variant/15 bg-surface-container-low/80 p-6 shadow-[0_24px_60px_rgba(0,0,0,0.45)] backdrop-blur-sm md:grid-cols-[170px_minmax(0,1fr)]">
-          <div class="w-[150px] overflow-hidden rounded-2xl border border-outline-variant/20 bg-surface-container-high poster-shadow md:w-[170px]" style="aspect-ratio: 2 / 3;">
-            <img alt="<?= e_film_details($title); ?> poster" class="block h-full w-full object-cover" src="<?= e_film_details($poster); ?>" />
+        <section class="flex flex-col gap-7 rounded-3xl border border-outline-variant/15 bg-surface-container-low/85 p-6 shadow-[0_24px_60px_rgba(0,0,0,0.45)] backdrop-blur-sm md:flex-row md:items-end">
+          <div class="shrink-0 overflow-hidden rounded-2xl border border-outline-variant/20 bg-surface-container-high poster-shadow" style="width: 138px; height: 207px; min-width: 138px; max-width: 138px;">
+            <img alt="<?= e_film_details($title); ?> poster" class="block h-full w-full object-cover" style="width: 138px; height: 207px; object-fit: cover;" src="<?= e_film_details($poster); ?>" />
           </div>
 
           <div class="min-w-0 self-end pb-1">
@@ -102,13 +105,13 @@ include __DIR__ . '/partials/navigation.html';
                 <span class="material-symbols-outlined text-[18px]">playlist_add</span>
                 Add to list
               </a>
-              <button type="button" data-film-action="watched" class="inline-flex items-center justify-center gap-2 rounded-full border border-outline-variant/30 px-5 py-3 font-label text-sm font-bold text-on-surface transition-colors hover:bg-surface-container-high">
-                <span class="material-symbols-outlined text-[18px]">visibility</span>
-                Mark watched
+              <button type="button" data-film-action="watched" data-active="<?= $isWatched ? '1' : '0'; ?>" <?= $isWatched ? 'disabled' : ''; ?> class="inline-flex items-center justify-center gap-2 rounded-full border border-outline-variant/30 px-5 py-3 font-label text-sm font-bold <?= $isWatched ? 'bg-surface-container-high text-primary opacity-80' : 'text-on-surface hover:bg-surface-container-high'; ?> transition-colors">
+                <span class="material-symbols-outlined text-[18px]"><?= $isWatched ? 'check_circle' : 'visibility'; ?></span>
+                <?= $isWatched ? 'Watched' : 'Mark watched'; ?>
               </button>
-              <button type="button" data-film-action="watchlist" class="inline-flex items-center justify-center gap-2 rounded-full border border-outline-variant/30 px-5 py-3 font-label text-sm font-bold text-on-surface transition-colors hover:bg-surface-container-high">
-                <span class="material-symbols-outlined text-[18px]">bookmark_add</span>
-                Watchlist
+              <button type="button" data-film-action="watchlist" data-active="<?= $isWatchlisted ? '1' : '0'; ?>" <?= $isWatchlisted ? 'disabled' : ''; ?> class="inline-flex items-center justify-center gap-2 rounded-full border border-outline-variant/30 px-5 py-3 font-label text-sm font-bold <?= $isWatchlisted ? 'bg-surface-container-high text-primary opacity-80' : 'text-on-surface hover:bg-surface-container-high'; ?> transition-colors">
+                <span class="material-symbols-outlined text-[18px]"><?= $isWatchlisted ? 'bookmark_added' : 'bookmark_add'; ?></span>
+                <?= $isWatchlisted ? 'In watchlist' : 'Watchlist'; ?>
               </button>
             </div>
             <p id="film-details-action-status" class="mt-3 min-h-[1.25rem] font-label text-sm text-on-surface-variant" role="status" aria-live="polite"></p>
