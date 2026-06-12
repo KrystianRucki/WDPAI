@@ -924,11 +924,6 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    if (!listIds.length) {
-      setStatus("Select at least one list.", true);
-      return;
-    }
-
     applyButton.disabled = true;
     applyButton.classList.add("opacity-70");
     setStatus("Saving changes...");
@@ -949,16 +944,135 @@ document.addEventListener("DOMContentLoaded", () => {
       const payload = await response.json().catch(() => ({}));
 
       if (!response.ok || !payload.success) {
-        throw new Error(payload.error || payload.message || "Could not add film to lists.");
+        throw new Error(payload.error || payload.message || "Could not save list changes.");
       }
 
       setStatus("Changes saved.");
       window.location.href = payload.redirect || `/film-details?id=${filmId}`;
     } catch (error) {
-      setStatus(error.message || "Could not add film to lists.", true);
+      setStatus(error.message || "Could not save list changes.", true);
       applyButton.disabled = false;
       applyButton.classList.remove("opacity-70");
     }
   });
+});
+
+
+
+
+/* Ranked list reorder */
+document.addEventListener("DOMContentLoaded", () => {
+  const page = document.querySelector("[data-ranked-list-reorder]");
+
+  if (!page || page.dataset.reevioReorderReady === "1") return;
+
+  page.dataset.reevioReorderReady = "1";
+
+  const listId = Number(page.dataset.listId);
+  const grid = page.querySelector("[data-reorder-grid]");
+  const saveButton = page.querySelector("[data-save-list-order]");
+  const status = page.querySelector("[data-list-order-status]");
+
+  if (!listId || !grid || !saveButton) return;
+
+  function items() {
+    return [...grid.querySelectorAll("[data-reorder-item]")];
+  }
+
+  function setStatus(message, isError = false) {
+    if (!status) return;
+    status.textContent = message;
+    status.classList.toggle("text-red-300", isError);
+    status.classList.toggle("text-primary", !isError && message.length > 0);
+    status.classList.toggle("text-on-surface-variant", message.length === 0);
+  }
+
+  function refreshRanks() {
+    items().forEach((item, index) => {
+      const badge = item.querySelector("[data-rank-badge]");
+      if (badge) badge.textContent = String(index + 1);
+
+      const upButton = item.querySelector("[data-move-up]");
+      const downButton = item.querySelector("[data-move-down]");
+
+      if (upButton) upButton.disabled = index === 0;
+      if (downButton) downButton.disabled = index === items().length - 1;
+    });
+  }
+
+  page.addEventListener("click", (event) => {
+    const upButton = event.target.closest("[data-move-up]");
+    const downButton = event.target.closest("[data-move-down]");
+
+    if (!upButton && !downButton) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    const item = event.target.closest("[data-reorder-item]");
+    if (!item) return;
+
+    if (upButton) {
+      const previous = item.previousElementSibling;
+      if (previous) {
+        grid.insertBefore(item, previous);
+        setStatus("Order changed. Save to apply.");
+      }
+    }
+
+    if (downButton) {
+      const next = item.nextElementSibling;
+      if (next) {
+        grid.insertBefore(next, item);
+        setStatus("Order changed. Save to apply.");
+      }
+    }
+
+    refreshRanks();
+  });
+
+  saveButton.addEventListener("click", async () => {
+    const filmIds = items()
+      .map((item) => Number(item.dataset.filmId))
+      .filter(Boolean);
+
+    if (!filmIds.length) {
+      setStatus("Nothing to save.", true);
+      return;
+    }
+
+    saveButton.disabled = true;
+    saveButton.classList.add("opacity-70");
+    setStatus("Saving order...");
+
+    try {
+      const response = await fetch("/api-lists-reorder", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify({
+          list_id: listId,
+          film_ids: filmIds
+        })
+      });
+
+      const payload = await response.json().catch(() => ({}));
+
+      if (!response.ok || !payload.success) {
+        throw new Error(payload.error || payload.message || "Could not save order.");
+      }
+
+      setStatus("Order saved.");
+      window.location.href = payload.redirect || `/list-details?id=${listId}`;
+    } catch (error) {
+      setStatus(error.message || "Could not save order.", true);
+      saveButton.disabled = false;
+      saveButton.classList.remove("opacity-70");
+    }
+  });
+
+  refreshRanks();
 });
 

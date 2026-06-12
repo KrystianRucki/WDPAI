@@ -88,6 +88,7 @@ final class Routing
             'api-settings-notifications' => [SettingsController::class, 'updateNotifications'],
             'api-lists-create' => [ListsController::class, 'create'],
             'api-lists-add-film' => [ListsController::class, 'addFilm'],
+            'api-lists-reorder' => [ListsController::class, 'reorder'],
             'api-reviews-comment' => [ReviewsController::class, 'comment'],
             'api-reviews-like' => [ReviewsController::class, 'like'],
             'api-diary-delete-log' => [DiaryController::class, 'deleteLog'],

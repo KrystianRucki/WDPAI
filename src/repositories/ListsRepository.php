@@ -313,4 +313,210 @@ final class ListsRepository extends Repository
     }
 
 
+
+    public function syncFilmUserLists(int $userId, int $filmId, array $selectedListIds): array
+    {
+        $selectedListIds = array_values(array_unique(array_filter(array_map('intval', $selectedListIds), fn (int $id): bool => $id > 0)));
+
+        $pdo = $this->connection();
+        $pdo->beginTransaction();
+
+        try {
+            $currentQuery = $pdo->prepare(
+                'SELECT l.id
+                 FROM lists l
+                 JOIN list_items li ON li.list_id = l.id
+                 WHERE l.user_id = :user_id
+                   AND li.film_id = :film_id'
+            );
+            $currentQuery->bindValue(':user_id', $userId, PDO::PARAM_INT);
+            $currentQuery->bindValue(':film_id', $filmId, PDO::PARAM_INT);
+            $currentQuery->execute();
+
+            $currentListIds = array_map('intval', array_column($currentQuery->fetchAll(), 'id'));
+            $toRemove = array_values(array_diff($currentListIds, $selectedListIds));
+            $toAdd = array_values(array_diff($selectedListIds, $currentListIds));
+
+            foreach ($toRemove as $listId) {
+                $delete = $pdo->prepare(
+                    'DELETE FROM list_items
+                     WHERE list_id = :list_id
+                       AND film_id = :film_id
+                       AND EXISTS (
+                           SELECT 1 FROM lists
+                           WHERE lists.id = :list_id
+                             AND lists.user_id = :user_id
+                       )'
+                );
+                $delete->bindValue(':list_id', $listId, PDO::PARAM_INT);
+                $delete->bindValue(':film_id', $filmId, PDO::PARAM_INT);
+                $delete->bindValue(':user_id', $userId, PDO::PARAM_INT);
+                $delete->execute();
+
+                $update = $pdo->prepare('UPDATE lists SET updated_at = CURRENT_TIMESTAMP WHERE id = :list_id AND user_id = :user_id');
+                $update->bindValue(':list_id', $listId, PDO::PARAM_INT);
+                $update->bindValue(':user_id', $userId, PDO::PARAM_INT);
+                $update->execute();
+            }
+
+            $added = 0;
+
+            foreach ($toAdd as $listId) {
+                $ownerQuery = $pdo->prepare('SELECT id FROM lists WHERE id = :list_id AND user_id = :user_id');
+                $ownerQuery->bindValue(':list_id', $listId, PDO::PARAM_INT);
+                $ownerQuery->bindValue(':user_id', $userId, PDO::PARAM_INT);
+                $ownerQuery->execute();
+
+                if (!$ownerQuery->fetchColumn()) {
+                    continue;
+                }
+
+                $positionQuery = $pdo->prepare('SELECT COALESCE(MAX(position), 0) + 1 FROM list_items WHERE list_id = :list_id');
+                $positionQuery->bindValue(':list_id', $listId, PDO::PARAM_INT);
+                $positionQuery->execute();
+                $position = (int) $positionQuery->fetchColumn();
+
+                $insert = $pdo->prepare(
+                    'INSERT INTO list_items (list_id, film_id, position)
+                     VALUES (:list_id, :film_id, :position)
+                     ON CONFLICT (list_id, film_id) DO NOTHING'
+                );
+                $insert->bindValue(':list_id', $listId, PDO::PARAM_INT);
+                $insert->bindValue(':film_id', $filmId, PDO::PARAM_INT);
+                $insert->bindValue(':position', $position, PDO::PARAM_INT);
+                $insert->execute();
+
+                if ($insert->rowCount() > 0) {
+                    $added++;
+                }
+
+                $update = $pdo->prepare('UPDATE lists SET updated_at = CURRENT_TIMESTAMP WHERE id = :list_id AND user_id = :user_id');
+                $update->bindValue(':list_id', $listId, PDO::PARAM_INT);
+                $update->bindValue(':user_id', $userId, PDO::PARAM_INT);
+                $update->execute();
+            }
+
+            $pdo->commit();
+
+            return [
+                'added_count' => $added,
+                'removed_count' => count($toRemove),
+                'selected_count' => count($selectedListIds),
+            ];
+        } catch (Throwable $exception) {
+            if ($pdo->inTransaction()) {
+                $pdo->rollBack();
+            }
+
+            throw $exception;
+        }
+    }
+
+    public function reorderRankedList(int $userId, int $listId, array $filmIds): int
+    {
+        $filmIds = array_values(array_unique(array_filter(array_map('intval', $filmIds), fn (int $id): bool => $id > 0)));
+
+        if (!$filmIds) {
+            return 0;
+        }
+
+        $pdo = $this->connection();
+        $pdo->beginTransaction();
+
+        try {
+            $listQuery = $pdo->prepare('SELECT id FROM lists WHERE id = :list_id AND user_id = :user_id AND is_ranked = TRUE');
+            $listQuery->bindValue(':list_id', $listId, PDO::PARAM_INT);
+            $listQuery->bindValue(':user_id', $userId, PDO::PARAM_INT);
+            $listQuery->execute();
+
+            if (!$listQuery->fetchColumn()) {
+                $pdo->rollBack();
+                return 0;
+            }
+
+            $existingQuery = $pdo->prepare(
+                'SELECT film_id
+                 FROM list_items
+                 WHERE list_id = :list_id
+                 ORDER BY position ASC, added_at ASC'
+            );
+            $existingQuery->bindValue(':list_id', $listId, PDO::PARAM_INT);
+            $existingQuery->execute();
+
+            $existingIds = array_map('intval', array_column($existingQuery->fetchAll(), 'film_id'));
+
+            sort($existingIds);
+            $sortedSubmitted = $filmIds;
+            sort($sortedSubmitted);
+
+            if ($existingIds !== $sortedSubmitted) {
+                $pdo->rollBack();
+                return 0;
+            }
+
+            /*
+             * list_items has:
+             * - UNIQUE(list_id, position)
+             * - CHECK(position > 0)
+             *
+             * Directly swapping positions can temporarily create duplicates.
+             * Negative temporary positions are not allowed by the CHECK constraint.
+             * So first move all items to high positive temporary positions,
+             * then write final positions 1..N.
+             */
+            $maxPositionQuery = $pdo->prepare(
+                'SELECT COALESCE(MAX(position), 0)
+                 FROM list_items
+                 WHERE list_id = :list_id'
+            );
+            $maxPositionQuery->bindValue(':list_id', $listId, PDO::PARAM_INT);
+            $maxPositionQuery->execute();
+
+            $temporaryBase = (int) $maxPositionQuery->fetchColumn() + count($filmIds) + 1000;
+
+            $temporaryUpdate = $pdo->prepare(
+                'UPDATE list_items
+                 SET position = :position
+                 WHERE list_id = :list_id
+                   AND film_id = :film_id'
+            );
+
+            foreach ($filmIds as $index => $filmId) {
+                $temporaryUpdate->bindValue(':position', $temporaryBase + $index + 1, PDO::PARAM_INT);
+                $temporaryUpdate->bindValue(':list_id', $listId, PDO::PARAM_INT);
+                $temporaryUpdate->bindValue(':film_id', $filmId, PDO::PARAM_INT);
+                $temporaryUpdate->execute();
+            }
+
+            $finalUpdate = $pdo->prepare(
+                'UPDATE list_items
+                 SET position = :position
+                 WHERE list_id = :list_id
+                   AND film_id = :film_id'
+            );
+
+            foreach ($filmIds as $index => $filmId) {
+                $finalUpdate->bindValue(':position', $index + 1, PDO::PARAM_INT);
+                $finalUpdate->bindValue(':list_id', $listId, PDO::PARAM_INT);
+                $finalUpdate->bindValue(':film_id', $filmId, PDO::PARAM_INT);
+                $finalUpdate->execute();
+            }
+
+            $touch = $pdo->prepare('UPDATE lists SET updated_at = CURRENT_TIMESTAMP WHERE id = :list_id AND user_id = :user_id');
+            $touch->bindValue(':list_id', $listId, PDO::PARAM_INT);
+            $touch->bindValue(':user_id', $userId, PDO::PARAM_INT);
+            $touch->execute();
+
+            $pdo->commit();
+
+            return count($filmIds);
+        } catch (Throwable $exception) {
+            if ($pdo->inTransaction()) {
+                $pdo->rollBack();
+            }
+
+            throw $exception;
+        }
+    }
+
 }

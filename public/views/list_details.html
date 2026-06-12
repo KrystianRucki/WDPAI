@@ -49,6 +49,7 @@ if (!function_exists('reevio_list_runtime')) {
 }
 
 $isOwnList = $listDetails && (int) ($listDetails['user_id'] ?? 0) === (int) ($profileUser['id'] ?? 0);
+$canReorder = $isOwnList && !empty($listDetails['is_ranked']) && count($listItems) > 1;
 ?>
 <!doctype html>
 <html class="dark" lang="en">
@@ -125,10 +126,31 @@ include __DIR__ . '/partials/navigation.html';
         </header>
 
         <?php if ($listItems): ?>
-        <section class="grid grid-cols-2 gap-5 md:grid-cols-3 xl:grid-cols-5">
+        <section <?= $canReorder ? 'data-ranked-list-reorder data-list-id="' . (int) $listDetails['id'] . '"' : ''; ?>>
+          <?php if ($canReorder): ?>
+          <div class="mb-5 flex flex-wrap items-center justify-between gap-4 rounded-3xl border border-outline-variant/15 bg-surface-container-low p-4 ambient-shadow">
+            <div>
+              <p class="font-label text-xs font-bold uppercase tracking-[0.24em] text-secondary">Ranked order</p>
+              <p class="mt-1 text-sm text-on-surface-variant">Use arrows on posters to reorder this ranked list.</p>
+            </div>
+            <div class="flex items-center gap-3">
+              <p data-list-order-status class="min-h-[1.25rem] font-label text-sm text-on-surface-variant" role="status" aria-live="polite"></p>
+              <button
+                data-save-list-order
+                type="button"
+                class="rounded-full bg-primary px-5 py-3 font-label text-sm font-bold text-on-primary shadow-[0_0_18px_rgba(255,215,155,0.24)] transition-all hover:shadow-[0_0_26px_rgba(255,215,155,0.36)]"
+              >
+                Save order
+              </button>
+            </div>
+          </div>
+          <?php endif; ?>
+
+          <div data-reorder-grid class="grid grid-cols-2 gap-5 md:grid-cols-3 xl:grid-cols-5">
           <?php foreach ($listItems as $index => $film): ?>
-          <a href="/film-details?id=<?= (int) $film['film_id']; ?>" class="group block rounded-2xl border border-outline-variant/15 bg-surface-container-low p-3 ambient-shadow transition-transform duration-200 hover:scale-[1.02] hover:bg-surface-container-high">
+          <article data-reorder-item data-film-id="<?= (int) $film['film_id']; ?>" class="group block rounded-2xl border border-outline-variant/15 bg-surface-container-low p-3 ambient-shadow transition-transform duration-200 hover:scale-[1.02] hover:bg-surface-container-high">
             <div class="relative aspect-[2/3] overflow-hidden rounded-xl poster-shadow">
+              <a href="/film-details?id=<?= (int) $film['film_id']; ?>" class="absolute inset-0 z-0" aria-label="Open <?= reevio_list_e($film['title'] ?? 'film'); ?>"></a>
               <img
                 src="<?= reevio_list_e(reevio_list_poster($film['poster_url'] ?? null)); ?>"
                 alt="<?= reevio_list_e($film['title'] ?? 'Film'); ?> poster"
@@ -137,8 +159,19 @@ include __DIR__ . '/partials/navigation.html';
               <div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest/75 to-transparent"></div>
 
               <?php if (!empty($listDetails['is_ranked'])): ?>
-              <div class="absolute left-2 top-2 inline-flex h-8 min-w-8 items-center justify-center rounded-full bg-primary px-2 font-headline text-xs font-black text-on-primary shadow-[0_0_14px_rgba(255,215,155,0.28)]">
+              <div data-rank-badge class="absolute left-2 top-2 z-10 inline-flex h-8 min-w-8 items-center justify-center rounded-full bg-primary px-2 font-headline text-xs font-black text-on-primary shadow-[0_0_14px_rgba(255,215,155,0.28)]">
                 <?= (int) ($film['position'] ?? ($index + 1)); ?>
+              </div>
+              <?php endif; ?>
+
+              <?php if ($canReorder): ?>
+              <div class="absolute right-2 top-2 z-20 flex flex-col gap-1 opacity-90 transition-opacity group-hover:opacity-100">
+                <button data-move-up type="button" class="inline-flex h-8 w-8 items-center justify-center rounded-full border border-outline-variant/20 bg-surface-container-lowest/90 text-on-surface transition-colors hover:text-primary disabled:cursor-not-allowed disabled:opacity-35" aria-label="Move up">
+                  <span class="material-symbols-outlined text-[18px]">keyboard_arrow_up</span>
+                </button>
+                <button data-move-down type="button" class="inline-flex h-8 w-8 items-center justify-center rounded-full border border-outline-variant/20 bg-surface-container-lowest/90 text-on-surface transition-colors hover:text-primary disabled:cursor-not-allowed disabled:opacity-35" aria-label="Move down">
+                  <span class="material-symbols-outlined text-[18px]">keyboard_arrow_down</span>
+                </button>
               </div>
               <?php endif; ?>
 
@@ -149,9 +182,9 @@ include __DIR__ . '/partials/navigation.html';
               <?php endif; ?>
             </div>
 
-            <h2 class="mt-3 line-clamp-2 font-headline text-base font-bold text-on-surface group-hover:text-primary">
+            <a href="/film-details?id=<?= (int) $film['film_id']; ?>" class="mt-3 line-clamp-2 block font-headline text-base font-bold text-on-surface group-hover:text-primary">
               <?= reevio_list_e($film['title'] ?? 'Untitled film'); ?>
-            </h2>
+            </a>
 
             <p class="mt-1 font-label text-xs text-on-surface-variant">
               <?= reevio_list_e($film['release_year'] ?? ''); ?><?= !empty($film['director']) ? ' • ' . reevio_list_e($film['director']) : ''; ?>
@@ -162,8 +195,9 @@ include __DIR__ . '/partials/navigation.html';
               “<?= reevio_list_e($film['note']); ?>”
             </p>
             <?php endif; ?>
-          </a>
+          </article>
           <?php endforeach; ?>
+          </div>
         </section>
         <?php else: ?>
         <section class="rounded-3xl border border-outline-variant/15 bg-surface-container-low p-8 ambient-shadow">
