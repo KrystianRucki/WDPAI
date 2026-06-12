@@ -2,11 +2,11 @@
 $query = $query ?? trim((string) ($_GET['q'] ?? $_GET['query'] ?? ''));
 $activeSearchType = $activeSearchType ?? 'all';
 $filmResults = $filmResults ?? [];
-$actorResults = $actorResults ?? [];
+$crewResults = $crewResults ?? ($personResults ?? []);
 $userResults = $userResults ?? [];
 $listResults = $listResults ?? [];
 $tmdbFilmFallback = $tmdbFilmFallback ?? [];
-$tmdbActorFallback = $tmdbActorFallback ?? [];
+$tmdbCrewFallback = $tmdbCrewFallback ?? ($tmdbCrewFallback ?? []);
 $tmdbError = $tmdbError ?? null;
 
 if (!function_exists('reevio_search_e')) {
@@ -73,7 +73,7 @@ if (!function_exists('reevio_search_chips')) {
         $items = [
             ['all', 'All', '/search'],
             ['films', 'Films', '/search-films'],
-            ['actors', 'Actors', '/search-actors'],
+            ['crew', 'Crew', '/search-crew'],
             ['users', 'Users', '/search-users'],
             ['lists', 'Lists', '/search-lists'],
         ];
@@ -102,7 +102,7 @@ if (!function_exists('reevio_search_header')) {
             <input
               class="bg-transparent border-none focus:ring-0 text-on-surface font-body w-full placeholder-on-surface-variant text-lg outline-none"
               name="q"
-              placeholder="Search films, actors, users or lists..."
+              placeholder="Search films, crew, users or lists..."
               type="search"
               value="<?= reevio_search_e($query); ?>"
             />
@@ -145,12 +145,12 @@ if (!function_exists('reevio_search_film_card')) {
     }
 }
 
-if (!function_exists('reevio_search_actor_card')) {
-    function reevio_search_actor_card(array $actor): void
+if (!function_exists('reevio_search_crew_card')) {
+    function reevio_search_crew_card(array $person): void
     {
-        $name = $actor['full_name'] ?? $actor['name'] ?? 'Unknown';
-        $photo = $actor['photo_url'] ?? $actor['profile_url'] ?? '';
-        $href = !empty($actor['id']) ? '/crew-profile?id=' . (int) $actor['id'] : '/search-actors?q=' . urlencode($name);
+        $name = $person['full_name'] ?? $person['name'] ?? 'Unknown';
+        $photo = $person['photo_url'] ?? $person['profile_url'] ?? '';
+        $href = !empty($person['id']) ? '/crew-profile?id=' . (int) $person['id'] : '/search-crew?q=' . urlencode($name);
         ?>
         <a href="<?= reevio_search_e($href); ?>" class="group block rounded-2xl border border-outline-variant/15 bg-surface-container-low p-3 ambient-shadow transition-transform duration-200 hover:scale-[1.02] hover:bg-surface-container-high">
           <div class="relative aspect-[2/3] overflow-hidden rounded-xl poster-shadow bg-surface-container-lowest">
@@ -160,15 +160,15 @@ if (!function_exists('reevio_search_actor_card')) {
             <div class="flex h-full w-full items-center justify-center bg-surface-container-high font-headline text-6xl font-black text-primary"><?= reevio_search_e(reevio_search_initial($name)); ?></div>
             <?php endif; ?>
             <div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest/85 to-transparent"></div>
-            <?php if (!empty($actor['film_count'])): ?>
+            <?php if (!empty($person['film_count'])): ?>
             <div class="absolute bottom-2 left-2 rounded-full bg-surface-container-lowest/85 px-2 py-1 font-label text-xs font-bold text-secondary">
-              <?= reevio_search_count($actor['film_count'] ?? 0); ?> films
+              <?= reevio_search_count($person['film_count'] ?? 0); ?> films
             </div>
             <?php endif; ?>
           </div>
           <h2 class="mt-3 line-clamp-2 font-headline text-base font-bold text-on-surface group-hover:text-primary"><?= reevio_search_e($name); ?></h2>
           <p class="mt-1 font-label text-xs text-on-surface-variant">
-            <?= reevio_search_e($actor['known_for_department'] ?? 'Person'); ?><?= !empty($actor['known_for_title']) ? ' • ' . reevio_search_e($actor['known_for_title']) : ''; ?>
+            <?= reevio_search_e($person['known_for_department'] ?? 'Person'); ?><?= !empty($person['known_for_title']) ? ' • ' . reevio_search_e($person['known_for_title']) : ''; ?>
           </p>
         </a>
         <?php
@@ -245,8 +245,8 @@ if (!function_exists('reevio_search_empty_state')) {
 }
 ?>
 <?php
-$pageTitle = 'Reevio - Search Actors';
-$bodyClass = 'search_actors';
+$pageTitle = 'Reevio - Search Crew';
+$bodyClass = 'search_crew';
 ?>
 <!doctype html>
 <html class="dark" lang="en">
@@ -269,22 +269,22 @@ include __DIR__ . '/partials/navigation.html';
     <main class="relative z-10 ml-64 min-h-screen w-[calc(100%-16rem)] px-4 pb-24 pt-[8.7rem] lg:px-5 xl:px-6">
       <div class="mx-auto max-w-[1120px]">
 
-        <?php reevio_search_header('actors', $query, 'Search Actors', $query !== '' ? 'Real people results for "' . $query . '".' : 'Browse actors and crew saved in the Reevio database.'); ?>
+        <?php reevio_search_header('crew', $query, 'Search Crew', $query !== '' ? 'Real crew results for "' . $query . '".' : 'Browse cast and crew saved in the Reevio database.'); ?>
 
-        <?php if ($actorResults): ?>
+        <?php if ($crewResults): ?>
         <section class="grid grid-cols-2 gap-5 md:grid-cols-3 xl:grid-cols-5">
-          <?php foreach ($actorResults as $actor): reevio_search_actor_card($actor); endforeach; ?>
+          <?php foreach ($crewResults as $person): reevio_search_crew_card($person); endforeach; ?>
         </section>
-        <?php elseif ($tmdbActorFallback): ?>
-        <p class="mb-5 text-sm text-on-surface-variant">No local actors found — showing broader actor results.</p>
+        <?php elseif ($tmdbCrewFallback): ?>
+        <p class="mb-5 text-sm text-on-surface-variant">No local crew found — showing broader crew results.</p>
         <section class="grid grid-cols-2 gap-5 md:grid-cols-3 xl:grid-cols-5">
-          <?php foreach ($tmdbActorFallback as $actor): reevio_search_actor_card($actor); endforeach; ?>
+          <?php foreach ($tmdbCrewFallback as $person): reevio_search_crew_card($person); endforeach; ?>
         </section>
         <?php elseif ($tmdbError): ?>
         <div class="rounded-3xl border border-red-300/20 bg-surface-container-low p-8 ambient-shadow text-red-300">
           <?= reevio_search_e($tmdbError); ?>
         </div>
-        <?php else: reevio_search_empty_state('actors'); endif; ?>
+        <?php else: reevio_search_empty_state('crew'); endif; ?>
       </div>
     </main>
     <script src="/public/assets/js/reevio.js"></script>

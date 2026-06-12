@@ -27,12 +27,12 @@ final class SearchController extends AppController
         $listsRepository = new ListsRepository();
 
         $filmResults = $filmsRepository->search($query, self::ALL_LIMIT);
-        $actorResults = $filmsRepository->searchPeople($query, self::ALL_LIMIT);
+        $crewResults = $filmsRepository->searchPeople($query, self::ALL_LIMIT);
         $tmdbFilmFallback = [];
-        $tmdbActorFallback = [];
+        $tmdbCrewFallback = [];
         $tmdbError = null;
 
-        if ($query !== '' && (!$filmResults || !$actorResults)) {
+        if ($query !== '' && (!$filmResults || !$crewResults)) {
             try {
                 $tmdb = new TmdbService();
 
@@ -40,8 +40,8 @@ final class SearchController extends AppController
                     $tmdbFilmFallback = $this->tmdbMovieResults($tmdb, $query, self::ALL_LIMIT);
                 }
 
-                if (!$actorResults) {
-                    $tmdbActorFallback = $this->tmdbPersonResults($tmdb, $query, self::ALL_LIMIT);
+                if (!$crewResults) {
+                    $tmdbCrewFallback = $this->tmdbPersonResults($tmdb, $query, self::ALL_LIMIT);
                 }
             } catch (Throwable $exception) {
                 $tmdbError = $exception->getMessage();
@@ -52,9 +52,9 @@ final class SearchController extends AppController
             'query' => $query,
             'activeSearchType' => 'all',
             'filmResults' => $filmResults,
-            'actorResults' => $actorResults,
+            'crewResults' => $crewResults,
             'tmdbFilmFallback' => $tmdbFilmFallback,
-            'tmdbActorFallback' => $tmdbActorFallback,
+            'tmdbCrewFallback' => $tmdbCrewFallback,
             'tmdbError' => $tmdbError,
             'userResults' => $usersRepository->searchPublicUsers($query, $currentUserId, self::ALL_LIMIT),
             'listResults' => $listsRepository->searchVisibleLists($query, $currentUserId, self::ALL_LIMIT),
@@ -89,30 +89,30 @@ final class SearchController extends AppController
         ]);
     }
 
-    public function actorsPage(): void
+    public function crewPage(): void
     {
         if (!$this->requireLogin()) {
             return;
         }
 
         $query = $this->query();
-        $actorResults = (new FilmsRepository())->searchPeople($query, self::DEFAULT_LIMIT);
-        $tmdbActorFallback = [];
+        $crewResults = (new FilmsRepository())->searchPeople($query, self::DEFAULT_LIMIT);
+        $tmdbCrewFallback = [];
         $tmdbError = null;
 
-        if ($query !== '' && !$actorResults) {
+        if ($query !== '' && !$crewResults) {
             try {
-                $tmdbActorFallback = $this->tmdbPersonResults(new TmdbService(), $query, self::DEFAULT_LIMIT);
+                $tmdbCrewFallback = $this->tmdbPersonResults(new TmdbService(), $query, self::DEFAULT_LIMIT);
             } catch (Throwable $exception) {
                 $tmdbError = $exception->getMessage();
             }
         }
 
-        $this->render('search_actors', [
+        $this->render('search_crew', [
             'query' => $query,
-            'activeSearchType' => 'actors',
-            'actorResults' => $actorResults,
-            'tmdbActorFallback' => $tmdbActorFallback,
+            'activeSearchType' => 'crew',
+            'crewResults' => $crewResults,
+            'tmdbCrewFallback' => $tmdbCrewFallback,
             'tmdbError' => $tmdbError,
         ]);
     }
@@ -169,7 +169,7 @@ final class SearchController extends AppController
             return;
         }
 
-        if ($type === 'actors' || $type === 'people') {
+        if ($type === 'crew' || $type === 'people') {
             $results = $filmsRepository->searchPeople($query, self::DEFAULT_LIMIT);
             $source = 'local';
 

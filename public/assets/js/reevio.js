@@ -227,7 +227,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const targetByLabel = {
       all: "/search",
       films: "/search-films",
-      actors: "/search-actors",
+      crew: "/search-crew",
       users: "/search-users",
       lists: "/search-lists"
     };

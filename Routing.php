@@ -48,7 +48,7 @@ final class Routing
         'search-films' => 'search_films',
         'search-users' => 'search_users',
         'search-lists' => 'search_lists',
-        'search-actors' => 'search_actors',
+        'search-crew' => 'search_crew',
         'crew-profile' => 'crew_profile',
         'log-search' => 'log_search_empty',
         'log-search-results' => 'log_search_results',
@@ -80,7 +80,7 @@ final class Routing
 
             'search' => [SearchController::class, 'index'],
             'search-films' => [SearchController::class, 'filmsPage'],
-            'search-actors' => [SearchController::class, 'actorsPage'],
+            'search-crew' => [SearchController::class, 'crewPage'],
             'search-users' => [SearchController::class, 'usersPage'],
             'search-lists' => [SearchController::class, 'listsPage'],
 
