@@ -239,9 +239,9 @@ include __DIR__ . '/partials/navigation.html';
           </div>
 
           <?php if ($cast): ?>
-          <div class="flex gap-5 overflow-x-auto pb-2">
+          <div class="film-details-cast-row flex gap-5 overflow-x-auto pb-2 no-scrollbar">
             <?php foreach ($cast as $person): ?>
-            <a href="/crew-profile?id=<?= (int) ($person['id'] ?? 0); ?>" class="group flex min-w-[112px] max-w-[112px] flex-col items-center gap-3 text-center">
+            <a href="/crew-profile?id=<?= (int) ($person['id'] ?? 0); ?>" class="film-details-cast-card group flex min-w-[112px] max-w-[112px] flex-col items-center gap-3 text-center">
               <div class="h-20 w-20 overflow-hidden rounded-full border-2 border-outline-variant/30 bg-surface-container-highest transition-transform group-hover:scale-105">
                 <?php if (!empty($person['photo_url'])): ?>
                 <img class="h-full w-full object-cover" src="<?= e_film_details($person['photo_url']); ?>" alt="<?= e_film_details($person['full_name']); ?>" />
@@ -249,8 +249,8 @@ include __DIR__ . '/partials/navigation.html';
                 <span class="material-symbols-outlined flex h-full w-full items-center justify-center text-4xl text-outline-variant">person</span>
                 <?php endif; ?>
               </div>
-              <span class="font-label text-sm text-on-surface group-hover:text-primary"><?= e_film_details($person['full_name']); ?></span>
-              <?php if (!empty($person['character_name'])): ?><span class="line-clamp-2 font-label text-xs text-on-surface-variant"><?= e_film_details($person['character_name']); ?></span><?php endif; ?>
+              <span class="film-details-cast-name font-label text-sm text-on-surface group-hover:text-primary"><?= e_film_details($person['full_name']); ?></span>
+              <?php if (!empty($person['character_name'])): ?><span class="film-details-cast-character line-clamp-2 font-label text-xs text-on-surface-variant"><?= e_film_details($person['character_name']); ?></span><?php endif; ?>
             </a>
             <?php endforeach; ?>
           </div>

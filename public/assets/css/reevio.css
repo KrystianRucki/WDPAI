@@ -7045,3 +7045,80 @@ button {
     height: 42px !important;
   }
 }
+
+
+/* ==========================================================================
+   Film details cast mobile fix
+   Keeps cast cards horizontally scrollable instead of shrinking into 1px columns.
+   ========================================================================== */
+
+.reevio-page-film_details .film-details-cast-row {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  align-items: flex-start !important;
+  gap: 1.25rem !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  max-width: 100% !important;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x proximity;
+}
+
+.reevio-page-film_details .film-details-cast-card {
+  flex: 0 0 112px !important;
+  width: 112px !important;
+  min-width: 112px !important;
+  max-width: 112px !important;
+  scroll-snap-align: start;
+}
+
+.reevio-page-film_details .film-details-cast-card > div {
+  flex: 0 0 auto !important;
+  width: 5rem !important;
+  height: 5rem !important;
+}
+
+.reevio-page-film_details .film-details-cast-name,
+.reevio-page-film_details .film-details-cast-character {
+  display: -webkit-box !important;
+  width: 100% !important;
+  max-width: 112px !important;
+  overflow: hidden !important;
+  overflow-wrap: normal !important;
+  word-break: normal !important;
+  white-space: normal !important;
+  text-align: center !important;
+  -webkit-box-orient: vertical;
+}
+
+.reevio-page-film_details .film-details-cast-name {
+  -webkit-line-clamp: 2;
+}
+
+.reevio-page-film_details .film-details-cast-character {
+  -webkit-line-clamp: 2;
+}
+
+@media (max-width: 480px) {
+  .reevio-page-film_details .film-details-cast-row {
+    gap: 0.95rem !important;
+    padding-bottom: 0.75rem !important;
+  }
+
+  .reevio-page-film_details .film-details-cast-card {
+    flex-basis: 96px !important;
+    width: 96px !important;
+    min-width: 96px !important;
+    max-width: 96px !important;
+  }
+
+  .reevio-page-film_details .film-details-cast-card > div {
+    width: 4.5rem !important;
+    height: 4.5rem !important;
+  }
+
+  .reevio-page-film_details .film-details-cast-name,
+  .reevio-page-film_details .film-details-cast-character {
+    max-width: 96px !important;
+  }
+}
