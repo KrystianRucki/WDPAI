@@ -4,6 +4,8 @@ $collectionItems = $collectionItems ?? [];
 $collectionTotal = (int) ($collectionTotal ?? count($collectionItems));
 $collectionHasMore = (bool) ($collectionHasMore ?? false);
 $collectionNextPage = (int) ($collectionNextPage ?? 2);
+$collectionOwnerId = (int) ($collectionOwnerId ?? ($profileUser['id'] ?? 0));
+$isOwnCollection = $collectionOwnerId === (int) ($currentUser['id'] ?? 0);
 
 if (!function_exists('reevio_collection_e')) {
     function reevio_collection_e($value): string
@@ -85,7 +87,7 @@ include __DIR__ . '/partials/navigation.html';
 ?>
     <main class="relative z-10 ml-64 min-h-screen w-[calc(100%-16rem)] px-4 pb-24 pt-[8.7rem] lg:px-5 xl:px-6">
       <div class="mx-auto max-w-[1120px]">
-        <a href="/profile" class="mb-8 inline-flex items-center gap-2 rounded-full border border-outline-variant/20 bg-surface-container-low/70 px-4 py-2.5 font-label text-sm font-bold text-primary transition-colors hover:bg-surface-container-high hover:text-secondary">
+        <a href="<?= $isOwnCollection ? '/profile' : '/profile-u-main?id=' . $collectionOwnerId; ?>" class="mb-8 inline-flex items-center gap-2 rounded-full border border-outline-variant/20 bg-surface-container-low/70 px-4 py-2.5 font-label text-sm font-bold text-primary transition-colors hover:bg-surface-container-high hover:text-secondary">
           <span class="material-symbols-outlined text-[20px]">arrow_back</span>
           Back to profile
         </a>
@@ -126,7 +128,7 @@ include __DIR__ . '/partials/navigation.html';
 
         <?php if ($collectionHasMore): ?>
         <div class="mt-8 flex justify-center">
-          <a href="/users-films?page=<?= $collectionNextPage; ?>" class="inline-flex items-center gap-2 rounded-full border border-secondary/35 px-8 py-3 font-label text-sm font-bold uppercase tracking-widest text-secondary transition-colors hover:border-secondary/70 hover:bg-secondary/10">
+          <a href="/users-films?<?= http_build_query(array_filter(['id' => $isOwnCollection ? null : $collectionOwnerId, 'page' => $collectionNextPage])); ?>" class="inline-flex items-center gap-2 rounded-full border border-secondary/35 px-8 py-3 font-label text-sm font-bold uppercase tracking-widest text-secondary transition-colors hover:border-secondary/70 hover:bg-secondary/10">
             <span class="material-symbols-outlined text-[18px]">expand_more</span>
             Load more
           </a>

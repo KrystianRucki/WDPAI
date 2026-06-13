@@ -122,7 +122,7 @@ include __DIR__ . '/partials/navigation.html';
           <div class="grid gap-4">
             <?php foreach ($relationUsers as $user): ?>
             <?php $isFollowing = reevio_relation_bool($user['is_following'] ?? false); ?>
-            <article data-href="/profile-u-main?id=<?= (int) $user['id']; ?>"
+            <article data-href="<?= (int) $user['id'] === (int) ($currentUser['id'] ?? 0) ? '/profile' : '/profile-u-main?id=' . (int) $user['id']; ?>"
               class="group flex items-center justify-between gap-5 rounded-3xl border border-outline-variant/15 bg-surface-container-low p-5 ambient-shadow transition-colors hover:bg-surface-container-high"
             >
               <div class="flex min-w-0 items-center gap-5">

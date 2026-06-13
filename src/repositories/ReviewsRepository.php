@@ -6,13 +6,17 @@ require_once __DIR__ . '/Repository.php';
 
 final class ReviewsRepository extends Repository
 {
-    public function feed(int $limit = 20, ?int $filmId = null): array
+    public function feed(int $limit = 20, ?int $filmId = null, ?int $userId = null): array
     {
         $this->ensureReviewCommentsSchema();
 
         $where = ['r.is_public = TRUE'];
         if ($filmId !== null && $filmId > 0) {
             $where[] = 'r.film_id = :film_id';
+        }
+
+        if ($userId !== null && $userId > 0) {
+            $where[] = 'r.user_id = :user_id';
         }
 
         $query = $this->connection()->prepare(
@@ -59,6 +63,11 @@ final class ReviewsRepository extends Repository
         if ($filmId !== null && $filmId > 0) {
             $query->bindValue(':film_id', $filmId, PDO::PARAM_INT);
         }
+
+        if ($userId !== null && $userId > 0) {
+            $query->bindValue(':user_id', $userId, PDO::PARAM_INT);
+        }
+
         $query->bindValue(':limit', $limit, PDO::PARAM_INT);
         $query->execute();
 

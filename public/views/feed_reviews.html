@@ -51,6 +51,7 @@ if (!function_exists('rv_poster')) {
 <?php
 $reviews = $reviews ?? [];
 $filterFilmId = (int) ($filterFilmId ?? 0);
+$filterUserId = (int) ($filterUserId ?? 0);
 $pageTitle = $filterFilmId > 0 && $reviews ? 'Reviews for ' . ($reviews[0]['film_title'] ?? 'Film') : 'Reviews';
 ?>
 <!doctype html>
@@ -77,7 +78,7 @@ include __DIR__ . '/partials/navigation.html';
           <p class="mb-3 font-label text-xs font-bold uppercase tracking-[0.28em] text-secondary">Reviews</p>
           <h1 class="font-headline text-[38px] font-black tracking-tight text-on-surface"><?= rv_e($pageTitle); ?></h1>
           <p class="mt-2 text-sm text-on-surface-variant">
-            <?= $filterFilmId > 0 ? 'All public reviews for this film.' : 'Latest public reviews from Reevio users.'; ?>
+            <?= $filterFilmId > 0 ? 'All public reviews for this film.' : ($filterUserId > 0 ? 'Public reviews by this user.' : 'Latest public reviews from Reevio users.'); ?>
           </p>
         </div>
         <?php if ($filterFilmId > 0): ?>

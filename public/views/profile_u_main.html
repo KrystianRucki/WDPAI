@@ -134,10 +134,6 @@ include __DIR__ . '/partials/navigation.html';
                 <div class="h-32 w-32 rounded-full bg-surface-container-high p-1 avatar-shadow">
                   <?= reevio_public_avatar($publicUser); ?>
                 </div>
-
-                <div class="absolute bottom-2 right-2 flex h-8 w-8 items-center justify-center rounded-full border-2 border-surface bg-primary">
-                  <span class="material-symbols-outlined filled text-[16px] text-on-primary">workspace_premium</span>
-                </div>
               </div>
 
               <div>
@@ -200,7 +196,7 @@ include __DIR__ . '/partials/navigation.html';
 
         <!-- Stats -->
         <section class="mb-8 grid max-w-[920px] grid-cols-2 gap-4 md:grid-cols-4">
-          <a href="/profile-u-main?id=<?= $publicUserId; ?>" class="rounded-2xl border border-outline-variant/15 bg-surface-container-low p-5 transition-colors hover:bg-surface-container-high">
+          <a href="/users-films?id=<?= $publicUserId; ?>" class="rounded-2xl border border-outline-variant/15 bg-surface-container-low p-5 transition-colors hover:bg-surface-container-high">
             <span class="font-headline text-3xl font-black text-primary"><?= reevio_public_compact_count($profileStats['films_count'] ?? 0); ?></span>
             <span class="mt-1 block font-label text-xs font-bold uppercase tracking-wider text-on-surface-variant">Films</span>
           </a>
@@ -210,7 +206,7 @@ include __DIR__ . '/partials/navigation.html';
             <span class="mt-1 block font-label text-xs font-bold uppercase tracking-wider text-on-surface-variant">Lists</span>
           </a>
 
-          <a href="/feed-reviews" class="rounded-2xl border border-outline-variant/15 bg-surface-container-low p-5 transition-colors hover:bg-surface-container-high">
+          <a href="/feed-reviews?user_id=<?= $publicUserId; ?>" class="rounded-2xl border border-outline-variant/15 bg-surface-container-low p-5 transition-colors hover:bg-surface-container-high">
             <span class="font-headline text-3xl font-black text-primary"><?= reevio_public_compact_count($profileStats['reviews_count'] ?? 0); ?></span>
             <span class="mt-1 block font-label text-xs font-bold uppercase tracking-wider text-on-surface-variant">Reviews</span>
           </a>

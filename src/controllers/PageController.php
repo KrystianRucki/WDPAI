@@ -113,15 +113,19 @@ final class PageController extends AppController
         $publicUserId = (int) ($publicUser['id'] ?? 0);
         $currentUserId = (int) ($currentUser['id'] ?? 0);
 
+        $stats = $publicUserId > 0 ? $usersRepository->getFollowStats($publicUserId) : [];
+
+        if ($publicUserId > 0) {
+            $stats['lists_count'] = $listsRepository->countVisibleUserLists($publicUserId, $currentUserId);
+            $stats['reviews_count'] = $reviewsRepository->countPublicUserReviews($publicUserId);
+        }
+
         return [
             'profileUser' => $currentUser,
             'publicUser' => $publicUser,
-            'profileStats' => $publicUserId > 0 ? $usersRepository->getFollowStats($publicUserId) : [],
+            'profileStats' => $stats,
             'isFollowing' => $publicUserId > 0 && $publicUserId !== $currentUserId ? $usersRepository->isFollowing($currentUserId, $publicUserId) : false,
             'favoriteFilms' => $publicUserId > 0 ? $filmsRepository->getUserFavoriteFilms($publicUserId, 4) : [],
-            'recentLists' => $publicUserId > 0 ? $listsRepository->getVisibleUserLists($publicUserId, $currentUserId, 6) : [],
-            'recentReviews' => $publicUserId > 0 ? $reviewsRepository->getPublicUserReviews($publicUserId, 4) : [],
-            'watchlistItems' => $publicUserId > 0 ? $filmsRepository->getUserWatchlist($publicUserId, 6) : [],
             'ratingDistribution' => $publicUserId > 0 ? $filmsRepository->getUserRatingDistribution($publicUserId) : [],
             'mostCommonRating' => $publicUserId > 0 ? $filmsRepository->getUserMostCommonRating($publicUserId) : null,
         ];
@@ -179,10 +183,12 @@ final class PageController extends AppController
     private function feedReviewsVariables(ReviewsRepository $reviewsRepository): array
     {
         $filmId = max(0, (int) ($_GET['film_id'] ?? 0));
+        $userId = max(0, (int) ($_GET['user_id'] ?? 0));
 
         return [
-            'reviews' => $reviewsRepository->feed(40, $filmId > 0 ? $filmId : null),
+            'reviews' => $reviewsRepository->feed(40, $filmId > 0 ? $filmId : null, $userId > 0 ? $userId : null),
             'filterFilmId' => $filmId,
+            'filterUserId' => $userId,
         ];
     }
 
@@ -468,12 +474,22 @@ final class PageController extends AppController
 
     private function userFilmsVariables(array $currentUser, FilmsRepository $filmsRepository): array
     {
-        $userId = (int) $currentUser['id'];
+        $targetUserId = max(0, (int) ($_GET['id'] ?? 0));
+        if ($targetUserId <= 0) {
+            $targetUserId = (int) $currentUser['id'];
+        }
+
+        $targetUser = $targetUserId === (int) $currentUser['id']
+            ? $currentUser
+            : ((new UsersRepository())->getUserById($targetUserId) ?: $currentUser);
+
+        $userId = (int) ($targetUser['id'] ?? $currentUser['id']);
         [$page, $limit] = $this->userCollectionLimit();
         $total = $filmsRepository->countUserFilms($userId);
 
         return [
-            'profileUser' => $currentUser,
+            'profileUser' => $targetUser,
+            'collectionOwnerId' => $userId,
             'collectionType' => 'films',
             'collectionItems' => $filmsRepository->getUserFilms($userId, $limit),
             'collectionTotal' => $total,
