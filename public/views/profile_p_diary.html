@@ -112,6 +112,39 @@ include __DIR__ . '/partials/navigation.html';
 ?>
     <main class="relative z-10 ml-64 min-h-screen w-[calc(100%-16rem)] px-4 pb-24 pt-[8.7rem] lg:px-5 xl:px-6">
       <div class="mx-auto max-w-[1120px]">
+        <nav
+          class="mb-10 flex w-fit items-center gap-2 rounded-full border border-outline-variant/20 bg-surface-container-low px-2 py-2"
+          aria-label="Profile sections"
+        >
+          <a
+            class="rounded-full px-5 py-2.5 font-label text-sm font-bold text-on-surface-variant transition-colors hover:bg-surface-container-high hover:text-on-surface"
+            href="/profile"
+          >
+            Profile
+          </a>
+
+          <a
+            class="rounded-full bg-primary px-5 py-2.5 font-label text-sm font-bold text-on-primary shadow-[0_0_16px_rgba(255,215,155,0.18)]"
+            href="/profile-diary"
+          >
+            Diary
+          </a>
+
+          <a
+            class="rounded-full px-5 py-2.5 font-label text-sm font-bold text-on-surface-variant transition-colors hover:bg-surface-container-high hover:text-on-surface"
+            href="/profile-lists"
+          >
+            Lists
+          </a>
+
+          <a
+            class="rounded-full px-5 py-2.5 font-label text-sm font-bold text-on-surface-variant transition-colors hover:bg-surface-container-high hover:text-on-surface"
+            href="/profile-watchlist"
+          >
+            Watchlist
+          </a>
+        </nav>
+
         <header class="mb-8 pr-44">
           <p class="mb-3 font-label text-xs font-bold uppercase tracking-[0.28em] text-secondary">
             @<?= reevio_diary_e($profileUser['username'] ?? 'user'); ?>
@@ -123,13 +156,6 @@ include __DIR__ . '/partials/navigation.html';
             <?= reevio_diary_count($diaryTotal); ?> logged entries from your watched films.
           </p>
         </header>
-
-        <nav class="mb-8 flex flex-wrap gap-3">
-          <a class="rounded-full px-5 py-2.5 font-label text-sm font-bold text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface" href="/profile">Profile</a>
-          <a class="rounded-full bg-primary px-5 py-2.5 font-label text-sm font-bold text-on-primary" href="/profile-diary">Diary</a>
-          <a class="rounded-full px-5 py-2.5 font-label text-sm font-bold text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface" href="/profile-lists">Lists</a>
-          <a class="rounded-full px-5 py-2.5 font-label text-sm font-bold text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface" href="/profile-watchlist">Watchlist</a>
-        </nav>
 
         <section class="rounded-3xl border border-outline-variant/15 bg-surface-container-low p-6 ambient-shadow">
           <?php if ($diaryEntries): ?>

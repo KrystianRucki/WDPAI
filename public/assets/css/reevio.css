@@ -7621,3 +7621,53 @@ button {
     font-size: 1.2rem !important;
   }
 }
+
+
+/* ==========================================================================
+   Own profile tabs/header consistency
+   Tabs first, then username/header. Keeps tabs readable on mobile.
+   ========================================================================== */
+
+.reevio-page-profile_p_main nav[aria-label="Profile sections"],
+.reevio-page-profile_p_diary nav[aria-label="Profile sections"],
+.reevio-page-profile_p_lists nav[aria-label="Profile sections"],
+.reevio-page-profile_p_watchlist nav[aria-label="Profile sections"] {
+  max-width: 100%;
+}
+
+@media (max-width: 900px) {
+  .reevio-page-profile_p_main nav[aria-label="Profile sections"],
+  .reevio-page-profile_p_diary nav[aria-label="Profile sections"],
+  .reevio-page-profile_p_lists nav[aria-label="Profile sections"],
+  .reevio-page-profile_p_watchlist nav[aria-label="Profile sections"] {
+    width: max-content !important;
+    max-width: 100% !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .reevio-page-profile_p_main nav[aria-label="Profile sections"]::-webkit-scrollbar,
+  .reevio-page-profile_p_diary nav[aria-label="Profile sections"]::-webkit-scrollbar,
+  .reevio-page-profile_p_lists nav[aria-label="Profile sections"]::-webkit-scrollbar,
+  .reevio-page-profile_p_watchlist nav[aria-label="Profile sections"]::-webkit-scrollbar {
+    display: none;
+  }
+
+  .reevio-page-profile_p_main nav[aria-label="Profile sections"] a,
+  .reevio-page-profile_p_diary nav[aria-label="Profile sections"] a,
+  .reevio-page-profile_p_lists nav[aria-label="Profile sections"] a,
+  .reevio-page-profile_p_watchlist nav[aria-label="Profile sections"] a {
+    flex: 0 0 auto !important;
+    white-space: nowrap !important;
+    overflow-wrap: normal !important;
+    word-break: normal !important;
+  }
+
+  .reevio-page-profile_p_diary header,
+  .reevio-page-profile_p_lists header,
+  .reevio-page-profile_p_watchlist header {
+    padding-right: 0 !important;
+    margin-top: 0 !important;
+  }
+}
