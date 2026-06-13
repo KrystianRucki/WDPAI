@@ -1,6 +1,7 @@
 <?php
 $profileUser = $profileUser ?? $currentUser ?? [];
 $logEntry = $logEntry ?? null;
+$isOwnLog = $logEntry && (int) ($logEntry['user_id'] ?? 0) === (int) ($profileUser['id'] ?? 0);
 
 if (!function_exists('reevio_log_e')) {
     function reevio_log_e($value): string
@@ -112,6 +113,7 @@ include __DIR__ . '/partials/navigation.html';
               Open film
             </a>
 
+            <?php if ($isOwnLog): ?>
             <button
               type="button"
               data-delete-log
@@ -121,6 +123,7 @@ include __DIR__ . '/partials/navigation.html';
               <span class="material-symbols-outlined text-[18px]">delete</span>
               Delete log
             </button>
+            <?php endif; ?>
           </aside>
 
           <article class="rounded-3xl border border-outline-variant/15 bg-surface-container-low p-7 ambient-shadow">

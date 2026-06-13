@@ -8,6 +8,7 @@ require_once __DIR__ . '/../repositories/UsersRepository.php';
 require_once __DIR__ . '/../repositories/ReviewsRepository.php';
 require_once __DIR__ . '/../repositories/ListsRepository.php';
 require_once __DIR__ . '/../repositories/DiaryRepository.php';
+require_once __DIR__ . '/../repositories/ActivityRepository.php';
 require_once __DIR__ . '/../services/TmdbService.php';
 
 final class PageController extends AppController
@@ -55,6 +56,7 @@ final class PageController extends AppController
         $reviewsRepository = new ReviewsRepository();
         $listsRepository = new ListsRepository();
         $diaryRepository = new DiaryRepository();
+        $activityRepository = new ActivityRepository();
 
         return match ($template) {
             'feed_films' => [
@@ -66,6 +68,8 @@ final class PageController extends AppController
             'new_from_friends' => [
                 'friendLogs' => $filmsRepository->getFriendsRecentLogs($currentUserId, 30),
             ],
+            'activity_following' => $this->activityVariables('following', $currentUser, $activityRepository),
+            'activity_you' => $this->activityVariables('you', $currentUser, $activityRepository),
             'profile_p_main' => [
                 'profileUser' => $currentUser,
                 'profileStats' => $usersRepository->getFollowStats($currentUserId),
@@ -101,6 +105,22 @@ final class PageController extends AppController
 
 
 
+
+
+    private function activityVariables(string $type, array $currentUser, ActivityRepository $activityRepository): array
+    {
+        $currentUserId = (int) $currentUser['id'];
+        $limit = max(10, min(100, (int) ($_GET['limit'] ?? 30)));
+
+        return [
+            'profileUser' => $currentUser,
+            'activityType' => $type,
+            'activityItems' => $type === 'following'
+                ? $activityRepository->getFollowingActivity($currentUserId, $limit)
+                : $activityRepository->getUserActivity($currentUserId, $limit),
+            'activityLimit' => $limit,
+        ];
+    }
 
     private function targetUser(array $currentUser, UsersRepository $usersRepository): ?array
     {
@@ -457,13 +477,13 @@ final class PageController extends AppController
     {
         $logId = max(0, (int) ($_GET['id'] ?? 0));
         $userId = (int) $currentUser['id'];
-        $logEntry = $logId > 0 ? $diaryRepository->getEntryForUser($logId, $userId) : null;
+        $logEntry = $logId > 0 ? $diaryRepository->getEntryForViewer($logId, $userId) : null;
 
         if (!$logEntry) {
             return [
                 'httpStatus' => $logId > 0 && $diaryRepository->entryExists($logId) ? 403 : 404,
                 'errorMessage' => $logId > 0 && $diaryRepository->entryExists($logId)
-                    ? 'This log belongs to another user.'
+                    ? 'This log is private or unavailable.'
                     : 'This log does not exist.',
             ];
         }
