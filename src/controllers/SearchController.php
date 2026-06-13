@@ -32,16 +32,23 @@ final class SearchController extends AppController
         $tmdbCrewFallback = [];
         $tmdbError = null;
 
-        if ($query !== '' && (!$filmResults || !$crewResults)) {
+        if ($query !== '') {
             try {
                 $tmdb = new TmdbService();
+
+                if ($crewResults) {
+                    $crewResults = $this->enrichCrewSearchResults($crewResults, $tmdb);
+                }
 
                 if (!$filmResults) {
                     $tmdbFilmFallback = $this->tmdbMovieResults($tmdb, $query, self::ALL_LIMIT);
                 }
 
                 if (!$crewResults) {
-                    $tmdbCrewFallback = $this->tmdbPersonResults($tmdb, $query, self::ALL_LIMIT);
+                    $tmdbCrewFallback = $this->enrichCrewSearchResults(
+                        $this->tmdbPersonResults($tmdb, $query, self::ALL_LIMIT),
+                        $tmdb
+                    );
                 }
             } catch (Throwable $exception) {
                 $tmdbError = $exception->getMessage();
@@ -100,9 +107,18 @@ final class SearchController extends AppController
         $tmdbCrewFallback = [];
         $tmdbError = null;
 
-        if ($query !== '' && !$crewResults) {
+        if ($query !== '') {
             try {
-                $tmdbCrewFallback = $this->tmdbPersonResults(new TmdbService(), $query, self::DEFAULT_LIMIT);
+                $tmdb = new TmdbService();
+
+                if ($crewResults) {
+                    $crewResults = $this->enrichCrewSearchResults($crewResults, $tmdb);
+                } else {
+                    $tmdbCrewFallback = $this->enrichCrewSearchResults(
+                        $this->tmdbPersonResults($tmdb, $query, self::DEFAULT_LIMIT),
+                        $tmdb
+                    );
+                }
             } catch (Throwable $exception) {
                 $tmdbError = $exception->getMessage();
             }
@@ -173,13 +189,25 @@ final class SearchController extends AppController
             $results = $filmsRepository->searchPeople($query, self::DEFAULT_LIMIT);
             $source = 'local';
 
-            if ($query !== '' && !$results) {
+            if ($query !== '') {
                 try {
-                    $results = $this->tmdbPersonResults(new TmdbService(), $query, self::DEFAULT_LIMIT);
-                    $source = 'tmdb';
+                    $tmdb = new TmdbService();
+
+                    if ($results) {
+                        $results = $this->enrichCrewSearchResults($results, $tmdb);
+                        $source = 'local_tmdb_enriched';
+                    } else {
+                        $results = $this->enrichCrewSearchResults(
+                            $this->tmdbPersonResults($tmdb, $query, self::DEFAULT_LIMIT),
+                            $tmdb
+                        );
+                        $source = 'tmdb';
+                    }
                 } catch (Throwable $exception) {
-                    $this->json(['results' => [], 'source' => 'tmdb_error', 'message' => $exception->getMessage()], 502);
-                    return;
+                    if (!$results) {
+                        $this->json(['results' => [], 'source' => 'tmdb_error', 'message' => $exception->getMessage()], 502);
+                        return;
+                    }
                 }
             }
 
@@ -215,6 +243,58 @@ final class SearchController extends AppController
         $this->json((new UsersRepository())->searchPublicUsers($query, (int) $_SESSION['user_id'], self::DEFAULT_LIMIT));
     }
 
+
+
+    private function enrichCrewSearchResults(array $people, TmdbService $tmdb): array
+    {
+        if (!$people) {
+            return [];
+        }
+
+        foreach ($people as &$person) {
+            $tmdbId = (int) ($person['tmdb_id'] ?? 0);
+
+            if ($tmdbId <= 0) {
+                $person['display_film_count'] = (int) ($person['film_count'] ?? 0);
+                continue;
+            }
+
+            try {
+                $details = $tmdb->getPersonDetails($tmdbId);
+                $tmdbCreditsCount = $this->tmdbPersonMovieCreditsCount($details);
+
+                if ($tmdbCreditsCount > 0) {
+                    $person['display_film_count'] = $tmdbCreditsCount;
+                    $person['film_count_source'] = 'tmdb';
+                } else {
+                    $person['display_film_count'] = (int) ($person['film_count'] ?? 0);
+                }
+            } catch (Throwable) {
+                $person['display_film_count'] = (int) ($person['film_count'] ?? 0);
+            }
+        }
+        unset($person);
+
+        return $people;
+    }
+
+    private function tmdbPersonMovieCreditsCount(array $details): int
+    {
+        $credits = $details['movie_credits'] ?? [];
+        $movieIds = [];
+
+        foreach (['cast', 'crew'] as $section) {
+            foreach (($credits[$section] ?? []) as $movie) {
+                $movieId = (int) ($movie['id'] ?? 0);
+
+                if ($movieId > 0) {
+                    $movieIds[$movieId] = true;
+                }
+            }
+        }
+
+        return count($movieIds);
+    }
 
     private function tmdbMovieResults(TmdbService $tmdb, string $query, int $limit): array
     {

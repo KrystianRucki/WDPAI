@@ -154,9 +154,10 @@ if (!function_exists('reevio_search_crew_card')) {
             <div class="flex h-full w-full items-center justify-center bg-surface-container-high font-headline text-6xl font-black text-primary"><?= reevio_search_e(reevio_search_initial($name)); ?></div>
             <?php endif; ?>
             <div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest/85 to-transparent"></div>
-            <?php if (!empty($person['film_count'])): ?>
+            <?php $displayFilmCount = (int) ($person['display_film_count'] ?? $person['film_count'] ?? 0); ?>
+            <?php if ($displayFilmCount > 0): ?>
             <div class="absolute bottom-2 left-2 rounded-full bg-surface-container-lowest/85 px-2 py-1 font-label text-xs font-bold text-secondary">
-              <?= reevio_search_count($person['film_count'] ?? 0); ?> films
+              <?= reevio_search_count($displayFilmCount); ?> films
             </div>
             <?php endif; ?>
           </div>
