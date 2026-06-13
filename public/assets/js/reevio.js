@@ -1978,3 +1978,52 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
+
+
+
+/* Clickable rating distribution */
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll(".rating-distribution-section").forEach((section) => {
+    if (section.dataset.reevioRatingDistributionReady === "1") return;
+    section.dataset.reevioRatingDistributionReady = "1";
+
+    const bars = [...section.querySelectorAll("[data-rating-label][data-rating-count]")];
+    const selectedTitle = section.querySelector("[data-rating-selected-title]");
+    const selectedCount = section.querySelector("[data-rating-selected-count]");
+
+    if (!bars.length || !selectedTitle || !selectedCount) return;
+
+    const updateSelected = (bar) => {
+      const label = bar.dataset.ratingLabel || "Rating";
+      const count = Number(bar.dataset.ratingCount || 0);
+      const countText = `${count} rating${count === 1 ? "" : "s"}`;
+
+      bars.forEach((item) => {
+        item.dataset.active = item === bar ? "1" : "0";
+        item.setAttribute("aria-pressed", item === bar ? "true" : "false");
+      });
+
+      selectedTitle.textContent = `${label} stars`;
+      selectedCount.textContent = countText;
+    };
+
+    bars.forEach((bar) => {
+      bar.setAttribute("aria-pressed", "false");
+      bar.addEventListener("click", () => updateSelected(bar));
+      bar.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          updateSelected(bar);
+        }
+      });
+    });
+
+    const defaultBar =
+      bars.find((bar) => bar.dataset.ratingDefault === "1") ||
+      bars.find((bar) => Number(bar.dataset.ratingCount || 0) > 0) ||
+      bars[0];
+
+    updateSelected(defaultBar);
+  });
+});
+

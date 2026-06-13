@@ -7386,3 +7386,109 @@ button {
     font-size: 1.2rem !important;
   }
 }
+
+
+/* ==========================================================================
+   Clickable rating distribution
+   ========================================================================== */
+
+.rating-distribution-bar {
+  appearance: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  min-width: 0;
+  transition:
+    transform 160ms ease,
+    background-color 160ms ease,
+    box-shadow 160ms ease,
+    opacity 160ms ease;
+}
+
+.rating-distribution-bar:hover,
+.rating-distribution-bar:focus-visible,
+.rating-distribution-bar[data-active="1"] {
+  transform: translateY(-3px);
+  outline: none;
+}
+
+.rating-distribution-bar:focus-visible {
+  box-shadow:
+    0 0 0 2px #131313,
+    0 0 0 4px rgba(189, 244, 255, 0.72),
+    0 0 18px rgba(189, 244, 255, 0.22) !important;
+}
+
+.rating-distribution-bar[data-active="1"] {
+  background: #ffd79b !important;
+  box-shadow: 0 0 22px rgba(255, 215, 155, 0.38) !important;
+}
+
+.rating-distribution-selected {
+  transition:
+    border-color 160ms ease,
+    background-color 160ms ease;
+}
+
+@media (max-width: 640px) {
+  .rating-distribution-section {
+    padding: 1.25rem !important;
+  }
+
+  .rating-distribution-section h2 {
+    margin-bottom: 1.5rem !important;
+  }
+
+  .rating-distribution-chart {
+    height: 11rem !important;
+    gap: 0.45rem !important;
+    overflow: visible !important;
+  }
+
+  .rating-distribution-bar {
+    min-width: 1.55rem !important;
+    border-radius: 0.45rem 0.45rem 0.18rem 0.18rem !important;
+    touch-action: manipulation;
+  }
+
+  .rating-distribution-bar span {
+    display: none !important;
+  }
+
+  .rating-distribution-labels {
+    gap: 0.35rem !important;
+    font-size: 0.72rem !important;
+  }
+
+  .rating-distribution-labels span {
+    min-width: 1.55rem;
+    text-align: center;
+    overflow-wrap: normal !important;
+    word-break: normal !important;
+  }
+
+  .rating-distribution-selected {
+    margin-top: 1rem !important;
+    padding: 1rem !important;
+  }
+
+  .rating-distribution-selected [data-rating-selected-title] {
+    font-size: 1.55rem !important;
+    line-height: 1.05 !important;
+  }
+}
+
+@media (max-width: 380px) {
+  .rating-distribution-chart {
+    gap: 0.32rem !important;
+  }
+
+  .rating-distribution-bar,
+  .rating-distribution-labels span {
+    min-width: 1.25rem !important;
+  }
+
+  .rating-distribution-labels {
+    font-size: 0.66rem !important;
+  }
+}
