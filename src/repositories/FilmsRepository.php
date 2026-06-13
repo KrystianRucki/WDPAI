@@ -84,6 +84,9 @@ final class FilmsRepository extends Repository
 
             $director = $this->directorName($movie['credits']['crew'] ?? []);
             $releaseYear = !empty($movie['release_date']) ? (int) substr((string) $movie['release_date'], 0, 4) : null;
+            $releaseYear = $releaseYear >= 1888 && $releaseYear <= 2100 ? $releaseYear : null;
+            $runtimeMinutes = (int) ($movie['runtime'] ?? 0);
+            $runtimeMinutes = $runtimeMinutes > 0 ? $runtimeMinutes : null;
             $posterPath = $movie['poster_path'] ?? null;
             $backdropPath = $movie['backdrop_path'] ?? null;
 
@@ -128,7 +131,7 @@ final class FilmsRepository extends Repository
                 ':poster_path' => $posterPath,
                 ':backdrop_url' => $tmdb->imageUrl($backdropPath, 'w1280'),
                 ':backdrop_path' => $backdropPath,
-                ':runtime_minutes' => $movie['runtime'] ?? null,
+                ':runtime_minutes' => $runtimeMinutes,
                 ':vote_average' => $movie['vote_average'] ?? null,
                 ':vote_count' => $movie['vote_count'] ?? null,
                 ':popularity' => $movie['popularity'] ?? null,
