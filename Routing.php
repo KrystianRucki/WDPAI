@@ -21,6 +21,7 @@ final class Routing
         'login',
         'register',
         'not_found',
+        'forbidden',
         'offline_page',
     ];
 

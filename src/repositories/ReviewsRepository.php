@@ -118,6 +118,21 @@ final class ReviewsRepository extends Repository
         return $query->fetchAll();
     }
 
+
+    public function reviewExists(int $reviewId): bool
+    {
+        $query = $this->connection()->prepare(
+            'SELECT 1
+             FROM reviews
+             WHERE id = :review_id
+             LIMIT 1'
+        );
+        $query->bindValue(':review_id', $reviewId, PDO::PARAM_INT);
+        $query->execute();
+
+        return (bool) $query->fetchColumn();
+    }
+
     public function getReviewDetails(int $reviewId, int $currentUserId = 0): ?array
     {
         $this->ensureReviewCommentsSchema();

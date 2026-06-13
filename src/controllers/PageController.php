@@ -22,6 +22,17 @@ final class PageController extends AppController
         }
 
         $variables = $this->variablesForTemplate($template, $public);
+        $status = (int) ($variables['httpStatus'] ?? 200);
+
+        if ($status === 403) {
+            $this->renderForbidden((string) ($variables['errorMessage'] ?? 'You do not have permission to view this page.'));
+            return;
+        }
+
+        if ($status === 404) {
+            $this->renderNotFound((string) ($variables['errorMessage'] ?? 'The requested resource was not found.'));
+            return;
+        }
 
         $this->render($template, $variables);
     }
@@ -110,40 +121,53 @@ final class PageController extends AppController
         ReviewsRepository $reviewsRepository
     ): array {
         $publicUser = $this->targetUser($currentUser, $usersRepository);
+
+        if (!$publicUser) {
+            return [
+                'httpStatus' => 404,
+                'errorMessage' => 'This user profile does not exist.',
+            ];
+        }
+
         $publicUserId = (int) ($publicUser['id'] ?? 0);
         $currentUserId = (int) ($currentUser['id'] ?? 0);
 
-        $stats = $publicUserId > 0 ? $usersRepository->getFollowStats($publicUserId) : [];
-
-        if ($publicUserId > 0) {
-            $stats['lists_count'] = $listsRepository->countVisibleUserLists($publicUserId, $currentUserId);
-            $stats['reviews_count'] = $reviewsRepository->countPublicUserReviews($publicUserId);
-        }
+        $stats = $usersRepository->getFollowStats($publicUserId);
+        $stats['lists_count'] = $listsRepository->countVisibleUserLists($publicUserId, $currentUserId);
+        $stats['reviews_count'] = $reviewsRepository->countPublicUserReviews($publicUserId);
 
         return [
             'profileUser' => $currentUser,
             'publicUser' => $publicUser,
             'profileStats' => $stats,
             'isFollowing' => $publicUserId > 0 && $publicUserId !== $currentUserId ? $usersRepository->isFollowing($currentUserId, $publicUserId) : false,
-            'favoriteFilms' => $publicUserId > 0 ? $filmsRepository->getUserFavoriteFilms($publicUserId, 4) : [],
-            'ratingDistribution' => $publicUserId > 0 ? $filmsRepository->getUserRatingDistribution($publicUserId) : [],
-            'mostCommonRating' => $publicUserId > 0 ? $filmsRepository->getUserMostCommonRating($publicUserId) : null,
+            'favoriteFilms' => $filmsRepository->getUserFavoriteFilms($publicUserId, 4),
+            'ratingDistribution' => $filmsRepository->getUserRatingDistribution($publicUserId),
+            'mostCommonRating' => $filmsRepository->getUserMostCommonRating($publicUserId),
         ];
     }
 
     private function publicUserListsVariables(array $currentUser, UsersRepository $usersRepository, ListsRepository $listsRepository): array
     {
         $publicUser = $this->targetUser($currentUser, $usersRepository);
+
+        if (!$publicUser) {
+            return [
+                'httpStatus' => 404,
+                'errorMessage' => 'This user profile does not exist.',
+            ];
+        }
+
         $publicUserId = (int) ($publicUser['id'] ?? 0);
         $currentUserId = (int) ($currentUser['id'] ?? 0);
         [$page, $limit] = $this->userCollectionLimit();
-        $total = $publicUserId > 0 ? $listsRepository->countVisibleUserLists($publicUserId, $currentUserId) : 0;
+        $total = $listsRepository->countVisibleUserLists($publicUserId, $currentUserId);
 
         return [
             'profileUser' => $currentUser,
             'publicUser' => $publicUser,
             'collectionType' => 'lists',
-            'collectionItems' => $publicUserId > 0 ? $listsRepository->getVisibleUserLists($publicUserId, $currentUserId, $limit) : [],
+            'collectionItems' => $listsRepository->getVisibleUserLists($publicUserId, $currentUserId, $limit),
             'collectionTotal' => $total,
             'collectionPage' => $page,
             'collectionLimit' => $limit,
@@ -155,15 +179,23 @@ final class PageController extends AppController
     private function publicUserWatchlistVariables(array $currentUser, UsersRepository $usersRepository, FilmsRepository $filmsRepository): array
     {
         $publicUser = $this->targetUser($currentUser, $usersRepository);
+
+        if (!$publicUser) {
+            return [
+                'httpStatus' => 404,
+                'errorMessage' => 'This user profile does not exist.',
+            ];
+        }
+
         $publicUserId = (int) ($publicUser['id'] ?? 0);
         [$page, $limit] = $this->userCollectionLimit();
-        $total = $publicUserId > 0 ? $filmsRepository->countUserWatchlist($publicUserId) : 0;
+        $total = $filmsRepository->countUserWatchlist($publicUserId);
 
         return [
             'profileUser' => $currentUser,
             'publicUser' => $publicUser,
             'collectionType' => 'watchlist',
-            'collectionItems' => $publicUserId > 0 ? $filmsRepository->getUserWatchlist($publicUserId, $limit) : [],
+            'collectionItems' => $filmsRepository->getUserWatchlist($publicUserId, $limit),
             'collectionTotal' => $total,
             'collectionPage' => $page,
             'collectionLimit' => $limit,
@@ -197,9 +229,18 @@ final class PageController extends AppController
         $reviewId = max(0, (int) ($_GET['id'] ?? $_GET['review_id'] ?? 0));
         $review = $reviewId > 0 ? $reviewsRepository->getReviewDetails($reviewId, (int) $currentUser['id']) : null;
 
+        if (!$review) {
+            return [
+                'httpStatus' => $reviewId > 0 && $reviewsRepository->reviewExists($reviewId) ? 403 : 404,
+                'errorMessage' => $reviewId > 0 && $reviewsRepository->reviewExists($reviewId)
+                    ? 'This review is private or unavailable.'
+                    : 'This review does not exist.',
+            ];
+        }
+
         return [
             'review' => $review,
-            'reviewComments' => $review ? $reviewsRepository->getReviewComments((int) $review['review_id'], (int) $currentUser['id']) : [],
+            'reviewComments' => $reviewsRepository->getReviewComments((int) $review['review_id'], (int) $currentUser['id']),
         ];
     }
 
@@ -386,11 +427,18 @@ final class PageController extends AppController
         $userId = (int) $currentUser['id'];
         $film = $filmId > 0 ? $filmsRepository->getById($filmId) : null;
 
+        if ($filmId <= 0 || !$film) {
+            return [
+                'httpStatus' => 404,
+                'errorMessage' => 'This film does not exist.',
+            ];
+        }
+
         return [
             'profileUser' => $currentUser,
             'film' => $film,
             'filmId' => $filmId,
-            'userLists' => $filmId > 0 ? $listsRepository->getUserListsForFilm($userId, $filmId) : [],
+            'userLists' => $listsRepository->getUserListsForFilm($userId, $filmId),
         ];
     }
 
@@ -409,23 +457,43 @@ final class PageController extends AppController
     {
         $logId = max(0, (int) ($_GET['id'] ?? 0));
         $userId = (int) $currentUser['id'];
+        $logEntry = $logId > 0 ? $diaryRepository->getEntryForUser($logId, $userId) : null;
+
+        if (!$logEntry) {
+            return [
+                'httpStatus' => $logId > 0 && $diaryRepository->entryExists($logId) ? 403 : 404,
+                'errorMessage' => $logId > 0 && $diaryRepository->entryExists($logId)
+                    ? 'This log belongs to another user.'
+                    : 'This log does not exist.',
+            ];
+        }
 
         return [
             'profileUser' => $currentUser,
-            'logEntry' => $logId > 0 ? $diaryRepository->getEntryForUser($logId, $userId) : null,
+            'logEntry' => $logEntry,
         ];
     }
-
 
     private function listDetailsVariables(array $currentUser, ListsRepository $listsRepository): array
     {
         $listId = max(0, (int) ($_GET['id'] ?? 0));
         $currentUserId = (int) $currentUser['id'];
 
+        $listDetails = $listId > 0 ? $listsRepository->getListDetails($listId, $currentUserId) : null;
+
+        if (!$listDetails) {
+            return [
+                'httpStatus' => $listId > 0 && $listsRepository->listExists($listId) ? 403 : 404,
+                'errorMessage' => $listId > 0 && $listsRepository->listExists($listId)
+                    ? 'This list is private or unavailable.'
+                    : 'This list does not exist.',
+            ];
+        }
+
         return [
             'profileUser' => $currentUser,
-            'listDetails' => $listId > 0 ? $listsRepository->getListDetails($listId, $currentUserId) : null,
-            'listItems' => $listId > 0 ? $listsRepository->getListItems($listId, $currentUserId) : [],
+            'listDetails' => $listDetails,
+            'listItems' => $listsRepository->getListItems($listId, $currentUserId),
         ];
     }
 
@@ -437,7 +505,15 @@ final class PageController extends AppController
             $targetUserId = $currentUserId;
         }
 
-        $targetUser = $usersRepository->getUserById($targetUserId) ?: $currentUser;
+        $targetUser = $usersRepository->getUserById($targetUserId);
+
+        if (!$targetUser) {
+            return [
+                'httpStatus' => 404,
+                'errorMessage' => 'This user profile does not exist.',
+            ];
+        }
+
         $targetUserId = (int) ($targetUser['id'] ?? $currentUserId);
 
         $page = max(1, (int) ($_GET['page'] ?? 1));
@@ -481,7 +557,14 @@ final class PageController extends AppController
 
         $targetUser = $targetUserId === (int) $currentUser['id']
             ? $currentUser
-            : ((new UsersRepository())->getUserById($targetUserId) ?: $currentUser);
+            : ((new UsersRepository())->getUserById($targetUserId));
+
+        if (!$targetUser) {
+            return [
+                'httpStatus' => 404,
+                'errorMessage' => 'This user profile does not exist.',
+            ];
+        }
 
         $userId = (int) ($targetUser['id'] ?? $currentUser['id']);
         [$page, $limit] = $this->userCollectionLimit();

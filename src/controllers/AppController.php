@@ -63,12 +63,34 @@ abstract class AppController
         }
 
         if (($_SESSION['role'] ?? 'user') !== 'admin') {
-            http_response_code(403);
-            $this->render('not_found', ['messages' => 'Access denied']);
+            $this->renderForbidden('Access denied');
             return false;
         }
 
         return true;
+    }
+
+
+    protected function renderNotFound(string $message = 'The page you are looking for does not exist.'): void
+    {
+        http_response_code(404);
+
+        $this->render('not_found', [
+            'errorEyebrow' => 'Error 404',
+            'errorTitle' => 'Scene not found',
+            'errorMessage' => $message,
+        ]);
+    }
+
+    protected function renderForbidden(string $message = 'You do not have permission to view this page.'): void
+    {
+        http_response_code(403);
+
+        $this->render('forbidden', [
+            'errorEyebrow' => 'Error 403',
+            'errorTitle' => 'Access denied',
+            'errorMessage' => $message,
+        ]);
     }
 
     protected function currentUser(): ?array

@@ -18,6 +18,21 @@ final class DiaryRepository extends Repository
         return (int) $query->fetchColumn();
     }
 
+
+    public function entryExists(int $entryId): bool
+    {
+        $query = $this->connection()->prepare(
+            'SELECT 1
+             FROM diary_entries
+             WHERE id = :entry_id
+             LIMIT 1'
+        );
+        $query->bindValue(':entry_id', $entryId, PDO::PARAM_INT);
+        $query->execute();
+
+        return (bool) $query->fetchColumn();
+    }
+
     public function getUserEntries(int $userId, int $limit = 30): array
     {
         $query = $this->connection()->prepare(

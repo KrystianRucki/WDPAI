@@ -79,6 +79,21 @@ final class ListsRepository extends Repository
         return (int) $query->fetchColumn();
     }
 
+
+    public function listExists(int $listId): bool
+    {
+        $query = $this->connection()->prepare(
+            'SELECT 1
+             FROM lists
+             WHERE id = :list_id
+             LIMIT 1'
+        );
+        $query->bindValue(':list_id', $listId, PDO::PARAM_INT);
+        $query->execute();
+
+        return (bool) $query->fetchColumn();
+    }
+
     public function getPublicLists(int $limit = 30): array
     {
         $query = $this->connection()->prepare(
