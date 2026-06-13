@@ -93,7 +93,7 @@ include __DIR__ . '/partials/navigation.html';
         </nav>
 
         <!-- Lists counter -->
-        <section class="mb-6 flex max-w-[940px] items-center justify-between rounded-2xl border border-outline-variant/15 bg-surface-container-low px-5 py-4">
+        <section class="profile-u-lists-counter mb-6 flex max-w-[940px] items-center justify-between rounded-2xl border border-outline-variant/15 bg-surface-container-low px-5 py-4">
           <span class="font-label text-xs font-bold uppercase tracking-[0.2em] text-on-surface-variant">
             Lists
           </span>
@@ -104,14 +104,14 @@ include __DIR__ . '/partials/navigation.html';
         </section>
 
         <!-- Lists grid -->
-        <section class="max-w-[940px]">
+        <section class="profile-u-lists-section max-w-[940px]">
           <?php if ($collectionItems): ?>
-          <div class="grid gap-5 md:grid-cols-2">
+          <div class="profile-u-lists-grid grid gap-5 md:grid-cols-2">
             <?php foreach ($collectionItems as $list): ?>
             <?php $posters = reevio_public_lists_posters($list); ?>
-            <article data-href="/list-details?id=<?= (int) $list['id']; ?>" class="group rounded-3xl border border-outline-variant/15 bg-surface-container-low p-5 ambient-shadow transition-colors hover:bg-surface-container-high">
-              <div class="flex gap-5">
-                <div class="relative h-36 w-24 shrink-0">
+            <article data-href="/list-details?id=<?= (int) $list['id']; ?>" class="profile-u-lists-card group rounded-3xl border border-outline-variant/15 bg-surface-container-low p-5 ambient-shadow transition-colors hover:bg-surface-container-high">
+              <div class="profile-u-lists-card-inner flex gap-5">
+                <div class="profile-u-lists-poster-stack relative h-36 w-24 shrink-0">
                   <div class="absolute inset-0 -rotate-6 translate-x-2 -translate-y-1 scale-90 overflow-hidden rounded-xl bg-surface-container-high opacity-60 poster-shadow">
                     <img
                       alt="<?= reevio_public_lists_e($list['title'] ?? 'List'); ?> back poster"
@@ -138,12 +138,12 @@ include __DIR__ . '/partials/navigation.html';
                   </div>
                 </div>
 
-                <div class="flex min-w-0 flex-1 flex-col justify-center">
-                  <h2 class="font-headline text-xl font-black leading-tight text-on-surface transition-colors group-hover:text-primary">
+                <div class="profile-u-lists-card-body flex min-w-0 flex-1 flex-col justify-center">
+                  <h2 class="profile-u-lists-title font-headline text-xl font-black leading-tight text-on-surface transition-colors group-hover:text-primary">
                     <?= reevio_public_lists_e($list['title'] ?? 'Untitled list'); ?>
                   </h2>
 
-                  <p class="mt-3 flex items-center gap-2 font-label text-sm text-on-surface-variant">
+                  <p class="profile-u-lists-count mt-3 flex items-center gap-2 font-label text-sm text-on-surface-variant">
                     <span class="material-symbols-outlined text-[17px]">movie</span>
                     <?= (int) ($list['films_count'] ?? 0); ?> films
                   </p>

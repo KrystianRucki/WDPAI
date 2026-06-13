@@ -7492,3 +7492,132 @@ button {
     font-size: 0.66rem !important;
   }
 }
+
+
+/* ==========================================================================
+   Public profile lists mobile fix
+   Prevents /profile-u-lists cards from being squeezed into narrow columns.
+   ========================================================================== */
+
+.reevio-page-profile_u_lists .profile-u-lists-title,
+.reevio-page-profile_u_lists .profile-u-lists-count,
+.reevio-page-profile_u_lists header p,
+.reevio-page-profile_u_lists .profile-u-lists-counter span {
+  overflow-wrap: normal !important;
+  word-break: normal !important;
+}
+
+@media (max-width: 900px) {
+  .reevio-page-profile_u_lists .profile-u-lists-section,
+  .reevio-page-profile_u_lists .profile-u-lists-counter {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .reevio-page-profile_u_lists .profile-u-lists-grid {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    gap: 1rem !important;
+  }
+
+  .reevio-page-profile_u_lists .profile-u-lists-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    padding: 1rem !important;
+  }
+
+  .reevio-page-profile_u_lists .profile-u-lists-card-inner {
+    display: grid !important;
+    grid-template-columns: 7rem minmax(0, 1fr) !important;
+    align-items: center !important;
+    gap: 1rem !important;
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .reevio-page-profile_u_lists .profile-u-lists-poster-stack {
+    width: 6.4rem !important;
+    height: 9.6rem !important;
+    min-width: 6.4rem !important;
+    max-width: 6.4rem !important;
+  }
+
+  .reevio-page-profile_u_lists .profile-u-lists-card-body {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .reevio-page-profile_u_lists .profile-u-lists-title {
+    display: -webkit-box !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+    white-space: normal !important;
+    line-height: 1.12 !important;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+  }
+
+  .reevio-page-profile_u_lists .profile-u-lists-count {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.45rem !important;
+    white-space: nowrap !important;
+  }
+
+  .reevio-page-profile_u_lists .profile-u-lists-counter {
+    flex-wrap: wrap !important;
+    gap: 0.65rem !important;
+    padding: 1rem !important;
+  }
+
+  .reevio-page-profile_u_lists .profile-u-lists-counter span {
+    white-space: nowrap !important;
+  }
+}
+
+@media (max-width: 560px) {
+  .reevio-page-profile_u_lists .profile-u-lists-grid {
+    gap: 1rem !important;
+  }
+
+  .reevio-page-profile_u_lists .profile-u-lists-card-inner {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+
+  .reevio-page-profile_u_lists .profile-u-lists-poster-stack {
+    width: min(8.5rem, 48vw) !important;
+    height: min(12.75rem, 72vw) !important;
+    min-width: min(8.5rem, 48vw) !important;
+    max-width: min(8.5rem, 48vw) !important;
+    justify-self: start !important;
+  }
+
+  .reevio-page-profile_u_lists .profile-u-lists-title {
+    font-size: 1.35rem !important;
+    line-height: 1.12 !important;
+    -webkit-line-clamp: 2;
+  }
+
+  .reevio-page-profile_u_lists .profile-u-lists-count {
+    font-size: 0.92rem !important;
+  }
+}
+
+@media (max-width: 380px) {
+  .reevio-page-profile_u_lists .profile-u-lists-poster-stack {
+    width: 7.25rem !important;
+    height: 10.9rem !important;
+    min-width: 7.25rem !important;
+    max-width: 7.25rem !important;
+  }
+
+  .reevio-page-profile_u_lists .profile-u-lists-title {
+    font-size: 1.2rem !important;
+  }
+}
