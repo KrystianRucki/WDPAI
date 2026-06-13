@@ -139,12 +139,12 @@ include __DIR__ . '/partials/navigation.html';
         </header>
 
         <?php if ($collectionItems): ?>
-        <section class="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+        <section class="profile-p-lists-grid grid gap-5 md:grid-cols-2 xl:grid-cols-3">
           <?php foreach ($collectionItems as $list): ?>
           <?php $posters = reevio_profile_lists_posters($list); ?>
-          <article data-profile-list-card data-list-id="<?= (int) $list['id']; ?>" data-href="/list-details?id=<?= (int) $list['id']; ?>" class="group rounded-3xl border border-outline-variant/15 bg-surface-container-low p-5 ambient-shadow transition-colors hover:bg-surface-container-high">
-            <div class="flex gap-5">
-              <div class="relative h-36 w-24 shrink-0">
+          <article data-profile-list-card data-list-id="<?= (int) $list['id']; ?>" data-href="/list-details?id=<?= (int) $list['id']; ?>" class="profile-p-lists-card group rounded-3xl border border-outline-variant/15 bg-surface-container-low p-5 ambient-shadow transition-colors hover:bg-surface-container-high">
+            <div class="profile-p-lists-card-inner flex gap-5">
+              <div class="profile-p-lists-poster-stack relative h-36 w-24 shrink-0">
                 <div class="absolute inset-0 -rotate-6 translate-x-2 -translate-y-1 scale-90 overflow-hidden rounded-xl bg-surface-container-high opacity-60 poster-shadow">
                   <img
                     alt="<?= reevio_profile_lists_e($list['title'] ?? 'List'); ?> back poster"
@@ -171,17 +171,17 @@ include __DIR__ . '/partials/navigation.html';
                 </div>
               </div>
 
-              <div class="flex min-w-0 flex-1 flex-col justify-center">
-                <a href="/list-details?id=<?= (int) $list['id']; ?>" class="font-headline text-xl font-black leading-tight text-on-surface transition-colors group-hover:text-primary">
+              <div class="profile-p-lists-card-body flex min-w-0 flex-1 flex-col justify-center">
+                <a href="/list-details?id=<?= (int) $list['id']; ?>" class="profile-p-lists-title font-headline text-xl font-black leading-tight text-on-surface transition-colors group-hover:text-primary">
                   <?= reevio_profile_lists_e($list['title'] ?? 'Untitled list'); ?>
                 </a>
 
-                <p class="mt-3 flex items-center gap-2 font-label text-sm text-on-surface-variant">
+                <p class="profile-p-lists-count mt-3 flex items-center gap-2 font-label text-sm text-on-surface-variant">
                   <span class="material-symbols-outlined text-[17px]">movie</span>
                   <?= (int) ($list['films_count'] ?? 0); ?> films
                 </p>
 
-                <div class="mt-3 flex flex-wrap items-center gap-2">
+                <div class="profile-p-lists-badges mt-3 flex flex-wrap items-center gap-2">
                   <span class="inline-flex items-center gap-1 rounded-full border border-outline-variant/20 bg-surface-container-lowest px-2.5 py-1 font-label text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">
                     <span class="material-symbols-outlined text-[14px]"><?= !empty($list['is_public']) ? 'public' : 'lock'; ?></span>
                     <?= !empty($list['is_public']) ? 'Public' : 'Private'; ?>
@@ -194,12 +194,12 @@ include __DIR__ . '/partials/navigation.html';
                   <?php endif; ?>
                 </div>
 
-                <p class="mt-4 line-clamp-3 text-sm leading-relaxed text-on-surface-variant">
+                <p class="profile-p-lists-description mt-4 line-clamp-3 text-sm leading-relaxed text-on-surface-variant">
                   <?= reevio_profile_lists_e($list['description'] ?: 'No description yet.'); ?>
                 </p>
 
-                <div class="mt-4 flex items-center justify-between gap-3">
-                  <p class="font-label text-[11px] font-bold uppercase tracking-wider text-on-surface-variant/80">
+                <div class="profile-p-lists-footer mt-4 flex items-center justify-between gap-3">
+                  <p class="profile-p-lists-updated font-label text-[11px] font-bold uppercase tracking-wider text-on-surface-variant/80">
                     Updated <?= reevio_profile_lists_e(reevio_profile_lists_date($list['updated_at'] ?? $list['created_at'] ?? null)); ?>
                   </p>
 

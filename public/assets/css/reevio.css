@@ -7233,3 +7233,156 @@ button {
     letter-spacing: 0.04em !important;
   }
 }
+
+
+/* ==========================================================================
+   Profile lists mobile fix
+   Prevents own profile list cards from being squeezed into narrow columns.
+   ========================================================================== */
+
+.reevio-page-profile_p_lists .profile-p-lists-title,
+.reevio-page-profile_p_lists .profile-p-lists-count,
+.reevio-page-profile_p_lists .profile-p-lists-badges,
+.reevio-page-profile_p_lists .profile-p-lists-badges span,
+.reevio-page-profile_p_lists .profile-p-lists-description,
+.reevio-page-profile_p_lists .profile-p-lists-updated,
+.reevio-page-profile_p_lists header p {
+  overflow-wrap: normal !important;
+  word-break: normal !important;
+}
+
+@media (max-width: 900px) {
+  .reevio-page-profile_p_lists .profile-p-lists-grid {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    gap: 1rem !important;
+  }
+
+  .reevio-page-profile_p_lists .profile-p-lists-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    padding: 1rem !important;
+  }
+
+  .reevio-page-profile_p_lists .profile-p-lists-card-inner {
+    display: grid !important;
+    grid-template-columns: 7rem minmax(0, 1fr) !important;
+    align-items: center !important;
+    gap: 1rem !important;
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .reevio-page-profile_p_lists .profile-p-lists-poster-stack {
+    width: 6.4rem !important;
+    height: 9.6rem !important;
+    min-width: 6.4rem !important;
+    max-width: 6.4rem !important;
+  }
+
+  .reevio-page-profile_p_lists .profile-p-lists-card-body {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .reevio-page-profile_p_lists .profile-p-lists-title {
+    display: -webkit-box !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+    white-space: normal !important;
+    line-height: 1.14 !important;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .reevio-page-profile_p_lists .profile-p-lists-count {
+    white-space: nowrap !important;
+  }
+
+  .reevio-page-profile_p_lists .profile-p-lists-badges {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 0.5rem !important;
+    max-width: 100% !important;
+  }
+
+  .reevio-page-profile_p_lists .profile-p-lists-badges > span {
+    display: inline-flex !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    white-space: nowrap !important;
+  }
+
+  .reevio-page-profile_p_lists .profile-p-lists-description {
+    display: -webkit-box !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+    white-space: normal !important;
+    line-height: 1.42 !important;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .reevio-page-profile_p_lists .profile-p-lists-footer {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 0.75rem !important;
+  }
+
+  .reevio-page-profile_p_lists .profile-p-lists-updated {
+    flex: 1 1 100% !important;
+    max-width: 100% !important;
+    white-space: normal !important;
+    line-height: 1.35 !important;
+  }
+
+  .reevio-page-profile_p_lists [data-delete-list] {
+    width: fit-content !important;
+    white-space: nowrap !important;
+  }
+}
+
+@media (max-width: 560px) {
+  .reevio-page-profile_p_lists .profile-p-lists-card-inner {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+
+  .reevio-page-profile_p_lists .profile-p-lists-poster-stack {
+    width: min(8.5rem, 48vw) !important;
+    height: min(12.75rem, 72vw) !important;
+    min-width: min(8.5rem, 48vw) !important;
+    max-width: min(8.5rem, 48vw) !important;
+    justify-self: start !important;
+  }
+
+  .reevio-page-profile_p_lists .profile-p-lists-title {
+    font-size: 1.35rem !important;
+  }
+
+  .reevio-page-profile_p_lists .profile-p-lists-badges > span {
+    padding-left: 0.65rem !important;
+    padding-right: 0.65rem !important;
+    letter-spacing: 0.04em !important;
+  }
+}
+
+@media (max-width: 380px) {
+  .reevio-page-profile_p_lists .profile-p-lists-poster-stack {
+    width: 7.25rem !important;
+    height: 10.9rem !important;
+    min-width: 7.25rem !important;
+    max-width: 7.25rem !important;
+  }
+
+  .reevio-page-profile_p_lists .profile-p-lists-title {
+    font-size: 1.2rem !important;
+  }
+}

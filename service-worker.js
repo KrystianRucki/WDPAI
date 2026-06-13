@@ -1,4 +1,4 @@
-const REEVIO_CACHE_VERSION = "reevio-offline-v4";
+const REEVIO_CACHE_VERSION = "reevio-offline-v5";
 const REEVIO_OFFLINE_URL = "/offline-page";
 const REEVIO_SHELL_ASSETS = [
   REEVIO_OFFLINE_URL,
