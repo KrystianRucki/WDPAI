@@ -375,8 +375,6 @@ Po dodaniu diagramu można odkomentować lub uzupełnić poniższy fragment:
 
 ```md
 ![Diagram ERD](docs/erd/reevio_erd.png)
-
-Źródło diagramu: `docs/erd/reevio_erd.drawio`
 ```
 
 ### Najważniejsze relacje w bazie
