@@ -94,6 +94,21 @@ if (!function_exists('reevio_friends_description')) {
         return 'Film log';
     }
 }
+
+if (!function_exists('reevio_friends_activity_target')) {
+    function reevio_friends_activity_target(array $log): string
+    {
+        $target = (string) ($log['target_url'] ?? ('/log-details?id=' . (int) ($log['log_id'] ?? 0)));
+
+        if (str_starts_with($target, '/log-details')) {
+            $separator = str_contains($target, '?') ? '&' : '?';
+            $target .= $separator . 'from=new-from-friends';
+        }
+
+        return $target;
+    }
+}
+
 ?>
 <!doctype html>
 <html class="dark" lang="en">
@@ -151,7 +166,7 @@ include __DIR__ . '/partials/navigation.html';
       <!-- Asymmetric Grid Layout for Movie Logs -->
       <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-10">
         <?php foreach ($friendLogs as $index => $log): ?>
-        <article data-href="<?= reevio_friends_e($log['target_url'] ?? ('/log-details?id=' . (int) $log['log_id'])); ?>"
+        <article data-href="<?= reevio_friends_e(reevio_friends_activity_target($log)); ?>"
           class="bg-surface-container-low rounded-2xl p-5 ghost-border flex flex-col gap-4 relative group hover:bg-surface-container-high transition-colors duration-300 ambient-shadow <?= $index % 3 === 1 ? 'xl:mt-10' : ''; ?>"
         >
           <div class="flex items-center gap-3">

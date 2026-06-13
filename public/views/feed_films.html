@@ -97,6 +97,21 @@ if (!function_exists('reevio_feed_avatar')) {
         return '<div class="' . $class . ' flex items-center justify-center bg-surface-container-high text-primary font-headline text-xs font-black">' . reevio_feed_e($initial) . '</div>';
     }
 }
+
+if (!function_exists('reevio_feed_activity_target')) {
+    function reevio_feed_activity_target(array $log): string
+    {
+        $target = (string) ($log['target_url'] ?? ('/log-details?id=' . (int) ($log['log_id'] ?? 0)));
+
+        if (str_starts_with($target, '/log-details')) {
+            $separator = str_contains($target, '?') ? '&' : '?';
+            $target .= $separator . 'from=feed-films';
+        }
+
+        return $target;
+    }
+}
+
 ?>
 <!doctype html>
 <html class="dark" lang="en">
@@ -191,7 +206,7 @@ include __DIR__ . '/partials/navigation.html';
           <?php if ($friendLogs): ?>
           <div class="grid grid-cols-[repeat(3,165px)] gap-10">
             <?php foreach ($friendLogs as $log): ?>
-            <article data-href="<?= reevio_feed_e($log['target_url'] ?? ('/log-details?id=' . (int) $log['log_id'])); ?>" class="group relative aspect-[2/3] overflow-hidden rounded-xl bg-surface-container-high poster-shadow transition-transform duration-200 hover:scale-[1.02]">
+            <article data-href="<?= reevio_feed_e(reevio_feed_activity_target($log)); ?>" class="group relative aspect-[2/3] overflow-hidden rounded-xl bg-surface-container-high poster-shadow transition-transform duration-200 hover:scale-[1.02]">
               <img
                 alt="<?= reevio_feed_e($log['film_title'] ?? 'Movie'); ?> poster"
                 class="h-full w-full object-cover"
