@@ -8,22 +8,38 @@ Aplikacja łączy funkcje serwisu filmowego i społecznościowego: użytkownik m
 
 ## Spis treści
 
-1. [Technologie](#technologie)
-2. [Główne funkcjonalności](#główne-funkcjonalności)
-3. [Architektura aplikacji](#architektura-aplikacji)
-4. [Struktura projektu](#struktura-projektu)
-5. [Instrukcja uruchomienia](#instrukcja-uruchomienia)
-6. [Zmienne środowiskowe](#zmienne-środowiskowe)
-7. [Konta testowe](#konta-testowe)
-8. [Flow aplikacji](#flow-aplikacji)
-9. [Baza danych](#baza-danych)
-10. [Diagram ERD](#diagram-erd)
-11. [Widoki, funkcje, triggery i transakcje](#widoki-funkcje-triggery-i-transakcje)
-12. [Testy](#testy)
-13. [Security Bingo](#security-bingo)
-14. [Responsywność i design](#responsywność-i-design)
-15. [Screeny aplikacji](#screeny-aplikacji)
-16. [Checklista wymagań](#checklista-wymagań)
+- [Reevio](#reevio)
+  - [Spis treści](#spis-treści)
+  - [Technologie](#technologie)
+  - [Główne funkcjonalności](#główne-funkcjonalności)
+  - [Architektura aplikacji](#architektura-aplikacji)
+  - [Struktura projektu](#struktura-projektu)
+  - [Instrukcja uruchomienia](#instrukcja-uruchomienia)
+    - [1. Wejście do katalogu projektu](#1-wejście-do-katalogu-projektu)
+    - [2. Przygotowanie zmiennych środowiskowych](#2-przygotowanie-zmiennych-środowiskowych)
+    - [3. Uruchomienie kontenerów](#3-uruchomienie-kontenerów)
+    - [4. Sprawdzenie kontenerów](#4-sprawdzenie-kontenerów)
+    - [5. Reset bazy danych](#5-reset-bazy-danych)
+  - [Zmienne środowiskowe](#zmienne-środowiskowe)
+  - [Flow aplikacji](#flow-aplikacji)
+  - [Baza danych](#baza-danych)
+  - [Diagram ERD](#diagram-erd)
+    - [Najważniejsze relacje w bazie](#najważniejsze-relacje-w-bazie)
+  - [Widoki, funkcje, triggery i transakcje](#widoki-funkcje-triggery-i-transakcje)
+    - [Widoki SQL](#widoki-sql)
+    - [Funkcje SQL](#funkcje-sql)
+    - [Triggery](#triggery)
+    - [Transakcje](#transakcje)
+  - [Testy](#testy)
+    - [Instalacja zależności testowych](#instalacja-zależności-testowych)
+    - [PHPUnit](#phpunit)
+    - [Smoke test endpointów](#smoke-test-endpointów)
+  - [Security Bingo](#security-bingo)
+    - [Zrealizowana pełna linia](#zrealizowana-pełna-linia)
+    - [Dodatkowe zabezpieczenia](#dodatkowe-zabezpieczenia)
+  - [Responsywność i design](#responsywność-i-design)
+  - [Przykładowy scenariusz testowy](#przykładowy-scenariusz-testowy)
+  - [Checklista wymagań](#checklista-wymagań)
 
 ---
 
@@ -284,22 +300,6 @@ Opis:
 
 Nie należy wrzucać prawdziwego pliku `.env`, `config.php` ani plików z kluczami API do repozytorium.
 
----
-
-## Konta testowe
-
-Przykładowe konta do prezentacji:
-
-| Rola | Email | Hasło | Przeznaczenie |
-|---|---|---|---|
-| Administrator | `admin@reevio.test` | `Password123` | Test panelu administratora |
-| Użytkownik demo | `demo@reevio.test` | `Password123` | Pełny profil z listami, watchlistą, dziennikiem i ocenami |
-| Użytkownik standardowy | `jakub@reevio.test` | `password` / zgodnie z aktualnym seedem | Test zwykłego konta użytkownika |
-
-Właściwe dane kont zależą od aktualnego pliku `docker/db/init/init.sql` lub `database/reevio_dump.sql`.
-
----
-
 ## Flow aplikacji
 
 Podstawowy scenariusz użycia aplikacji:
@@ -554,12 +554,6 @@ W projekcie zastosowano również:
 - JSON błędów dla endpointów API/AJAX,
 - brak sekretów w repozytorium przez `.gitignore`.
 
-Dokumentacja Security Bingo może znajdować się w:
-
-```txt
-docs/security_bingo.md
-```
-
 ---
 
 ## Responsywność i design
@@ -578,46 +572,6 @@ Zastosowano m.in.:
 - osobne style dla szczegółów filmu, profili, list i rating distribution.
 
 Design aplikacji jest utrzymany w ciemnym, filmowym stylu z kartami, gradientami, dużymi plakatami i widokami dopasowanymi do tematyki kina.
-
----
-
-## Screeny aplikacji
-
-Miejsce na screeny aplikacji.
-
-Proponowana struktura:
-
-```txt
-docs/screenshots/web/login.png
-docs/screenshots/web/feed-films.png
-docs/screenshots/web/film-details.png
-docs/screenshots/web/profile.png
-docs/screenshots/web/admin-panel.png
-
-docs/screenshots/mobile/login.png
-docs/screenshots/mobile/feed-films.png
-docs/screenshots/mobile/film-details.png
-docs/screenshots/mobile/profile.png
-docs/screenshots/mobile/search.png
-```
-
-Po dodaniu screenów można uzupełnić sekcję:
-
-### Wersja desktop
-
-```md
-![Login desktop](docs/screenshots/web/login.png)
-![Feed desktop](docs/screenshots/web/feed-films.png)
-![Profil desktop](docs/screenshots/web/profile.png)
-```
-
-### Wersja mobilna
-
-```md
-![Login mobile](docs/screenshots/mobile/login.png)
-![Feed mobile](docs/screenshots/mobile/feed-films.png)
-![Profil mobile](docs/screenshots/mobile/profile.png)
-```
 
 ---
 
@@ -655,140 +609,38 @@ Po dodaniu screenów można uzupełnić sekcję:
 
 ## Checklista wymagań
 
-| Wymaganie | Status |
-|---|---|
-| Dokumentacja w README.md | Zrealizowane |
-| Docker | Zrealizowane |
-| Architektura MVC / front-backend | Zrealizowane |
-| Backend obiektowy PHP | Zrealizowane |
-| Diagram ERD | Miejsce przygotowane, należy dodać pliki diagramu |
-| Git i commity | Do potwierdzenia w repozytorium |
-| Realizacja tematu | Zrealizowane |
-| HTML5 | Zrealizowane |
-| CSS | Zrealizowane |
-| JavaScript | Zrealizowane |
-| Fetch API / AJAX | Zrealizowane |
-| PostgreSQL | Zrealizowane |
-| Złożoność bazy danych | Zrealizowane |
-| Eksport bazy do `.sql` | Zrealizowane |
-| Logowanie | Zrealizowane |
-| Sesja użytkownika | Zrealizowane |
-| Uprawnienia użytkowników | Zrealizowane |
-| Role użytkowników, minimum dwie | Zrealizowane |
-| Wylogowywanie | Zrealizowane |
-| Widoki SQL | Zrealizowane |
-| Wyzwalacze SQL | Zrealizowane |
-| Funkcje SQL | Zrealizowane |
-| Transakcje | Zrealizowane |
-| Akcje na referencjach | Zrealizowane |
-| Security Bingo | Częściowo zrealizowane, pełna linia pokryta |
-| Brak duplikacji kodu | W dużej części zrealizowane |
-| Testy PHPUnit | Zrealizowane |
-| Testy integracyjne endpointów | Zrealizowane |
-| Globalna obsługa błędów 400/403/404/500 | Zrealizowane |
-| Responsywność | Zrealizowane |
-| Design | Zrealizowane |
+| Wymaganie                               | Status                                            |
+| --------------------------------------- | ------------------------------------------------- |
+| Dokumentacja w README.md                | Zrealizowane                                      |
+| Docker                                  | Zrealizowane                                      |
+| Architektura MVC / front-backend        | Zrealizowane                                      |
+| Backend obiektowy PHP                   | Zrealizowane                                      |
+| Diagram ERD                             | Miejsce przygotowane, należy dodać pliki diagramu |
+| Git i commity                           | Do potwierdzenia w repozytorium                   |
+| Realizacja tematu                       | Zrealizowane                                      |
+| HTML5                                   | Zrealizowane                                      |
+| CSS                                     | Zrealizowane                                      |
+| JavaScript                              | Zrealizowane                                      |
+| Fetch API / AJAX                        | Zrealizowane                                      |
+| PostgreSQL                              | Zrealizowane                                      |
+| Złożoność bazy danych                   | Zrealizowane                                      |
+| Eksport bazy do `.sql`                  | Zrealizowane                                      |
+| Logowanie                               | Zrealizowane                                      |
+| Sesja użytkownika                       | Zrealizowane                                      |
+| Uprawnienia użytkowników                | Zrealizowane                                      |
+| Role użytkowników, minimum dwie         | Zrealizowane                                      |
+| Wylogowywanie                           | Zrealizowane                                      |
+| Widoki SQL                              | Zrealizowane                                      |
+| Wyzwalacze SQL                          | Zrealizowane                                      |
+| Funkcje SQL                             | Zrealizowane                                      |
+| Transakcje                              | Zrealizowane                                      |
+| Akcje na referencjach                   | Zrealizowane                                      |
+| Security Bingo                          | Częściowo zrealizowane, pełna linia pokryta       |
+| Brak duplikacji kodu                    | W dużej części zrealizowane                       |
+| Testy PHPUnit                           | Zrealizowane                                      |
+| Testy integracyjne endpointów           | Zrealizowane                                      |
+| Globalna obsługa błędów 400/403/404/500 | Zrealizowane                                      |
+| Responsywność                           | Zrealizowane                                      |
+| Design                                  | Zrealizowane                                      |
 
 ---
-
-## Przydatne komendy do prezentacji
-
-Start projektu:
-
-```powershell
-docker compose up --build -d
-```
-
-Status kontenerów:
-
-```powershell
-docker compose ps
-```
-
-Reset bazy:
-
-```powershell
-docker compose down -v
-docker compose up --build -d
-```
-
-Instalacja zależności testowych:
-
-```powershell
-docker run --rm -v "${PWD}:/app" -w /app composer:2 install --ignore-platform-req=ext-pdo_pgsql
-```
-
-PHPUnit:
-
-```powershell
-docker compose exec php sh -lc "cd /app && php vendor/bin/phpunit"
-```
-
-Smoke test endpointów:
-
-```powershell
-docker compose exec php sh -lc "cd /app && BASE_URL=http://server sh tests/Integration/endpoint_smoke.sh"
-```
-
-Logi bazy danych:
-
-```powershell
-docker compose logs db --tail=120
-```
-
-Logi PHP:
-
-```powershell
-docker compose logs php --tail=120
-```
-
-Logi serwera:
-
-```powershell
-docker compose logs server --tail=120
-```
-
----
-
-## Uwagi dotyczące repozytorium
-
-Do repozytorium należy dodać:
-
-```txt
-composer.json
-composer.lock
-phpunit.xml.dist
-tests/
-src/
-public/
-docker/
-database/
-docs/
-README.md
-```
-
-Nie należy dodawać:
-
-```txt
-vendor/
-.env
-.env.local
-config.php
-public/uploads/
-docker-compose.yml z prawdziwymi sekretami
-docker-compose.yaml z prawdziwymi sekretami
-```
-
-Jeżeli plik Docker Compose zawiera prywatny klucz API, najlepiej dodać do repozytorium wersję przykładową, np.:
-
-```txt
-docker-compose.example.yml
-```
-
-a lokalny plik z sekretami trzymać poza repozytorium.
-
----
-
-## Autor
-
-Projekt przygotowany w ramach przedmiotu **Wstęp do Projektowania Aplikacji Internetowych**.
