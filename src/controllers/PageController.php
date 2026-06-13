@@ -73,6 +73,7 @@ final class PageController extends AppController
             'activity_following' => $this->activityVariables('following', $currentUser, $activityRepository),
             'activity_you' => $this->activityVariables('you', $currentUser, $activityRepository),
             'notifications' => $this->notificationsVariables($currentUser, $notificationsRepository),
+            'settings' => $this->settingsVariables($currentUser, $usersRepository),
             'profile_p_main' => [
                 'profileUser' => $currentUser,
                 'profileStats' => $usersRepository->getFollowStats($currentUserId),
@@ -110,6 +111,15 @@ final class PageController extends AppController
 
 
 
+
+
+    private function settingsVariables(array $currentUser, UsersRepository $usersRepository): array
+    {
+        return [
+            'settingsUser' => $currentUser,
+            'notificationSettings' => $usersRepository->getNotificationSettings((int) $currentUser['id']),
+        ];
+    }
 
     private function notificationsVariables(array $currentUser, NotificationsRepository $notificationsRepository): array
     {

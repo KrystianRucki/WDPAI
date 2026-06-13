@@ -552,7 +552,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const payload = await response.json().catch(() => ({}));
 
       if (!response.ok || !payload.success) {
-        throw new Error(payload.message || payload.error || "Could not save changes.");
+        throw new Error(payload.message || payload.error || "Could not save profile changes.");
       }
 
       if (payload.user?.username && usernameInput) {
@@ -561,6 +561,33 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (typeof payload.user?.bio === "string" && bioInput) {
         bioInput.value = payload.user.bio;
+      }
+
+      const notifications = {};
+      form.querySelectorAll("[data-notification-setting]").forEach((toggle) => {
+        notifications[toggle.dataset.notificationSetting] = toggle.getAttribute("aria-pressed") === "true";
+      });
+
+      const notificationResponse = await fetch("/api-settings-notifications", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify({ notifications })
+      });
+
+      const notificationPayload = await notificationResponse.json().catch(() => ({}));
+
+      if (!notificationResponse.ok || !notificationPayload.success) {
+        throw new Error(notificationPayload.message || notificationPayload.error || "Could not save notification settings.");
+      }
+
+      if (notificationPayload.settings) {
+        Object.entries(notificationPayload.settings).forEach(([key, value]) => {
+          const toggle = form.querySelector(`[data-notification-setting="${key}"]`);
+          if (toggle) toggle.setAttribute("aria-pressed", value ? "true" : "false");
+        });
       }
 
       setStatus("Changes saved.");

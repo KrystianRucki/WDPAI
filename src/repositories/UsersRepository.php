@@ -134,6 +134,131 @@ final class UsersRepository extends Repository
         ]);
     }
 
+
+    public function getNotificationSettings(int $userId): array
+    {
+        $this->ensureNotificationSettingsSchema();
+
+        $query = $this->connection()->prepare(
+            'SELECT new_followers, review_likes, review_comments
+             FROM user_notification_settings
+             WHERE user_id = :user_id
+             LIMIT 1'
+        );
+        $query->execute(['user_id' => $userId]);
+        $settings = $query->fetch();
+
+        if (!$settings) {
+            return [
+                'new_followers' => true,
+                'review_likes' => true,
+                'review_comments' => true,
+            ];
+        }
+
+        return [
+            'new_followers' => (bool) $settings['new_followers'],
+            'review_likes' => (bool) $settings['review_likes'],
+            'review_comments' => (bool) $settings['review_comments'],
+        ];
+    }
+
+    public function updateNotificationSettings(
+        int $userId,
+        bool $newFollowers,
+        bool $reviewLikes,
+        bool $reviewComments
+    ): array {
+        $this->ensureNotificationSettingsSchema();
+
+        $query = $this->connection()->prepare(
+            'INSERT INTO user_notification_settings (user_id, new_followers, review_likes, review_comments, updated_at)
+             VALUES (:user_id, :new_followers, :review_likes, :review_comments, CURRENT_TIMESTAMP)
+             ON CONFLICT (user_id) DO UPDATE
+             SET new_followers = EXCLUDED.new_followers,
+                 review_likes = EXCLUDED.review_likes,
+                 review_comments = EXCLUDED.review_comments,
+                 updated_at = CURRENT_TIMESTAMP'
+        );
+
+        $query->bindValue(':user_id', $userId, PDO::PARAM_INT);
+        $query->bindValue(':new_followers', $newFollowers, PDO::PARAM_BOOL);
+        $query->bindValue(':review_likes', $reviewLikes, PDO::PARAM_BOOL);
+        $query->bindValue(':review_comments', $reviewComments, PDO::PARAM_BOOL);
+        $query->execute();
+
+        return $this->getNotificationSettings($userId);
+    }
+
+    private function ensureNotificationSettingsSchema(): void
+    {
+        $connection = $this->connection();
+
+        $connection->exec(
+            'CREATE TABLE IF NOT EXISTS user_notification_settings (
+                user_id INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+                new_followers BOOLEAN NOT NULL DEFAULT TRUE,
+                review_likes BOOLEAN NOT NULL DEFAULT TRUE,
+                review_comments BOOLEAN NOT NULL DEFAULT TRUE,
+                updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+            )'
+        );
+
+        $connection->exec(
+            "CREATE OR REPLACE FUNCTION notify_review_interaction()
+             RETURNS TRIGGER AS $$
+             DECLARE
+                 recipient_id INTEGER;
+                 should_notify BOOLEAN;
+             BEGIN
+                 SELECT user_id INTO recipient_id
+                 FROM reviews
+                 WHERE id = NEW.review_id;
+
+                 IF recipient_id IS NOT NULL AND recipient_id <> NEW.user_id THEN
+                     IF TG_TABLE_NAME = 'review_comments' THEN
+                         SELECT COALESCE((
+                             SELECT review_comments
+                             FROM user_notification_settings
+                             WHERE user_id = recipient_id
+                         ), TRUE) INTO should_notify;
+
+                         IF should_notify THEN
+                             INSERT INTO notifications(user_id, actor_id, type, review_id, comment_id)
+                             VALUES (
+                                 recipient_id,
+                                 NEW.user_id,
+                                 'review_comment',
+                                 NEW.review_id,
+                                 NEW.id
+                             );
+                         END IF;
+                     ELSE
+                         SELECT COALESCE((
+                             SELECT review_likes
+                             FROM user_notification_settings
+                             WHERE user_id = recipient_id
+                         ), TRUE) INTO should_notify;
+
+                         IF should_notify THEN
+                             INSERT INTO notifications(user_id, actor_id, type, review_id, comment_id)
+                             VALUES (
+                                 recipient_id,
+                                 NEW.user_id,
+                                 'review_like',
+                                 NEW.review_id,
+                                 NULL
+                             );
+                         END IF;
+                     END IF;
+                 END IF;
+
+                 RETURN NEW;
+             END;
+             $$ LANGUAGE plpgsql"
+        );
+    }
+
     public function deleteUser(int $id): bool
     {
         return $this->setBlocked($id, true);
@@ -276,6 +401,8 @@ final class UsersRepository extends Repository
             return false;
         }
 
+        $this->ensureNotificationSettingsSchema();
+
         $connection = $this->connection();
         $query = $connection->prepare(
             'INSERT INTO followers (follower_id, followed_id)
@@ -294,7 +421,12 @@ final class UsersRepository extends Repository
         if ($inserted) {
             $notification = $connection->prepare(
                 "INSERT INTO notifications (user_id, actor_id, type)
-                 VALUES (:user_id, :actor_id, 'new_follower')"
+                 SELECT :user_id, :actor_id, 'new_follower'
+                 WHERE COALESCE((
+                    SELECT new_followers
+                    FROM user_notification_settings
+                    WHERE user_id = :user_id
+                 ), TRUE)"
             );
             $notification->execute([
                 'user_id' => $followedId,

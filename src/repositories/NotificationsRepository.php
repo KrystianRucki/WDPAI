@@ -38,7 +38,14 @@ final class NotificationsRepository extends Repository
              LEFT JOIN reviews r ON r.id = n.review_id
              LEFT JOIN films f ON f.id = r.film_id
              LEFT JOIN review_comments rc ON rc.id = n.comment_id
+             LEFT JOIN user_notification_settings uns ON uns.user_id = n.user_id
              WHERE n.user_id = :user_id
+               AND CASE n.type
+                    WHEN 'new_follower' THEN COALESCE(uns.new_followers, TRUE)
+                    WHEN 'review_like' THEN COALESCE(uns.review_likes, TRUE)
+                    WHEN 'review_comment' THEN COALESCE(uns.review_comments, TRUE)
+                    ELSE TRUE
+               END
              ORDER BY n.created_at DESC, n.id DESC
              LIMIT :limit"
         );
@@ -53,12 +60,21 @@ final class NotificationsRepository extends Repository
     {
         $query = $this->connection()->prepare(
             "SELECT
-                COUNT(*) FILTER (WHERE type = 'new_follower') AS followers_count,
-                COUNT(*) FILTER (WHERE type = 'review_like') AS likes_count,
-                COUNT(*) FILTER (WHERE type = 'review_comment') AS comments_count,
-                COUNT(*) FILTER (WHERE is_read = FALSE) AS unread_count
-             FROM notifications
-             WHERE user_id = :user_id"
+                COUNT(*) FILTER (WHERE n.type = 'new_follower') AS followers_count,
+                COUNT(*) FILTER (WHERE n.type = 'review_like') AS likes_count,
+                COUNT(*) FILTER (WHERE n.type = 'review_comment') AS comments_count,
+                COUNT(*) FILTER (
+                    WHERE n.is_read = FALSE
+                      AND CASE n.type
+                            WHEN 'new_follower' THEN COALESCE(uns.new_followers, TRUE)
+                            WHEN 'review_like' THEN COALESCE(uns.review_likes, TRUE)
+                            WHEN 'review_comment' THEN COALESCE(uns.review_comments, TRUE)
+                            ELSE TRUE
+                          END
+                ) AS unread_count
+             FROM notifications n
+             LEFT JOIN user_notification_settings uns ON uns.user_id = n.user_id
+             WHERE n.user_id = :user_id"
         );
         $query->execute(['user_id' => $userId]);
         $stats = $query->fetch() ?: [];

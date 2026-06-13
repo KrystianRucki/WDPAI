@@ -1,5 +1,10 @@
 <?php
-$settingsUser = $currentUser ?? [];
+$settingsUser = $settingsUser ?? $currentUser ?? [];
+$notificationSettings = $notificationSettings ?? [
+    'new_followers' => true,
+    'review_likes' => true,
+    'review_comments' => true,
+];
 
 if (!function_exists('reevio_settings_e')) {
     function reevio_settings_e($value): string
@@ -119,7 +124,7 @@ include __DIR__ . '/partials/navigation.html';
                   <h3 class="font-headline text-lg font-bold text-on-surface">New followers</h3>
                   <p class="mt-1 text-sm text-on-surface-variant">Notify me when someone follows my profile.</p>
                 </div>
-                <button class="settings-switch" type="button" aria-label="New followers toggle" aria-pressed="true"></button>
+                <button class="settings-switch" type="button" aria-label="New followers toggle" aria-pressed="<?= !empty($notificationSettings['new_followers']) ? 'true' : 'false'; ?>" data-notification-setting="new_followers"></button>
               </div>
 
               <div class="flex items-center justify-between gap-5 py-4">
@@ -127,7 +132,7 @@ include __DIR__ . '/partials/navigation.html';
                   <h3 class="font-headline text-lg font-bold text-on-surface">Review likes</h3>
                   <p class="mt-1 text-sm text-on-surface-variant">Notify me when someone likes one of my reviews.</p>
                 </div>
-                <button class="settings-switch" type="button" aria-label="Review likes toggle" aria-pressed="true"></button>
+                <button class="settings-switch" type="button" aria-label="Review likes toggle" aria-pressed="<?= !empty($notificationSettings['review_likes']) ? 'true' : 'false'; ?>" data-notification-setting="review_likes"></button>
               </div>
 
               <div class="flex items-center justify-between gap-5 py-4">
@@ -135,7 +140,7 @@ include __DIR__ . '/partials/navigation.html';
                   <h3 class="font-headline text-lg font-bold text-on-surface">Review comments</h3>
                   <p class="mt-1 text-sm text-on-surface-variant">Notify me about comments and replies under my reviews.</p>
                 </div>
-                <button class="settings-switch" type="button" aria-label="Review comments toggle" aria-pressed="true"></button>
+                <button class="settings-switch" type="button" aria-label="Review comments toggle" aria-pressed="<?= !empty($notificationSettings['review_comments']) ? 'true' : 'false'; ?>" data-notification-setting="review_comments"></button>
               </div>
             </div>
           </article>

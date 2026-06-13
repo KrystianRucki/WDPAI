@@ -297,6 +297,7 @@ CREATE OR REPLACE FUNCTION notify_review_interaction()
 RETURNS TRIGGER AS $$
 DECLARE
     recipient_id INTEGER;
+    should_notify BOOLEAN;
 BEGIN
     SELECT user_id INTO recipient_id
     FROM reviews
@@ -304,23 +305,39 @@ BEGIN
 
     IF recipient_id IS NOT NULL AND recipient_id <> NEW.user_id THEN
         IF TG_TABLE_NAME = 'review_comments' THEN
-            INSERT INTO notifications(user_id, actor_id, type, review_id, comment_id)
-            VALUES (
-                recipient_id,
-                NEW.user_id,
-                'review_comment',
-                NEW.review_id,
-                NEW.id
-            );
+            SELECT COALESCE((
+                SELECT review_comments
+                FROM user_notification_settings
+                WHERE user_id = recipient_id
+            ), TRUE) INTO should_notify;
+
+            IF should_notify THEN
+                INSERT INTO notifications(user_id, actor_id, type, review_id, comment_id)
+                VALUES (
+                    recipient_id,
+                    NEW.user_id,
+                    'review_comment',
+                    NEW.review_id,
+                    NEW.id
+                );
+            END IF;
         ELSE
-            INSERT INTO notifications(user_id, actor_id, type, review_id, comment_id)
-            VALUES (
-                recipient_id,
-                NEW.user_id,
-                'review_like',
-                NEW.review_id,
-                NULL
-            );
+            SELECT COALESCE((
+                SELECT review_likes
+                FROM user_notification_settings
+                WHERE user_id = recipient_id
+            ), TRUE) INTO should_notify;
+
+            IF should_notify THEN
+                INSERT INTO notifications(user_id, actor_id, type, review_id, comment_id)
+                VALUES (
+                    recipient_id,
+                    NEW.user_id,
+                    'review_like',
+                    NEW.review_id,
+                    NULL
+                );
+            END IF;
         END IF;
     END IF;
 

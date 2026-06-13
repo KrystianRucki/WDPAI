@@ -166,7 +166,36 @@ final class SettingsController extends AppController
             return;
         }
 
-        $this->json(['success' => true, 'updated' => true]);
+        $data = $this->getJsonInput();
+        $settings = is_array($data['notifications'] ?? null) ? $data['notifications'] : $data;
+
+        $newFollowers = filter_var($settings['new_followers'] ?? true, FILTER_VALIDATE_BOOL, FILTER_NULL_ON_FAILURE);
+        $reviewLikes = filter_var($settings['review_likes'] ?? true, FILTER_VALIDATE_BOOL, FILTER_NULL_ON_FAILURE);
+        $reviewComments = filter_var($settings['review_comments'] ?? true, FILTER_VALIDATE_BOOL, FILTER_NULL_ON_FAILURE);
+
+        $newFollowers = $newFollowers ?? false;
+        $reviewLikes = $reviewLikes ?? false;
+        $reviewComments = $reviewComments ?? false;
+
+        try {
+            $savedSettings = (new UsersRepository())->updateNotificationSettings(
+                (int) $_SESSION['user_id'],
+                $newFollowers,
+                $reviewLikes,
+                $reviewComments
+            );
+
+            $this->json([
+                'success' => true,
+                'updated' => true,
+                'settings' => $savedSettings,
+            ]);
+        } catch (Throwable) {
+            $this->json([
+                'success' => false,
+                'message' => 'Could not save notification settings.',
+            ], 500);
+        }
     }
 
     public function saveFavorites(): void
