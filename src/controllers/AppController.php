@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../repositories/UsersRepository.php';
 require_once __DIR__ . '/../repositories/NotificationsRepository.php';
-require_once __DIR__ . '/../Support/ErrorHandler.php';
 
 abstract class AppController
 {
@@ -28,6 +27,22 @@ abstract class AppController
         $raw = file_get_contents('php://input');
         $data = json_decode($raw ?: '[]', true);
         return is_array($data) ? $data : [];
+    }
+
+    protected function csrfToken(): string
+    {
+        if (empty($_SESSION['csrf_token'])) {
+            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+        }
+
+        return (string) $_SESSION['csrf_token'];
+    }
+
+    protected function validateCsrfToken(?string $token): bool
+    {
+        return is_string($token)
+            && isset($_SESSION['csrf_token'])
+            && hash_equals((string) $_SESSION['csrf_token'], $token);
     }
 
     protected function json(array $payload, int $status = 200): void
@@ -73,17 +88,6 @@ abstract class AppController
     }
 
 
-    protected function renderBadRequest(string $message = 'This request could not be understood.'): void
-    {
-        http_response_code(400);
-
-        $this->render('bad_request', [
-            'errorEyebrow' => 'Error 400',
-            'errorTitle' => 'Bad request',
-            'errorMessage' => $message,
-        ]);
-    }
-
     protected function renderNotFound(string $message = 'The page you are looking for does not exist.'): void
     {
         http_response_code(404);
@@ -106,17 +110,6 @@ abstract class AppController
         ]);
     }
 
-    protected function renderServerError(string $message = 'Something went wrong on the Reevio server.'): void
-    {
-        http_response_code(500);
-
-        $this->render('server_error', [
-            'errorEyebrow' => 'Error 500',
-            'errorTitle' => 'Server error',
-            'errorMessage' => $message,
-        ]);
-    }
-
     protected function currentUser(): ?array
     {
         if (!isset($_SESSION['user_id'])) {
@@ -134,6 +127,7 @@ abstract class AppController
         $currentUser = $variables['currentUser'] ?? $this->currentUser();
         $showAdminLink = $variables['showAdminLink'] ?? (($currentUser['role'] ?? null) === 'admin');
         $messages = $variables['messages'] ?? null;
+        $csrfToken = $variables['csrfToken'] ?? $this->csrfToken();
         $notificationUnreadCount = (int) ($variables['notificationUnreadCount'] ?? 0);
 
         if ($currentUser && !isset($variables['notificationUnreadCount'])) {

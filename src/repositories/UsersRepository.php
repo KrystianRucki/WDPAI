@@ -22,6 +22,19 @@ final class UsersRepository extends Repository
         return $user ?: null;
     }
 
+    public function getAuthenticationUserByEmail(string $email): ?array
+    {
+        $query = $this->connection()->prepare(
+            'SELECT id, username, email, password, role, is_active
+             FROM users
+             WHERE email = :email
+             LIMIT 1'
+        );
+        $query->execute(['email' => $email]);
+        $user = $query->fetch();
+        return $user ?: null;
+    }
+
     public function getUserByUsername(string $username): ?array
     {
         $query = $this->connection()->prepare('SELECT * FROM users WHERE username = :username');
@@ -44,6 +57,19 @@ final class UsersRepository extends Repository
         ]);
 
         return (int) $query->fetchColumn();
+    }
+
+    public function logAudit(?int $userId, string $action, array $metadata = []): void
+    {
+        $query = $this->connection()->prepare(
+            'INSERT INTO audit_logs (user_id, action, metadata)
+             VALUES (:user_id, :action, CAST(:metadata AS jsonb))'
+        );
+
+        $query->bindValue(':user_id', $userId, $userId === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
+        $query->bindValue(':action', $action);
+        $query->bindValue(':metadata', json_encode($metadata, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+        $query->execute();
     }
 
     public function searchUsers(string $searchTerm): array

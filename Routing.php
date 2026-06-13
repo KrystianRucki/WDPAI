@@ -14,17 +14,16 @@ require_once __DIR__ . '/src/controllers/NotificationsController.php';
 require_once __DIR__ . '/src/controllers/SettingsController.php';
 require_once __DIR__ . '/src/controllers/TmdbController.php';
 require_once __DIR__ . '/src/controllers/DiaryController.php';
-require_once __DIR__ . '/src/Support/ErrorHandler.php';
 
 final class Routing
 {
     private const PUBLIC_VIEWS = [
         'login',
         'register',
-        'bad_request',
         'not_found',
         'forbidden',
-        'server_error',
+        'bad_request',
+        'internal_error',
         'offline_page',
     ];
 
@@ -34,9 +33,7 @@ final class Routing
         'feed-films' => 'feed_films',
         'feed-reviews' => 'feed_reviews',
         'feed-lists' => 'feed_lists',
-        'bad-request' => 'bad_request',
         'offline-page' => 'offline_page',
-        'server-error' => 'server_error',
         'film-details' => 'film_details',
         'review-details' => 'review_details',
         'review-comments' => 'review_comments',
@@ -70,37 +67,13 @@ final class Routing
 
     public static function run(string $path): void
     {
-        if (!self::isSafePath($path)) {
-            ErrorHandler::badRequest('The requested URL contains invalid characters.');
-            return;
-        }
-
         $path = self::normalizePath($path);
-
-        if (in_array($path, ['bad-request', '400'], true)) {
-            ErrorHandler::badRequest('This request could not be understood.');
-            return;
-        }
-
-        if (in_array($path, ['forbidden', '403'], true)) {
-            ErrorHandler::forbidden();
-            return;
-        }
-
-        if (in_array($path, ['not-found', '404'], true)) {
-            ErrorHandler::notFound();
-            return;
-        }
-
-        if (in_array($path, ['server-error', '500'], true)) {
-            ErrorHandler::serverError();
-            return;
-        }
 
         $routes = [
             'login' => [SecurityController::class, 'login'],
             'register' => [SecurityController::class, 'register'],
             'logout' => [SecurityController::class, 'logout'],
+            'bad-request' => [PageController::class, 'badRequest'],
 
             'admin-panel' => [AdminController::class, 'index'],
             'api-admin-users' => [AdminController::class, 'users'],
@@ -166,22 +139,34 @@ final class Routing
             return;
         }
 
-        ErrorHandler::notFound('The requested route does not exist.');
+        if (self::expectsJsonResponse($path)) {
+            self::renderJsonNotFound();
+            return;
+        }
+
+        http_response_code(404);
+        (new PageController())->show('not_found', true);
     }
 
-    private static function isSafePath(string $path): bool
+    private static function expectsJsonResponse(string $path): bool
     {
-        $decoded = rawurldecode($path);
+        $accept = $_SERVER['HTTP_ACCEPT'] ?? '';
+        $requestedWith = $_SERVER['HTTP_X_REQUESTED_WITH'] ?? '';
 
-        if (preg_match('/[\x00-\x1F\x7F]/', $decoded)) {
-            return false;
-        }
+        return str_starts_with($path, 'api-')
+            || str_contains($accept, 'application/json')
+            || strtolower($requestedWith) === 'xmlhttprequest';
+    }
 
-        if (str_contains($decoded, '..')) {
-            return false;
-        }
-
-        return true;
+    private static function renderJsonNotFound(): void
+    {
+        http_response_code(404);
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode([
+            'success' => false,
+            'status' => 404,
+            'error' => 'Endpoint not found',
+        ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     }
 
     private static function normalizePath(string $path): string
