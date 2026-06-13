@@ -1849,6 +1849,13 @@ if ("serviceWorker" in navigator && window.location.protocol !== "file:") {
 
 
 
+
+function setNavNotificationDot(visible) {
+  document.querySelectorAll("[data-nav-notification-dot], .reevio-mobile-menu-actions__dot").forEach((dot) => {
+    dot.style.display = visible ? "" : "none";
+  });
+}
+
 /* Real notifications */
 document.addEventListener("DOMContentLoaded", () => {
   const page = document.querySelector(".reevio-page-notifications");
@@ -1858,8 +1865,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const unreadLabel = page.querySelector("[data-notification-unread]");
 
   function setUnreadCount(count) {
-    if (!unreadLabel) return;
-    unreadLabel.textContent = `${Math.max(0, Number(count) || 0)} unread`;
+    const value = Math.max(0, Number(count) || 0);
+    if (unreadLabel) unreadLabel.textContent = `${value} unread`;
+    if (typeof setNavNotificationDot === "function") setNavNotificationDot(value > 0);
   }
 
   function markCardAsRead(card) {

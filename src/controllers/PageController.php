@@ -125,10 +125,13 @@ final class PageController extends AppController
     {
         $userId = (int) $currentUser['id'];
 
+        $notificationStats = $notificationsRepository->statsForUser($userId);
+
         return [
             'profileUser' => $currentUser,
             'notifications' => $notificationsRepository->forUser($userId, 50),
-            'notificationStats' => $notificationsRepository->statsForUser($userId),
+            'notificationStats' => $notificationStats,
+            'notificationUnreadCount' => (int) ($notificationStats['unread_count'] ?? 0),
         ];
     }
 

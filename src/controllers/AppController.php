@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../repositories/UsersRepository.php';
+require_once __DIR__ . '/../repositories/NotificationsRepository.php';
 
 abstract class AppController
 {
@@ -110,6 +111,16 @@ abstract class AppController
         $currentUser = $variables['currentUser'] ?? $this->currentUser();
         $showAdminLink = $variables['showAdminLink'] ?? (($currentUser['role'] ?? null) === 'admin');
         $messages = $variables['messages'] ?? null;
+        $notificationUnreadCount = (int) ($variables['notificationUnreadCount'] ?? 0);
+
+        if ($currentUser && !isset($variables['notificationUnreadCount'])) {
+            try {
+                $notificationStats = (new NotificationsRepository())->statsForUser((int) $currentUser['id']);
+                $notificationUnreadCount = (int) ($notificationStats['unread_count'] ?? 0);
+            } catch (Throwable) {
+                $notificationUnreadCount = 0;
+            }
+        }
 
         extract($variables, EXTR_SKIP);
 

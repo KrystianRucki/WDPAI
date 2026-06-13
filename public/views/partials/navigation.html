@@ -163,7 +163,9 @@ if (!function_exists('reevio_nav_avatar')) {
     aria-label="Notifications"
   >
     <span class="material-symbols-outlined">notifications</span>
-    <span class="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full"></span>
+    <?php if ((int) ($notificationUnreadCount ?? 0) > 0): ?>
+    <span class="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full" data-nav-notification-dot></span>
+    <?php endif; ?>
   </a>
 
   <a
