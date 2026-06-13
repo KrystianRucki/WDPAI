@@ -62,10 +62,10 @@ final class Database
 
         error_log('Reevio database connection failed: ' . ($lastError ?? 'unknown error'));
 
-        http_response_code(500);
-        echo 'Database connection failed. Check Docker services or config.php. Last tried connection: '
-            . htmlspecialchars((string) $lastError, ENT_QUOTES, 'UTF-8');
-        exit;
+        throw new RuntimeException(
+            'Database connection failed. Check Docker services or config.php. Last tried connection: '
+            . (string) ($lastError ?? 'unknown error')
+        );
     }
 
     private function connectionCandidates(string $host, string $port): array

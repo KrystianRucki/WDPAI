@@ -14,14 +14,17 @@ require_once __DIR__ . '/src/controllers/NotificationsController.php';
 require_once __DIR__ . '/src/controllers/SettingsController.php';
 require_once __DIR__ . '/src/controllers/TmdbController.php';
 require_once __DIR__ . '/src/controllers/DiaryController.php';
+require_once __DIR__ . '/src/Support/ErrorHandler.php';
 
 final class Routing
 {
     private const PUBLIC_VIEWS = [
         'login',
         'register',
+        'bad_request',
         'not_found',
         'forbidden',
+        'server_error',
         'offline_page',
     ];
 
@@ -31,7 +34,9 @@ final class Routing
         'feed-films' => 'feed_films',
         'feed-reviews' => 'feed_reviews',
         'feed-lists' => 'feed_lists',
+        'bad-request' => 'bad_request',
         'offline-page' => 'offline_page',
+        'server-error' => 'server_error',
         'film-details' => 'film_details',
         'review-details' => 'review_details',
         'review-comments' => 'review_comments',
@@ -65,7 +70,32 @@ final class Routing
 
     public static function run(string $path): void
     {
+        if (!self::isSafePath($path)) {
+            ErrorHandler::badRequest('The requested URL contains invalid characters.');
+            return;
+        }
+
         $path = self::normalizePath($path);
+
+        if (in_array($path, ['bad-request', '400'], true)) {
+            ErrorHandler::badRequest('This request could not be understood.');
+            return;
+        }
+
+        if (in_array($path, ['forbidden', '403'], true)) {
+            ErrorHandler::forbidden();
+            return;
+        }
+
+        if (in_array($path, ['not-found', '404'], true)) {
+            ErrorHandler::notFound();
+            return;
+        }
+
+        if (in_array($path, ['server-error', '500'], true)) {
+            ErrorHandler::serverError();
+            return;
+        }
 
         $routes = [
             'login' => [SecurityController::class, 'login'],
@@ -136,8 +166,22 @@ final class Routing
             return;
         }
 
-        http_response_code(404);
-        (new PageController())->show('not_found', true);
+        ErrorHandler::notFound('The requested route does not exist.');
+    }
+
+    private static function isSafePath(string $path): bool
+    {
+        $decoded = rawurldecode($path);
+
+        if (preg_match('/[\x00-\x1F\x7F]/', $decoded)) {
+            return false;
+        }
+
+        if (str_contains($decoded, '..')) {
+            return false;
+        }
+
+        return true;
     }
 
     private static function normalizePath(string $path): string

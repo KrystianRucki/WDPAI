@@ -1,4 +1,24 @@
-.vscode
-.vs
-.idea
+# IDE / editors
+.vscode/
+.vs/
+.idea/
+
+# Local config / secrets
 config.php
+.env
+.env.local
+docker-compose.yaml
+
+# Composer dependencies
+/vendor/
+
+# Runtime / logs
+*.log
+
+# User uploads
+/public/uploads/*
+!/public/uploads/.gitkeep
+
+# OS files
+.DS_Store
+Thumbs.db

@@ -4,7 +4,14 @@ declare(strict_types=1);
 
 session_start();
 
-require_once 'Routing.php';
+require_once __DIR__ . '/src/Support/ErrorHandler.php';
+require_once __DIR__ . '/Routing.php';
 
-$path = trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?? '', '/');
-Routing::run($path);
+ErrorHandler::register();
+
+try {
+    $path = trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?? '', '/');
+    Routing::run($path);
+} catch (Throwable $exception) {
+    ErrorHandler::serverError($exception);
+}

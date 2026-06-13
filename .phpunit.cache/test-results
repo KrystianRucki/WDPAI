@@ -1,0 +1,1 @@
+{"version":2,"defects":[],"times":{"FilmsRepositoryValueNormalizationTest::testRuntimeZeroOrMissingIsStoredAsNull":0.136,"FilmsRepositoryValueNormalizationTest::testReleaseYearMustMatchDatabaseConstraintRange":0,"TmdbServiceTest::testImageUrlBuildsExpectedPath":0.012,"TmdbServiceTest::testPosterPlaceholderUsesLocalAsset":0}}

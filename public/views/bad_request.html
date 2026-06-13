@@ -1,0 +1,9 @@
+<?php
+$errorStatus = 400;
+$errorEyebrow = $errorEyebrow ?? 'Error 400';
+$errorTitle = $errorTitle ?? 'Bad request';
+$errorMessage = $errorMessage ?? 'This request could not be understood. Check the address or go back to browsing films.';
+$errorIcon = $errorIcon ?? 'report';
+$errorBodyClass = $errorBodyClass ?? 'bad_request';
+include __DIR__ . '/error_page.html';
+?>

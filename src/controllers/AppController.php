@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../repositories/UsersRepository.php';
 require_once __DIR__ . '/../repositories/NotificationsRepository.php';
+require_once __DIR__ . '/../Support/ErrorHandler.php';
 
 abstract class AppController
 {
@@ -72,6 +73,17 @@ abstract class AppController
     }
 
 
+    protected function renderBadRequest(string $message = 'This request could not be understood.'): void
+    {
+        http_response_code(400);
+
+        $this->render('bad_request', [
+            'errorEyebrow' => 'Error 400',
+            'errorTitle' => 'Bad request',
+            'errorMessage' => $message,
+        ]);
+    }
+
     protected function renderNotFound(string $message = 'The page you are looking for does not exist.'): void
     {
         http_response_code(404);
@@ -90,6 +102,17 @@ abstract class AppController
         $this->render('forbidden', [
             'errorEyebrow' => 'Error 403',
             'errorTitle' => 'Access denied',
+            'errorMessage' => $message,
+        ]);
+    }
+
+    protected function renderServerError(string $message = 'Something went wrong on the Reevio server.'): void
+    {
+        http_response_code(500);
+
+        $this->render('server_error', [
+            'errorEyebrow' => 'Error 500',
+            'errorTitle' => 'Server error',
             'errorMessage' => $message,
         ]);
     }

@@ -26,6 +26,11 @@ final class PageController extends AppController
         $variables = $this->variablesForTemplate($template, $public);
         $status = (int) ($variables['httpStatus'] ?? 200);
 
+        if ($status === 400) {
+            $this->renderBadRequest((string) ($variables['errorMessage'] ?? 'This request could not be understood.'));
+            return;
+        }
+
         if ($status === 403) {
             $this->renderForbidden((string) ($variables['errorMessage'] ?? 'You do not have permission to view this page.'));
             return;
@@ -33,6 +38,11 @@ final class PageController extends AppController
 
         if ($status === 404) {
             $this->renderNotFound((string) ($variables['errorMessage'] ?? 'The requested resource was not found.'));
+            return;
+        }
+
+        if ($status === 500) {
+            $this->renderServerError((string) ($variables['errorMessage'] ?? 'Something went wrong on the Reevio server.'));
             return;
         }
 

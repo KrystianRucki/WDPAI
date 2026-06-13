@@ -83,10 +83,8 @@ final class FilmsRepository extends Repository
             $this->cacheGenres($movie['genres'] ?? []);
 
             $director = $this->directorName($movie['credits']['crew'] ?? []);
-            $releaseYear = !empty($movie['release_date']) ? (int) substr((string) $movie['release_date'], 0, 4) : null;
-            $releaseYear = $releaseYear >= 1888 && $releaseYear <= 2100 ? $releaseYear : null;
-            $runtimeMinutes = (int) ($movie['runtime'] ?? 0);
-            $runtimeMinutes = $runtimeMinutes > 0 ? $runtimeMinutes : null;
+            $releaseYear = self::normalizeReleaseYear($movie['release_date'] ?? null);
+            $runtimeMinutes = self::normalizeRuntimeMinutes($movie['runtime'] ?? null);
             $posterPath = $movie['poster_path'] ?? null;
             $backdropPath = $movie['backdrop_path'] ?? null;
 
@@ -185,6 +183,25 @@ final class FilmsRepository extends Repository
         $query = $this->connection()->query('SELECT * FROM films ORDER BY id ASC LIMIT 1');
         $film = $query->fetch();
         return $film ? $this->hydrateFilm($film) : null;
+    }
+
+
+    public static function normalizeRuntimeMinutes($runtime): ?int
+    {
+        $runtimeMinutes = (int) ($runtime ?? 0);
+
+        return $runtimeMinutes > 0 ? $runtimeMinutes : null;
+    }
+
+    public static function normalizeReleaseYear($releaseDate): ?int
+    {
+        if (empty($releaseDate)) {
+            return null;
+        }
+
+        $year = (int) substr((string) $releaseDate, 0, 4);
+
+        return $year >= 1888 && $year <= 2100 ? $year : null;
     }
 
     private function hydrateFilm(array $film): array

@@ -1,0 +1,9 @@
+<?php
+$errorStatus = 500;
+$errorEyebrow = $errorEyebrow ?? 'Error 500';
+$errorTitle = $errorTitle ?? 'Server error';
+$errorMessage = $errorMessage ?? 'Something went wrong on the Reevio server. Try again in a moment.';
+$errorIcon = $errorIcon ?? 'warning';
+$errorBodyClass = $errorBodyClass ?? 'server_error';
+include __DIR__ . '/error_page.html';
+?>
