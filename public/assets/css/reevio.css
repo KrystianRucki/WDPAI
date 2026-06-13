@@ -7122,3 +7122,114 @@ button {
     max-width: 96px !important;
   }
 }
+
+
+/* ==========================================================================
+   Users lists mobile fix
+   Prevents /users-lists cards from being squeezed into narrow two-column layout.
+   ========================================================================== */
+
+.reevio-page-users_lists .users-lists-title,
+.reevio-page-users_lists .users-lists-description,
+.reevio-page-users_lists .users-lists-meta,
+.reevio-page-users_lists .users-lists-meta span,
+.reevio-page-users_lists .users-lists-updated,
+.reevio-page-users_lists header p {
+  overflow-wrap: normal !important;
+  word-break: normal !important;
+}
+
+@media (max-width: 900px) {
+  .reevio-page-users_lists .users-lists-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+
+  .reevio-page-users_lists .users-lists-card {
+    padding: 1rem !important;
+    min-width: 0 !important;
+  }
+
+  .reevio-page-users_lists .users-lists-card-inner {
+    display: grid !important;
+    grid-template-columns: 6rem minmax(0, 1fr) !important;
+    align-items: center !important;
+    gap: 1rem !important;
+    min-width: 0 !important;
+  }
+
+  .reevio-page-users_lists .users-lists-poster-stack {
+    width: 5.75rem !important;
+    height: 8.5rem !important;
+    min-width: 5.75rem !important;
+    max-width: 5.75rem !important;
+  }
+
+  .reevio-page-users_lists .users-lists-card-body {
+    min-width: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .reevio-page-users_lists .users-lists-title {
+    display: -webkit-box !important;
+    width: 100% !important;
+    overflow: hidden !important;
+    white-space: normal !important;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .reevio-page-users_lists .users-lists-description {
+    max-width: 100% !important;
+  }
+
+  .reevio-page-users_lists .users-lists-meta {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 0.55rem 0.9rem !important;
+    max-width: 100% !important;
+  }
+
+  .reevio-page-users_lists .users-lists-meta > span {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.35rem !important;
+    min-width: 0 !important;
+    white-space: nowrap !important;
+  }
+
+  .reevio-page-users_lists .users-lists-updated {
+    white-space: normal !important;
+    line-height: 1.35 !important;
+  }
+}
+
+@media (max-width: 420px) {
+  .reevio-page-users_lists .users-lists-card-inner {
+    grid-template-columns: 5.1rem minmax(0, 1fr) !important;
+    gap: 0.85rem !important;
+  }
+
+  .reevio-page-users_lists .users-lists-poster-stack {
+    width: 4.9rem !important;
+    height: 7.35rem !important;
+    min-width: 4.9rem !important;
+    max-width: 4.9rem !important;
+  }
+
+  .reevio-page-users_lists .users-lists-title {
+    font-size: 1.05rem !important;
+    line-height: 1.15 !important;
+  }
+
+  .reevio-page-users_lists .users-lists-meta {
+    font-size: 0.78rem !important;
+    gap: 0.45rem 0.65rem !important;
+  }
+
+  .reevio-page-users_lists .users-lists-updated {
+    font-size: 0.68rem !important;
+    letter-spacing: 0.04em !important;
+  }
+}

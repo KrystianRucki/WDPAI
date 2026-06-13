@@ -75,11 +75,11 @@ include __DIR__ . '/partials/navigation.html';
         </header>
 
         <?php if ($collectionItems): ?>
-        <section class="grid gap-5 md:grid-cols-2">
+        <section class="users-lists-grid grid gap-5 md:grid-cols-2">
           <?php foreach ($collectionItems as $list): ?>
-          <article data-href="/list-details?id=<?= (int) $list['id']; ?>" class="group rounded-3xl border border-outline-variant/15 bg-surface-container-low p-5 ambient-shadow transition-colors hover:bg-surface-container-high">
-            <div class="flex gap-5">
-              <div class="relative h-36 w-24 shrink-0">
+          <article data-href="/list-details?id=<?= (int) $list['id']; ?>" class="users-lists-card group rounded-3xl border border-outline-variant/15 bg-surface-container-low p-5 ambient-shadow transition-colors hover:bg-surface-container-high">
+            <div class="users-lists-card-inner flex gap-5">
+              <div class="users-lists-poster-stack relative h-36 w-24 shrink-0">
                 <div class="absolute inset-0 rotate-4 translate-x-1 -translate-y-1 scale-90 overflow-hidden rounded-xl bg-surface-container-high opacity-60 poster-shadow">
                   <img alt="<?= reevio_lists_e($list['title'] ?? 'List'); ?> back poster" class="h-full w-full object-cover grayscale opacity-50" src="<?= reevio_lists_e(reevio_lists_poster($list['poster_3'] ?? null)); ?>" />
                 </div>
@@ -94,18 +94,18 @@ include __DIR__ . '/partials/navigation.html';
                 </div>
               </div>
 
-              <div class="flex min-w-0 flex-1 flex-col justify-center">
-                <a href="/list-details?id=<?= (int) $list['id']; ?>" class="font-headline text-xl font-black leading-tight text-on-surface transition-colors group-hover:text-primary">
+              <div class="users-lists-card-body flex min-w-0 flex-1 flex-col justify-center">
+                <a href="/list-details?id=<?= (int) $list['id']; ?>" class="users-lists-title font-headline text-xl font-black leading-tight text-on-surface transition-colors group-hover:text-primary">
                   <?= reevio_lists_e($list['title'] ?? 'Untitled list'); ?>
                 </a>
 
                 <?php if (!empty($list['description'])): ?>
-                <p class="mt-2 line-clamp-2 text-sm leading-relaxed text-on-surface-variant">
+                <p class="users-lists-description mt-2 line-clamp-2 text-sm leading-relaxed text-on-surface-variant">
                   <?= reevio_lists_e($list['description']); ?>
                 </p>
                 <?php endif; ?>
 
-                <div class="mt-3 flex flex-wrap items-center gap-4 font-label text-sm text-on-surface-variant">
+                <div class="users-lists-meta mt-3 flex flex-wrap items-center gap-4 font-label text-sm text-on-surface-variant">
                   <span class="flex items-center gap-2">
                     <span class="material-symbols-outlined text-[17px]">movie</span>
                     <?= (int) ($list['films_count'] ?? 0); ?> films
@@ -122,7 +122,7 @@ include __DIR__ . '/partials/navigation.html';
                   <?php endif; ?>
                 </div>
 
-                <p class="mt-3 font-label text-xs uppercase tracking-wider text-on-surface-variant">
+                <p class="users-lists-updated mt-3 font-label text-xs uppercase tracking-wider text-on-surface-variant">
                   Updated <?= reevio_lists_e(reevio_lists_date($list['updated_at'] ?? $list['created_at'] ?? null)); ?>
                 </p>
               </div>
