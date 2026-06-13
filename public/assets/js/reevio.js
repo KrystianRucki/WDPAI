@@ -1819,3 +1819,126 @@ if ("serviceWorker" in navigator && window.location.protocol !== "file:") {
   });
 }
 
+
+
+
+/* Real notifications */
+document.addEventListener("DOMContentLoaded", () => {
+  const page = document.querySelector(".reevio-page-notifications");
+  if (!page || page.dataset.reevioNotificationsReady === "1") return;
+  page.dataset.reevioNotificationsReady = "1";
+
+  const unreadLabel = page.querySelector("[data-notification-unread]");
+
+  function setUnreadCount(count) {
+    if (!unreadLabel) return;
+    unreadLabel.textContent = `${Math.max(0, Number(count) || 0)} unread`;
+  }
+
+  function markCardAsRead(card) {
+    if (!card || card.dataset.read === "1") return;
+
+    card.dataset.read = "1";
+    card.className =
+      "notification-card group block cursor-pointer rounded-3xl border border-outline-variant/10 bg-surface-container-low/45 p-5 opacity-65 transition-all hover:opacity-90 hover:bg-surface-container-low";
+
+    const badge = card.querySelector("[data-notification-new-badge]");
+    if (badge) badge.remove();
+
+    const iconCircle = card.querySelector(".flex.h-12.w-12");
+    if (iconCircle) {
+      iconCircle.className =
+        "flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-surface-container-high text-on-surface-variant";
+    }
+  }
+
+  async function markRead(id = null) {
+    const response = await fetch("/api-notifications-read", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      },
+      body: JSON.stringify(id ? { id } : {})
+    });
+
+    const payload = await response.json().catch(() => ({}));
+
+    if (!response.ok || payload.success === false) {
+      throw new Error(payload.message || "Could not update notifications.");
+    }
+
+    if (payload.stats && typeof payload.stats.unread_count !== "undefined") {
+      setUnreadCount(payload.stats.unread_count);
+    }
+
+    return payload;
+  }
+
+  const markAll = page.querySelector("[data-notifications-mark-all]");
+  if (markAll) {
+    markAll.addEventListener("click", async () => {
+      if (markAll.dataset.loading === "1") return;
+
+      markAll.dataset.loading = "1";
+      markAll.disabled = true;
+      const previousText = markAll.textContent;
+      markAll.textContent = "Marking...";
+
+      try {
+        await markRead(null);
+        page.querySelectorAll("[data-notification-card]").forEach(markCardAsRead);
+        setUnreadCount(0);
+        markAll.textContent = "All read";
+      } catch (error) {
+        markAll.textContent = "Try again";
+        markAll.title = error.message || "Could not mark notifications.";
+      } finally {
+        setTimeout(() => {
+          markAll.disabled = false;
+          markAll.dataset.loading = "0";
+          if (markAll.textContent === "All read") {
+            markAll.textContent = previousText;
+          }
+        }, 900);
+      }
+    });
+  }
+
+  page.addEventListener(
+    "click",
+    async (event) => {
+      const card = event.target.closest("[data-notification-card]");
+      if (!card) return;
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      const id = Number(card.dataset.notificationId);
+      const target = card.dataset.notificationTarget || "/notifications";
+
+      try {
+        if (id && card.dataset.read !== "1") {
+          await markRead(id);
+          markCardAsRead(card);
+        }
+      } catch (error) {
+        console.error(error);
+      } finally {
+        window.location.href = target;
+      }
+    },
+    true
+  );
+
+  page.addEventListener("keydown", (event) => {
+    const card = event.target.closest("[data-notification-card]");
+    if (!card) return;
+
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      card.click();
+    }
+  });
+});
+

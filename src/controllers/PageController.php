@@ -9,6 +9,7 @@ require_once __DIR__ . '/../repositories/ReviewsRepository.php';
 require_once __DIR__ . '/../repositories/ListsRepository.php';
 require_once __DIR__ . '/../repositories/DiaryRepository.php';
 require_once __DIR__ . '/../repositories/ActivityRepository.php';
+require_once __DIR__ . '/../repositories/NotificationsRepository.php';
 require_once __DIR__ . '/../services/TmdbService.php';
 
 final class PageController extends AppController
@@ -57,6 +58,7 @@ final class PageController extends AppController
         $listsRepository = new ListsRepository();
         $diaryRepository = new DiaryRepository();
         $activityRepository = new ActivityRepository();
+        $notificationsRepository = new NotificationsRepository();
 
         return match ($template) {
             'feed_films' => [
@@ -70,6 +72,7 @@ final class PageController extends AppController
             ],
             'activity_following' => $this->activityVariables('following', $currentUser, $activityRepository),
             'activity_you' => $this->activityVariables('you', $currentUser, $activityRepository),
+            'notifications' => $this->notificationsVariables($currentUser, $notificationsRepository),
             'profile_p_main' => [
                 'profileUser' => $currentUser,
                 'profileStats' => $usersRepository->getFollowStats($currentUserId),
@@ -106,6 +109,18 @@ final class PageController extends AppController
 
 
 
+
+
+    private function notificationsVariables(array $currentUser, NotificationsRepository $notificationsRepository): array
+    {
+        $userId = (int) $currentUser['id'];
+
+        return [
+            'profileUser' => $currentUser,
+            'notifications' => $notificationsRepository->forUser($userId, 50),
+            'notificationStats' => $notificationsRepository->statsForUser($userId),
+        ];
+    }
 
     private function activityVariables(string $type, array $currentUser, ActivityRepository $activityRepository): array
     {

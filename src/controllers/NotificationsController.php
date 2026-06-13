@@ -13,7 +13,13 @@ final class NotificationsController extends AppController
             return;
         }
 
-        $this->json(['notifications' => (new NotificationsRepository())->forUser((int) $_SESSION['user_id'])]);
+        $userId = (int) $_SESSION['user_id'];
+        $repository = new NotificationsRepository();
+
+        $this->json([
+            'notifications' => $repository->forUser($userId),
+            'stats' => $repository->statsForUser($userId),
+        ]);
     }
 
     public function markRead(): void
@@ -24,7 +30,19 @@ final class NotificationsController extends AppController
 
         $data = $this->getJsonInput();
         $notificationId = isset($data['id']) ? (int) $data['id'] : null;
-        (new NotificationsRepository())->markRead((int) $_SESSION['user_id'], $notificationId);
-        $this->json(['updated' => true]);
+
+        if ($notificationId !== null && $notificationId <= 0) {
+            $notificationId = null;
+        }
+
+        $userId = (int) $_SESSION['user_id'];
+        $repository = new NotificationsRepository();
+        $updated = $repository->markRead($userId, $notificationId);
+
+        $this->json([
+            'success' => true,
+            'updated' => $updated,
+            'stats' => $repository->statsForUser($userId),
+        ]);
     }
 }

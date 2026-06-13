@@ -276,16 +276,31 @@ final class UsersRepository extends Repository
             return false;
         }
 
-        $query = $this->connection()->prepare(
+        $connection = $this->connection();
+        $query = $connection->prepare(
             'INSERT INTO followers (follower_id, followed_id)
              VALUES (:follower_id, :followed_id)
-             ON CONFLICT (follower_id, followed_id) DO NOTHING'
+             ON CONFLICT (follower_id, followed_id) DO NOTHING
+             RETURNING 1'
         );
 
         $query->execute([
             'follower_id' => $followerId,
             'followed_id' => $followedId,
         ]);
+
+        $inserted = (bool) $query->fetchColumn();
+
+        if ($inserted) {
+            $notification = $connection->prepare(
+                "INSERT INTO notifications (user_id, actor_id, type)
+                 VALUES (:user_id, :actor_id, 'new_follower')"
+            );
+            $notification->execute([
+                'user_id' => $followedId,
+                'actor_id' => $followerId,
+            ]);
+        }
 
         return true;
     }
