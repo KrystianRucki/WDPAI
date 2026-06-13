@@ -31,6 +31,7 @@ final class Routing
         'feed-films' => 'feed_films',
         'feed-reviews' => 'feed_reviews',
         'feed-lists' => 'feed_lists',
+        'offline-page' => 'offline_page',
         'film-details' => 'film_details',
         'review-details' => 'review_details',
         'review-comments' => 'review_comments',

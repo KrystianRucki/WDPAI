@@ -1796,3 +1796,26 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
+
+
+
+/* Offline support */
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll("[data-offline-retry]").forEach((button) => {
+    if (button.dataset.reevioRetryReady === "1") return;
+    button.dataset.reevioRetryReady = "1";
+
+    button.addEventListener("click", () => {
+      window.location.reload();
+    });
+  });
+});
+
+if ("serviceWorker" in navigator && window.location.protocol !== "file:") {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("/service-worker.js").catch(() => {
+      // Offline fallback is progressive enhancement; app should still work without it.
+    });
+  });
+}
+

@@ -75,6 +75,7 @@
         <button
           class="flex w-full items-center justify-center gap-3 rounded-full bg-gradient-to-r from-[#ffd79b] to-[#ffb300] py-4 font-headline text-lg font-bold tracking-wide text-[#281900] shadow-[0_10px_24px_rgba(255,215,155,0.18)] transition-transform hover:scale-[1.02] active:scale-95"
           type="button"
+          data-offline-retry
         >
           <span
             class="material-symbols-outlined text-2xl reevio-inline-style-014"
@@ -84,6 +85,10 @@
           </span>
           Try Again
         </button>
+
+        <p class="mt-5 text-xs leading-relaxed text-on-surface-variant/80">
+          This page is shown from the browser cache when Reevio cannot reach the server.
+        </p>
       </section>
     </main>
       <script src="/public/assets/js/reevio.js"></script>
