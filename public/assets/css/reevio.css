@@ -6624,3 +6624,424 @@ input[type="password"]::-webkit-credentials-auto-fill-button {
   pointer-events: none;
 }
 
+
+
+/* ==========================================================================
+   Reevio global mobile responsiveness v2
+   Fixes shared desktop-only spacing, grids and fixed widths across all pages.
+   ========================================================================== */
+
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+img,
+video,
+canvas,
+svg {
+  max-width: 100%;
+}
+
+input,
+textarea,
+select,
+button {
+  max-width: 100%;
+}
+
+@media (max-width: 900px) {
+  :root {
+    --reevio-mobile-x: clamp(0.875rem, 4vw, 1.25rem);
+    --reevio-mobile-top: 5.25rem;
+    --reevio-mobile-bottom: 4rem;
+  }
+
+  body {
+    min-width: 0 !important;
+    overflow-x: hidden !important;
+  }
+
+  .cinematic-glow,
+  [class*="cinematic-glow"] {
+    width: min(110vw, 720px) !important;
+    height: 360px !important;
+    opacity: 0.75 !important;
+  }
+
+  main,
+  [class*="ml-64"],
+  [class*="pl-64"],
+  [class*="w-[calc(100%-16rem)]"],
+  [class*="w-\[calc\(100\%-16rem\)\]"] {
+    width: 100% !important;
+    max-width: 100vw !important;
+    margin-left: 0 !important;
+    padding-left: var(--reevio-mobile-x) !important;
+    padding-right: var(--reevio-mobile-x) !important;
+  }
+
+  main {
+    padding-top: var(--reevio-mobile-top) !important;
+    padding-bottom: var(--reevio-mobile-bottom) !important;
+  }
+
+  .reevio-page-login main,
+  .reevio-page-register main,
+  .reevio-page-not_found main,
+  .reevio-page-forbidden main,
+  .reevio-page-offline_page main {
+    padding-top: 1rem !important;
+    padding-bottom: 1rem !important;
+  }
+
+  .reevio-page-login,
+  .reevio-page-register,
+  .reevio-page-not_found,
+  .reevio-page-forbidden,
+  .reevio-page-offline_page {
+    min-height: 100dvh !important;
+    height: auto !important;
+    overflow-y: auto !important;
+  }
+
+  main > div,
+  main > section,
+  main > article,
+  [class*="max-w-[1120px]"],
+  [class*="max-w-\[1120px\]"],
+  [class*="max-w-[1600px]"],
+  [class*="max-w-\[1600px\]"],
+  [class*="max-w-[980px]"],
+  [class*="max-w-\[980px\]"],
+  [class*="max-w-[940px]"],
+  [class*="max-w-\[940px\]"],
+  [class*="max-w-[920px]"],
+  [class*="max-w-\[920px\]"],
+  [class*="max-w-[860px]"],
+  [class*="max-w-\[860px\]"],
+  [class*="max-w-[820px]"],
+  [class*="max-w-\[820px\]"],
+  [class*="max-w-[520px]"],
+  [class*="max-w-\[520px\]"],
+  [class*="max-w-[480px]"],
+  [class*="max-w-\[480px\]"] {
+    max-width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  [class*="w-[800px]"],
+  [class*="w-\[800px\]"],
+  [class*="w-[720px]"],
+  [class*="w-\[720px\]"],
+  [class*="w-[660px]"],
+  [class*="w-\[660px\]"],
+  [class*="w-[600px]"],
+  [class*="w-\[600px\]"],
+  [class*="w-[480px]"],
+  [class*="w-\[480px\]"] {
+    width: 100% !important;
+    max-width: calc(100vw - (var(--reevio-mobile-x) * 2)) !important;
+  }
+
+  [class*="pr-44"],
+  .pr-44 {
+    padding-right: 0 !important;
+  }
+
+  [class*="px-8"] {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+
+  [class*="p-8"] {
+    padding: 1.25rem !important;
+  }
+
+  [class*="p-7"],
+  [class*="p-6"] {
+    padding: 1rem !important;
+  }
+
+  [class*="gap-12"],
+  [class*="gap-10"],
+  [class*="gap-8"] {
+    gap: 1.25rem !important;
+  }
+
+  [class*="mb-12"],
+  [class*="mb-10"] {
+    margin-bottom: 1.75rem !important;
+  }
+
+  [class*="mt-12"],
+  [class*="mt-10"] {
+    margin-top: 1.75rem !important;
+  }
+
+  main header,
+  main header[class*="flex"],
+  main [class*="items-end"][class*="justify-between"],
+  main [class*="items-center"][class*="justify-between"] {
+    flex-wrap: wrap !important;
+    gap: 1rem !important;
+  }
+
+  main header > *,
+  main [class*="items-end"][class*="justify-between"] > *,
+  main [class*="items-center"][class*="justify-between"] > * {
+    min-width: 0 !important;
+  }
+
+  main h1,
+  .font-headline[class*="text-[32px]"],
+  [class*="text-[32px]"] {
+    font-size: clamp(1.75rem, 8vw, 2.25rem) !important;
+    line-height: 1.08 !important;
+  }
+
+  [class*="text-4xl"] {
+    font-size: clamp(1.75rem, 8vw, 2.25rem) !important;
+    line-height: 1.12 !important;
+  }
+
+  [class*="text-3xl"] {
+    font-size: clamp(1.5rem, 7vw, 1.875rem) !important;
+    line-height: 1.12 !important;
+  }
+
+  [class*="text-2xl"] {
+    font-size: clamp(1.25rem, 5.8vw, 1.5rem) !important;
+  }
+
+  p,
+  h1,
+  h2,
+  h3,
+  h4,
+  a,
+  span {
+    overflow-wrap: anywhere;
+  }
+
+  main .grid,
+  main .flex {
+    min-width: 0 !important;
+  }
+
+  main [class*="grid-cols-[64px_minmax"],
+  main [class*="grid-cols-\[64px_minmax"],
+  main [class*="grid-cols-[280px_"],
+  main [class*="grid-cols-\[280px_"],
+  main [class*="grid-cols-[320px_"],
+  main [class*="grid-cols-\[320px_"],
+  main [class*="grid-cols-[360px_"],
+  main [class*="grid-cols-\[360px_"],
+  main [class*="lg:grid-cols"],
+  main [class*="xl:grid-cols"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  main .grid-cols-3 {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  main [class*="grid-cols-[repeat(3,165px)]"],
+  main [class*="grid-cols-\[repeat\(3\,165px\)\]"],
+  .reevio-page-feed_films [class*="grid-cols-[repeat(3,165px)]"],
+  .reevio-page-new_from_friends [class*="grid-cols-[repeat(3,165px)]"] {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 9.75rem), 1fr)) !important;
+    justify-content: stretch !important;
+  }
+
+  main [class*="h-[800px]"],
+  main [class*="h-\[800px\]"],
+  main [class*="h-[600px]"],
+  main [class*="h-\[600px\]"],
+  main [class*="h-[560px]"],
+  main [class*="h-\[560px\]"],
+  main [class*="h-[520px]"],
+  main [class*="h-\[520px\]"] {
+    height: auto !important;
+    min-height: min(72dvh, 34rem) !important;
+  }
+
+  main nav[class*="flex"],
+  main .overflow-x-auto,
+  main [class*="snap-x"] {
+    max-width: 100% !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  main nav[class*="flex"]::-webkit-scrollbar,
+  main .overflow-x-auto::-webkit-scrollbar,
+  main [class*="snap-x"]::-webkit-scrollbar {
+    display: none;
+  }
+
+  table,
+  .table,
+  [class*="admin"] table {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: auto !important;
+    white-space: nowrap;
+  }
+
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+
+  .settings-switch {
+    flex: 0 0 auto !important;
+  }
+
+  body > aside > div:last-child a,
+  aside[class*="w-64"][class*="fixed"] > div:last-child a,
+  aside[class*="fixed"][class*="left-0"][class*="top-0"] > div:last-child a {
+    width: 100% !important;
+    height: auto !important;
+    border-radius: 0.75rem !important;
+    padding: 0.875rem 1rem !important;
+    font-size: 0.875rem !important;
+  }
+
+  body > aside > div:last-child a .material-symbols-outlined,
+  aside[class*="w-64"][class*="fixed"] > div:last-child a .material-symbols-outlined,
+  aside[class*="fixed"][class*="left-0"][class*="top-0"] > div:last-child a .material-symbols-outlined {
+    font-size: 20px !important;
+  }
+}
+
+@media (max-width: 720px) {
+  main .grid-cols-2,
+  main .grid-cols-3,
+  main [class*="md:grid-cols"],
+  main [class*="lg:grid-cols"],
+  main [class*="xl:grid-cols"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  main header,
+  main header[class*="flex"],
+  main [class*="items-end"][class*="justify-between"],
+  main [class*="items-center"][class*="justify-between"] {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+
+  main header a,
+  main header button,
+  main header [role="button"] {
+    width: fit-content;
+  }
+
+  .reevio-page-feed_films [class*="grid-cols-[repeat(3,165px)]"],
+  .reevio-page-new_from_friends [class*="grid-cols-[repeat(3,165px)]"],
+  .reevio-page-feed_films [class*="grid-cols-\[repeat\(3\,165px\)\]"],
+  .reevio-page-new_from_friends [class*="grid-cols-\[repeat\(3\,165px\)\]"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 1rem !important;
+  }
+
+  .reevio-page-activity_following .timeline-line,
+  .reevio-page-activity_you .timeline-line {
+    left: 1.75rem !important;
+    transform: none !important;
+  }
+
+  .reevio-page-activity_following article[class*="grid-cols-[1fr_64px_1fr]"],
+  .reevio-page-activity_you article[class*="grid-cols-[1fr_64px_1fr]"],
+  .reevio-page-activity_following article[class*="grid-cols-\[1fr_64px_1fr\]"],
+  .reevio-page-activity_you article[class*="grid-cols-\[1fr_64px_1fr\]"] {
+    grid-template-columns: 3.5rem minmax(0, 1fr) !important;
+    gap: 0.85rem !important;
+  }
+
+  .reevio-page-activity_following article .col-start-1,
+  .reevio-page-activity_following article .col-start-3,
+  .reevio-page-activity_you article .col-start-1,
+  .reevio-page-activity_you article .col-start-3 {
+    grid-column: 2 !important;
+  }
+
+  .reevio-page-activity_following article .col-start-2,
+  .reevio-page-activity_you article .col-start-2 {
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+  }
+
+  .reevio-page-activity_following .activity-click-card::before,
+  .reevio-page-activity_you .activity-click-card::before {
+    display: none !important;
+  }
+
+  .reevio-page-activity_following article .h-14.w-14,
+  .reevio-page-activity_you article .h-14.w-14 {
+    width: 3rem !important;
+    height: 3rem !important;
+    border-width: 3px !important;
+  }
+
+  .reevio-page-log_details section[class*="grid"],
+  .reevio-page-film_details section[class*="grid"],
+  .reevio-page-list_details section[class*="grid"] {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --reevio-mobile-x: 0.75rem;
+    --reevio-mobile-top: 4.85rem;
+  }
+
+  main {
+    padding-left: var(--reevio-mobile-x) !important;
+    padding-right: var(--reevio-mobile-x) !important;
+  }
+
+  [class*="rounded-3xl"] {
+    border-radius: 1.1rem !important;
+  }
+
+  [class*="rounded-2xl"] {
+    border-radius: 0.9rem !important;
+  }
+
+  .reevio-page-feed_films [class*="grid-cols-[repeat(3,165px)]"],
+  .reevio-page-new_from_friends [class*="grid-cols-[repeat(3,165px)]"],
+  .reevio-page-feed_films [class*="grid-cols-\[repeat\(3\,165px\)\]"],
+  .reevio-page-new_from_friends [class*="grid-cols-\[repeat\(3\,165px\)\]"] {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 0.75rem !important;
+  }
+
+  main .flex[class*="gap-4"]:has(> .h-28),
+  main .flex[class*="gap-4"]:has(> .h-24) {
+    gap: 0.75rem !important;
+  }
+
+  main .h-28.w-\[74px\],
+  main [class*="h-28"][class*="w-[74px]"] {
+    width: 4rem !important;
+    height: 6rem !important;
+  }
+
+  .reevio-mobile-menu-toggle {
+    width: 42px !important;
+    height: 42px !important;
+  }
+}

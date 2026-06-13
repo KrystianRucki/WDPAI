@@ -148,6 +148,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (!sidebar || sidebar.querySelector(".reevio-mobile-menu-actions")) return;
 
   const actions = document.createElement("div");
+  const hasUnreadNotifications = Boolean(document.querySelector("[data-nav-notification-dot]"));
   actions.className = "reevio-mobile-menu-actions";
   actions.innerHTML = `
     <span class="reevio-mobile-menu-actions__label">Options</span>
@@ -157,7 +158,7 @@ document.addEventListener("DOMContentLoaded", () => {
       </button>
       <button class="reevio-mobile-menu-actions__button" type="button" aria-label="Notifications">
         <span class="material-symbols-outlined">notifications</span>
-        <span class="reevio-mobile-menu-actions__dot"></span>
+        <span class="reevio-mobile-menu-actions__dot" ${hasUnreadNotifications ? "" : 'style="display:none"'}></span>
       </button>
       <button class="reevio-mobile-menu-actions__button" type="button" aria-label="Account">
         <span class="material-symbols-outlined">account_circle</span>
