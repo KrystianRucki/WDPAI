@@ -151,7 +151,7 @@ include __DIR__ . '/partials/navigation.html';
       <!-- Asymmetric Grid Layout for Movie Logs -->
       <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-10">
         <?php foreach ($friendLogs as $index => $log): ?>
-        <article data-href="<?= reevio_friends_e($log['target_url'] ?? ('/film-details?id=' . (int) $log['film_id'])); ?>"
+        <article data-href="<?= reevio_friends_e($log['target_url'] ?? ('/log-details?id=' . (int) $log['log_id'])); ?>"
           class="bg-surface-container-low rounded-2xl p-5 ghost-border flex flex-col gap-4 relative group hover:bg-surface-container-high transition-colors duration-300 ambient-shadow <?= $index % 3 === 1 ? 'xl:mt-10' : ''; ?>"
         >
           <div class="flex items-center gap-3">

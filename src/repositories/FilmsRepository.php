@@ -433,7 +433,7 @@ final class FilmsRepository extends Repository
                 r.rating AS review_rating,
                 CASE
                     WHEN r.id IS NOT NULL THEN '/review-details?id=' || r.id
-                    ELSE '/film-details?id=' || f.id
+                    ELSE '/log-details?id=' || de.id
                 END AS target_url
              FROM diary_entries de
              JOIN followers fr ON fr.followed_id = de.user_id AND fr.follower_id = :user_id

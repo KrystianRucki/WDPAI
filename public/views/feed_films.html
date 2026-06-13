@@ -191,7 +191,7 @@ include __DIR__ . '/partials/navigation.html';
           <?php if ($friendLogs): ?>
           <div class="grid grid-cols-[repeat(3,165px)] gap-10">
             <?php foreach ($friendLogs as $log): ?>
-            <article data-href="<?= reevio_feed_e($log['target_url'] ?? ('/film-details?id=' . (int) $log['film_id'])); ?>" class="group relative aspect-[2/3] overflow-hidden rounded-xl bg-surface-container-high poster-shadow transition-transform duration-200 hover:scale-[1.02]">
+            <article data-href="<?= reevio_feed_e($log['target_url'] ?? ('/log-details?id=' . (int) $log['log_id'])); ?>" class="group relative aspect-[2/3] overflow-hidden rounded-xl bg-surface-container-high poster-shadow transition-transform duration-200 hover:scale-[1.02]">
               <img
                 alt="<?= reevio_feed_e($log['film_title'] ?? 'Movie'); ?> poster"
                 class="h-full w-full object-cover"
